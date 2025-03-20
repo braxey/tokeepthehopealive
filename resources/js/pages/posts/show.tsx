@@ -37,7 +37,7 @@ export default function ShowPost() {
     const [loadingComments, setLoadingComments] = useState(false);
 
     const paragraphs = post.body.split('\n').filter((para) => para.trim() !== '');
-    const contentWithMedia: any[] = [];
+    const contentWithMedia: object[] = [];
     paragraphs.forEach((para, index) => {
         contentWithMedia.push(
             <p key={`para-${index}`} className="text-neutral-900 dark:text-neutral-100">

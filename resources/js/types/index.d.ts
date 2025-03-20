@@ -61,7 +61,7 @@ export interface User {
     [key: string]: unknown;
 }
 
-export interface PageProps<T = {}> {
+export interface PageProps {
     auth: {
         user: User | null;
     };
@@ -73,5 +73,5 @@ export interface PageProps<T = {}> {
         current_page: number;
         last_page: number;
     };
-    [key: string]: any;
+    [key: string]: unknown;
 }

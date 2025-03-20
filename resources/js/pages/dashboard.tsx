@@ -32,7 +32,7 @@ type Props = PageProps & {
     };
 };
 
-export default function Dashboard({ canPost, featured, posts }: Props) {
+export default function Dashboard({ featured, posts }: Props) {
     return (
         <AppLayout>
             <Head title="dashboard" />
