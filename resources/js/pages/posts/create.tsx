@@ -1,7 +1,6 @@
-import { useForm } from '@inertiajs/react';
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { FormEvent, ChangeEvent } from 'react';
+import { Head, useForm } from '@inertiajs/react';
+import { ChangeEvent, FormEvent } from 'react';
 
 export default function CreatePost() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -47,7 +46,10 @@ export default function CreatePost() {
         <AppLayout>
             <Head title="create post" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <form onSubmit={submit} className="border-sidebar-border/70 dark:border-sidebar-border relative flex flex-col gap-4 rounded-xl border p-6 max-w-2xl mx-auto">
+                <form
+                    onSubmit={submit}
+                    className="border-sidebar-border/70 dark:border-sidebar-border relative mx-auto flex max-w-2xl flex-col gap-4 rounded-xl border p-6"
+                >
                     <h1 className="text-2xl font-bold">create a new post</h1>
 
                     <div className="flex flex-col gap-2">
@@ -62,7 +64,7 @@ export default function CreatePost() {
                             className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-2"
                             placeholder="enter post title"
                         />
-                        {errors.title && <span className="text-red-500 text-sm">{errors.title}</span>}
+                        {errors.title && <span className="text-sm text-red-500">{errors.title}</span>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -76,7 +78,7 @@ export default function CreatePost() {
                             className="border-sidebar-border/70 dark:border-sidebar-border min-h-[200px] rounded-xl border p-2"
                             placeholder="write your post here (use double newlines for paragraphs)"
                         />
-                        {errors.body && <span className="text-red-500 text-sm">{errors.body}</span>}
+                        {errors.body && <span className="text-sm text-red-500">{errors.body}</span>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -90,7 +92,7 @@ export default function CreatePost() {
                             onChange={handlePreviewImageChange}
                             className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-2"
                         />
-                        {errors.preview_image && <span className="text-red-500 text-sm">{errors.preview_image}</span>}
+                        {errors.preview_image && <span className="text-sm text-red-500">{errors.preview_image}</span>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -105,7 +107,7 @@ export default function CreatePost() {
                             onChange={handleMediaChange}
                             className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-2"
                         />
-                        {errors.media && <span className="text-red-500 text-sm">{errors.media}</span>}
+                        {errors.media && <span className="text-sm text-red-500">{errors.media}</span>}
                     </div>
 
                     {data.media.length > 0 && (
@@ -113,7 +115,7 @@ export default function CreatePost() {
                             <p className="text-sm font-medium">media positions (0 = before first paragraph, 1 = after first, etc.)</p>
                             {data.media.map((file, index) => (
                                 <div key={index} className="flex items-center gap-2">
-                                    <span className="text-sm truncate max-w-xs">{file.name}</span>
+                                    <span className="max-w-xs truncate text-sm">{file.name}</span>
                                     <input
                                         type="number"
                                         min="0"
@@ -129,7 +131,7 @@ export default function CreatePost() {
                     <button
                         type="submit"
                         disabled={processing}
-                        className="bg-blue-500 text-white rounded-xl p-2 hover:bg-blue-600 disabled:bg-blue-300"
+                        className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
                     >
                         {processing ? 'posting...' : 'create post'}
                     </button>

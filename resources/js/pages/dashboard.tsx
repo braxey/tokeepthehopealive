@@ -1,7 +1,7 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 
 type Media = {
     id: number;
@@ -41,7 +41,7 @@ export default function Dashboard({ canPost, featured, posts }: Props) {
                 {featured && (
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[50vh] flex-1 overflow-hidden rounded-xl border">
                         {featured.preview_image ? (
-                            <div className="absolute inset-0 flex justify-center items-center">
+                            <div className="absolute inset-0 flex items-center justify-center">
                                 <img
                                     src={featured.preview_image}
                                     alt={featured.title}
@@ -53,14 +53,14 @@ export default function Dashboard({ canPost, featured, posts }: Props) {
                             <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                         )}
                         <div className="absolute inset-0 flex items-center justify-end p-6">
-                            <div className="border-sidebar-border/70 dark:border-sidebar-border bg-white dark:bg-neutral-800 rounded-xl border p-6 w-full max-w-xs min-h-[300px] shadow-lg flex flex-col justify-between ml-6">
+                            <div className="border-sidebar-border/70 dark:border-sidebar-border ml-6 flex min-h-[300px] w-full max-w-xs flex-col justify-between rounded-xl border bg-white p-6 shadow-lg dark:bg-neutral-800">
                                 <div>
                                     <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{featured.title}</h2>
                                     <p className="mt-2 text-neutral-700 dark:text-neutral-300">{featured.first_paragraph}</p>
                                 </div>
                                 <Link
                                     href={`/posts/${featured.id}`}
-                                    className="mt-4 inline-block text-blue-500 dark:text-blue-400 hover:underline self-start"
+                                    className="mt-4 inline-block self-start text-blue-500 hover:underline dark:text-blue-400"
                                 >
                                     read more
                                 </Link>
@@ -75,9 +75,9 @@ export default function Dashboard({ canPost, featured, posts }: Props) {
                         <Link
                             key={post.id}
                             href={`/posts/${post.id}`}
-                            className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border hover:shadow-lg transition-shadow flex flex-col"
+                            className="border-sidebar-border/70 dark:border-sidebar-border relative flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-lg"
                         >
-                            <div className="relative aspect-video flex justify-center items-center">
+                            <div className="relative flex aspect-video items-center justify-center">
                                 {post.preview_image ? (
                                     <img
                                         src={post.preview_image}
@@ -89,20 +89,20 @@ export default function Dashboard({ canPost, featured, posts }: Props) {
                                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                                 )}
                             </div>
-                            <div className="p-4 bg-white dark:bg-neutral-800 flex-grow-0">
-                                <h3 className="text-neutral-900 dark:text-neutral-100 font-semibold">{post.title}</h3>
+                            <div className="flex-grow-0 bg-white p-4 dark:bg-neutral-800">
+                                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{post.title}</h3>
                             </div>
                         </Link>
                     ))}
                 </div>
 
                 {/* Pagination */}
-                <div className="flex gap-2 justify-center">
+                <div className="flex justify-center gap-2">
                     {posts.links.map((link, index) => (
                         <Link
                             key={index}
                             href={link.url || '#'}
-                            className={`px-3 py-1 rounded ${link.active ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-neutral-700 text-black dark:text-white'}`}
+                            className={`rounded px-3 py-1 ${link.active ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black dark:bg-neutral-700 dark:text-white'}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
