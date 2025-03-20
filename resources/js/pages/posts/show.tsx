@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { PageProps } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 type Media = {
     id: number;
@@ -37,7 +37,7 @@ export default function ShowPost() {
     const [loadingComments, setLoadingComments] = useState(false);
 
     const paragraphs = post.body.split('\n').filter((para) => para.trim() !== '');
-    const contentWithMedia: object[] = [];
+    const contentWithMedia: ReactNode[] = [];
     paragraphs.forEach((para, index) => {
         contentWithMedia.push(
             <p key={`para-${index}`} className="text-neutral-900 dark:text-neutral-100">
@@ -72,34 +72,36 @@ export default function ShowPost() {
     return (
         <AppLayout>
             <Head title={post.title} />
-            <div className="mx-auto flex h-full max-w-7xl flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
-                    <h1 className="mb-4 text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
-                    {post.preview_image && <img src={post.preview_image} alt={post.title} className="mb-6 h-auto w-full max-w-full rounded-xl" />}
-                    <div className="prose dark:prose-invert">{contentWithMedia}</div>
-                </div>
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative flex h-full min-h-[50vh] flex-1 flex-col gap-4 overflow-hidden rounded-xl border p-4">
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
+                        <h1 className="mb-4 text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
+                        {post.preview_image && <img src={post.preview_image} alt={post.title} className="mb-6 h-auto w-full max-w-full rounded-xl" />}
+                        <div className="prose dark:prose-invert">{contentWithMedia}</div>
+                    </div>
 
-                {/* Comments Section */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
-                    <button
-                        onClick={loadComments}
-                        disabled={loadingComments}
-                        className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
-                    >
-                        {loadingComments ? 'loading comments...' : 'load comments'}
-                    </button>
-                    {comments.length > 0 && (
-                        <div className="mt-4">
-                            {comments.map((comment) => (
-                                <div key={comment.id} className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4">
-                                    <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
-                                    <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
-                                        - {comment.user.name} (Votes: {comment.vote_count})
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* Comments Section */}
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
+                        <button
+                            onClick={loadComments}
+                            disabled={loadingComments}
+                            className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
+                        >
+                            {loadingComments ? 'loading comments...' : 'load comments'}
+                        </button>
+                        {comments.length > 0 && (
+                            <div className="mt-4">
+                                {comments.map((comment) => (
+                                    <div key={comment.id} className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4">
+                                        <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+                                        <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
+                                            - {comment.user.name} (Votes: {comment.vote_count})
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </AppLayout>

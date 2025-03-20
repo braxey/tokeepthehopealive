@@ -2,6 +2,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 
 type Media = {
     id: number;
@@ -32,7 +33,30 @@ type Props = PageProps & {
     };
 };
 
-export default function Dashboard({ featured, posts }: Props) {
+export default function Dashboard({ featured, posts: initialPosts }: Props) {
+    const [allPosts, setAllPosts] = useState<Post[]>(initialPosts.data);
+    const [currentPage, setCurrentPage] = useState(initialPosts.current_page);
+    const [lastPage, setLastPage] = useState(initialPosts.last_page);
+    const [loading, setLoading] = useState(false);
+
+    const loadMore = async () => {
+        if (currentPage >= lastPage || loading) return;
+
+        setLoading(true);
+        const response = await fetch(`/more-posts?page=${currentPage + 1}`, {
+            headers: {
+                Accept: 'application/json',
+            },
+        });
+        const data = await response.json();
+        const newPosts = data.data;
+
+        setAllPosts((prev) => [...prev, ...newPosts]);
+        setCurrentPage(data.current_page);
+        setLastPage(data.last_page);
+        setLoading(false);
+    };
+
     return (
         <AppLayout>
             <Head title="dashboard" />
@@ -45,7 +69,7 @@ export default function Dashboard({ featured, posts }: Props) {
                                 <img
                                     src={featured.preview_image}
                                     alt={featured.title}
-                                    className="min-h-full min-w-full object-cover"
+                                    className="h-auto min-h-full w-auto min-w-full object-cover"
                                     style={{ objectPosition: 'center' }}
                                 />
                             </div>
@@ -71,11 +95,11 @@ export default function Dashboard({ featured, posts }: Props) {
 
                 {/* Other Posts */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    {posts.data.map((post) => (
+                    {allPosts.map((post) => (
                         <Link
                             key={post.id}
                             href={`/posts/${post.id}`}
-                            className="border-sidebar-border/70 dark:border-sidebar-border relative flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-lg"
+                            className="border-sidebar-border/70 dark:border-sidebar-border relative flex flex-col justify-end overflow-hidden rounded-xl border transition-shadow hover:shadow-lg"
                         >
                             <div className="relative flex aspect-video items-center justify-center">
                                 {post.preview_image ? (
@@ -96,17 +120,18 @@ export default function Dashboard({ featured, posts }: Props) {
                     ))}
                 </div>
 
-                {/* Pagination */}
-                <div className="flex justify-center gap-2">
-                    {posts.links.map((link, index) => (
-                        <Link
-                            key={index}
-                            href={link.url || '#'}
-                            className={`rounded px-3 py-1 ${link.active ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black dark:bg-neutral-700 dark:text-white'}`}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    ))}
-                </div>
+                {/* Load More */}
+                {currentPage < lastPage && (
+                    <div className="mt-4 flex justify-center">
+                        <button
+                            onClick={loadMore}
+                            disabled={loading}
+                            className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
+                        >
+                            {loading ? 'loading...' : 'load more'}
+                        </button>
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

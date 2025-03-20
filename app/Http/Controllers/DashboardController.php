@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $featured = Post::with('votes', 'media')
             ->orderBy('created_at', 'desc')
             ->first();
-    
+
         if ($featured) {
             $featured->vote_count = $featured->voteCount();
             $featured->preview_image = $featured->preview_image ? asset('storage/' . $featured->preview_image) : ($featured->media->firstWhere('type', 'image')?->url ?? null);
@@ -23,23 +23,21 @@ class DashboardController extends Controller
                 return $media;
             });
         }
-    
-        $posts = Post::with('votes', 'media')
-            ->where('id', '!=', $featured?->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-    
-        $posts->getCollection()->transform(function ($post) {
-            $post->vote_count = $post->voteCount();
-            $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
-            return $post->only(['id', 'title', 'preview_image', 'vote_count']);
-        });
-    
+
+        $posts = $this->getPaginatedPosts($featured?->id);
+
         return Inertia::render('dashboard', [
             'featured' => $featured,
             'posts' => $posts,
             'canPost' => Auth::check() && Auth::id() === 1,
         ]);
+    }
+
+    public function morePosts(Request $request) {
+        $featuredId = Post::orderBy('created_at', 'desc')->first()->id;
+        $posts = $this->getPaginatedPosts($featuredId);
+
+        return response()->json($posts);
     }
 
     public function store(Request $request) {
@@ -51,8 +49,8 @@ class DashboardController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'required|string',
             'media.*' => 'nullable|file|mimes:jpg,png,gif,mp4,webm|max:10240',
-            'media_positions' => 'nullable|array', // Array of positions for media
-            'media_positions.*' => 'integer',      // Position index for each media
+            'media_positions' => 'nullable|array',
+            'media_positions.*' => 'integer',
         ]);
 
         $post = Post::create([
@@ -84,7 +82,7 @@ class DashboardController extends Controller
             ->where('title', 'like', "%{$query}%")
             ->orWhere('body', 'like', "%{$query}%")
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(9);
 
         $posts->getCollection()->transform(function ($post) {
             $post->vote_count = $post->voteCount();
@@ -95,8 +93,23 @@ class DashboardController extends Controller
         return response()->json($posts);
     }
 
+    private function getPaginatedPosts($featuredId = null) {
+        $posts = Post::with('votes', 'media')
+            ->where('id', '!=', $featuredId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(9);
+
+        $posts->getCollection()->transform(function ($post) {
+            $post->vote_count = $post->voteCount();
+            $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
+            return $post->only(['id', 'title', 'preview_image', 'vote_count']);
+        });
+
+        return $posts;
+    }
+
     private function getFirstParagraph($body) {
-        $paragraphs = explode("\n", trim($body));
+        $paragraphs = explode("\n\n", trim($body));
         return $paragraphs[0] ?? $body;
     }
 }
