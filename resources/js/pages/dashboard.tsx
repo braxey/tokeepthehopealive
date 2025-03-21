@@ -59,37 +59,59 @@ export default function Dashboard({ featured, posts: initialPosts }: Props) {
 
     return (
         <AppLayout>
-            <Head title="dashboard" />
+            <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 {/* Featured Post */}
                 {featured && (
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[50vh] flex-1 overflow-hidden rounded-xl border">
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border flex h-[50vh] flex-col overflow-hidden rounded-xl border">
                         {featured.preview_image ? (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <img
-                                    src={featured.preview_image}
-                                    alt={featured.title}
-                                    className="h-auto min-h-full w-auto min-w-full object-cover"
-                                    style={{ objectPosition: 'center' }}
-                                />
-                            </div>
+                            <>
+                                {/* Desktop Layout */}
+                                <div className="hidden h-full md:flex md:flex-row">
+                                    <div className="h-full md:w-2/3">
+                                        <img
+                                            src={featured.preview_image}
+                                            alt={featured.title}
+                                            className="h-full w-full object-cover"
+                                            style={{ objectPosition: 'center' }}
+                                        />
+                                    </div>
+                                    <div className="flex h-full flex-col overflow-hidden bg-white p-5 text-neutral-900 md:w-1/3 dark:bg-neutral-800 dark:text-neutral-100">
+                                        <h2 className="shrink-0 text-2xl font-bold">{featured.title}</h2>
+                                        <p className="text-ellipses mt-4 line-clamp-12 flex-1">{featured.first_paragraph}</p>
+                                        <Link
+                                            href={`/posts/${featured.id}`}
+                                            className="mt-4 block flex h-12 w-full shrink-0 items-center rounded-md bg-neutral-100 px-4 py-2 text-center text-blue-500 hover:text-blue-600 dark:bg-neutral-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                        >
+                                            Read More
+                                        </Link>
+                                    </div>
+                                </div>
+                                {/* Mobile Layout */}
+                                <div className="flex h-full flex-col md:hidden">
+                                    <div className="h-1/2">
+                                        <img
+                                            src={featured.preview_image}
+                                            alt={featured.title}
+                                            className="h-full w-full object-cover"
+                                            style={{ objectPosition: 'center' }}
+                                        />
+                                    </div>
+                                    <div className="flex flex-1 flex-col overflow-hidden bg-white p-5 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
+                                        <h2 className="shrink-0 text-2xl font-bold">{featured.title}</h2>
+                                        <p className="mt-1 line-clamp-4 flex-1 overflow-hidden">{featured.first_paragraph}</p>
+                                        <Link
+                                            href={`/posts/${featured.id}`}
+                                            className="mt-2 inline-block shrink-0 rounded-md bg-neutral-100 px-4 py-2 text-blue-500 hover:text-blue-600 dark:bg-neutral-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                        >
+                                            Read More
+                                        </Link>
+                                    </div>
+                                </div>
+                            </>
                         ) : (
                             <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                         )}
-                        <div className="absolute inset-0 flex items-center justify-end p-6">
-                            <div className="border-sidebar-border/70 dark:border-sidebar-border ml-6 flex min-h-[300px] w-full max-w-xs flex-col justify-between rounded-xl border bg-white p-6 shadow-lg dark:bg-neutral-800">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{featured.title}</h2>
-                                    <p className="mt-2 text-neutral-700 dark:text-neutral-300">{featured.first_paragraph}</p>
-                                </div>
-                                <Link
-                                    href={`/posts/${featured.id}`}
-                                    className="mt-4 inline-block self-start text-blue-500 hover:underline dark:text-blue-400"
-                                >
-                                    read more
-                                </Link>
-                            </div>
-                        </div>
                     </div>
                 )}
 
@@ -128,7 +150,7 @@ export default function Dashboard({ featured, posts: initialPosts }: Props) {
                             disabled={loading}
                             className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
                         >
-                            {loading ? 'loading...' : 'load more'}
+                            {loading ? 'Loading...' : 'Load More'}
                         </button>
                     </div>
                 )}

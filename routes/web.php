@@ -11,12 +11,12 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/more-posts', [DashboardController::class, 'morePosts'])->name('more.posts');
-Route::get('/search', [DashboardController::class, 'search'])->name('posts.search');
-Route::get('/posts/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
-
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/more-posts', [DashboardController::class, 'morePosts'])->name(name: 'more.posts');
+    Route::get('/search', [DashboardController::class, 'search'])->name('posts.search');
+    Route::get('/posts/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
+
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');

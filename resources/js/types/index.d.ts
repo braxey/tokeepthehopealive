@@ -28,6 +28,7 @@ export interface Media {
     type: string;
     url: string;
     position: number;
+    caption: string | null;
 }
 
 export interface Post {
@@ -36,6 +37,7 @@ export interface Post {
     body: string;
     vote_count: number;
     preview_image: string | null;
+    preview_caption: string | null;
     first_paragraph?: string;
     media: Media[];
 }

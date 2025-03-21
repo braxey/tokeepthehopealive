@@ -24,10 +24,13 @@ class PostController extends Controller {
         $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'preview_image' => 'nullable|file|mimes:jpg,png,gif|max:10240', // Separate preview image
+            'preview_image' => 'nullable|file|mimes:jpg,png,gif|max:10240',
+            'preview_caption' => 'nullable|string|max:255', // Added validation
             'media.*' => 'nullable|file|mimes:jpg,png,gif,mp4,webm|max:10240',
             'media_positions' => 'nullable|array',
             'media_positions.*' => 'integer',
+            'media_captions' => 'nullable|array',
+            'media_captions.*' => 'string|nullable|max:255',
         ]);
 
         $post = Post::create([
@@ -35,10 +38,12 @@ class PostController extends Controller {
             'body' => $request->body,
             'user_id' => Auth::id(),
             'preview_image' => $request->hasFile('preview_image') ? $request->file('preview_image')->store('posts', 'public') : null,
+            'preview_caption' => $request->input('preview_caption'), // Store caption
         ]);
 
         if ($request->hasFile('media')) {
             $positions = $request->input('media_positions', []);
+            $captions = $request->input('media_captions', []);
             foreach ($request->file('media') as $index => $file) {
                 $path = $file->store('posts', 'public');
                 $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
@@ -46,6 +51,7 @@ class PostController extends Controller {
                     'path' => $path,
                     'type' => $type,
                     'position' => $positions[$index] ?? $index,
+                    'caption' => $captions[$index] ?? null,
                 ]);
             }
         }
@@ -61,7 +67,7 @@ class PostController extends Controller {
             return $media;
         });
         $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
-    
+
         return Inertia::render('posts/show', [
             'post' => $post,
         ]);
