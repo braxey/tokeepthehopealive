@@ -5,13 +5,33 @@ import { ChangeEvent, FormEvent } from 'react';
 export default function CreatePost() {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
-        body: '',
+        summary: '', // New summary field
+        body: [{ section_title: '', section_text: '' }],
         preview_image: null as File | null,
         preview_caption: '',
         media: [] as File[],
         media_positions: [] as number[],
         media_captions: [] as (string | null)[],
     });
+
+    const addSection = () => {
+        setData('body', [...data.body, { section_title: '', section_text: '' }]);
+    };
+
+    const updateSection = (index: number, field: 'section_title' | 'section_text', value: string) => {
+        const newBody = [...data.body];
+        newBody[index][field] = value;
+        setData('body', newBody);
+    };
+
+    const removeSection = (index: number) => {
+        if (data.body.length > 1) {
+            setData(
+                'body',
+                data.body.filter((_, i) => i !== index),
+            );
+        }
+    };
 
     const handlePreviewImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -81,16 +101,66 @@ export default function CreatePost() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="body" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                            Body
+                        <label htmlFor="summary" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                            Summary
                         </label>
                         <textarea
-                            id="body"
-                            value={data.body}
-                            onChange={(e) => setData('body', e.target.value)}
-                            className="border-sidebar-border/70 dark:border-sidebar-border min-h-[200px] rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
-                            placeholder="Write Your Post Here (Use Double Newlines for Paragraphs)"
+                            id="summary"
+                            value={data.summary}
+                            onChange={(e) => setData('summary', e.target.value)}
+                            className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                            placeholder="Enter a brief summary"
                         />
+                        {errors.summary && <span className="text-sm text-red-500">{errors.summary}</span>}
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <label className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Body Sections</label>
+                        {data.body.map((section, index) => (
+                            <div key={index} className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-4">
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor={`section-title-${index}`} className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                        Section Title (Optional)
+                                    </label>
+                                    <input
+                                        id={`section-title-${index}`}
+                                        type="text"
+                                        value={section.section_title}
+                                        onChange={(e) => updateSection(index, 'section_title', e.target.value)}
+                                        className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                                        placeholder="Enter Section Title"
+                                    />
+                                </div>
+                                <div className="mt-4 flex flex-col gap-2">
+                                    <label htmlFor={`section-text-${index}`} className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                        Section Text (Optional)
+                                    </label>
+                                    <textarea
+                                        id={`section-text-${index}`}
+                                        value={section.section_text}
+                                        onChange={(e) => updateSection(index, 'section_text', e.target.value)}
+                                        className="border-sidebar-border/70 dark:border-sidebar-border min-h-[100px] rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                                        placeholder="Write Section Content"
+                                    />
+                                </div>
+                                {data.body.length > 1 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSection(index)}
+                                        className="mt-2 text-sm text-red-500 hover:text-red-700"
+                                    >
+                                        Remove Section
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={addSection}
+                            className="mt-2 rounded-xl bg-neutral-200 px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-300 dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500"
+                        >
+                            Add Section
+                        </button>
                         {errors.body && <span className="text-sm text-red-500">{errors.body}</span>}
                     </div>
 
@@ -166,7 +236,7 @@ export default function CreatePost() {
                     {data.media.length > 0 && (
                         <div className="flex flex-col gap-2">
                             <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                Media Details (Position: 0 = After First Paragraph, 1 = After Second, etc.)
+                                Media Details (Position: 0 = After First Section, 1 = After Second, etc.)
                             </p>
                             {data.media.map((file, index) => (
                                 <div key={index} className="border-sidebar-border/70 dark:border-sidebar-border flex flex-col gap-2 border-t pt-2">

@@ -17,7 +17,6 @@ class DashboardController extends Controller
         if ($featured) {
             $featured->vote_count = $featured->voteCount();
             $featured->preview_image = $featured->preview_image ? asset('storage/' . $featured->preview_image) : ($featured->media->firstWhere('type', 'image')?->url ?? null);
-            $featured->first_paragraph = $this->getFirstParagraph($featured->body);
             $featured->media = $featured->media->map(function ($media) {
                 $media->url = asset('storage/' . $media->path);
                 return $media;
@@ -106,10 +105,5 @@ class DashboardController extends Controller
         });
 
         return $posts;
-    }
-
-    private function getFirstParagraph($body) {
-        $paragraphs = explode("\n\n", trim($body));
-        return $paragraphs[0] ?? $body;
     }
 }

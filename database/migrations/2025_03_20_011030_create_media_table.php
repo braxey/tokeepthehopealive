@@ -16,6 +16,8 @@ return new class extends Migration
             $table->morphs('mediable'); // mediable_id and mediable_type
             $table->string('path'); // Path to the file in storage
             $table->string('type'); // 'image' or 'video'
+            $table->integer('position')->default(0);
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }

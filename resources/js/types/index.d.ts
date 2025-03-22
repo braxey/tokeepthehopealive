@@ -22,32 +22,11 @@ export interface NavItem {
     isActive?: boolean;
 }
 
-export interface Media {
-    id: number;
-    path: string;
-    type: string;
-    url: string;
-    position: number;
-    caption: string | null;
-}
-
-export interface Post {
-    id: number;
-    title: string;
-    body: string;
-    vote_count: number;
-    preview_image: string | null;
-    preview_caption: string | null;
-    first_paragraph?: string;
-    media: Media[];
-}
-
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };
-    canPost?: boolean;
     [key: string]: unknown;
 }
 
@@ -60,20 +39,5 @@ export interface User {
     created_at: string;
     updated_at: string;
     hasVerifiedEmail: boolean;
-    [key: string]: unknown;
-}
-
-export interface PageProps {
-    auth: {
-        user: User | null;
-    };
-    canPost?: boolean;
-    featured?: Post | null;
-    posts?: {
-        data: Post[];
-        links: { url: string | null; label: string; active: boolean }[];
-        current_page: number;
-        last_page: number;
-    };
     [key: string]: unknown;
 }
