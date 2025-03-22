@@ -5,7 +5,6 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 type DashboardProps = {
-    canPost: boolean;
     featured: Post | null;
     posts: {
         data: Post[];

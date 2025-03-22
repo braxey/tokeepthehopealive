@@ -11,19 +11,11 @@ class PostController extends Controller
 {
     public function create()
     {
-        if (Auth::id() !== 1) {
-            return redirect()->route('dashboard')->with('error', 'Unauthorized');
-        }
-
         return Inertia::render('posts/create');
     }
 
     public function store(Request $request)
     {
-        if (Auth::id() !== 1) {
-            return back()->with('error', 'Unauthorized');
-        }
-
         $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|array|min:1',

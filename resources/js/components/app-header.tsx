@@ -35,16 +35,16 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
-    const page = usePage<SharedData & { canPost?: boolean }>();
-    const { auth, canPost } = page.props;
+    const page = usePage<SharedData>();
+    const { auth } = page.props;
     const getInitials = useInitials();
 
     const mainNavItems: NavItem[] = [
-        ...(canPost
+        ...(auth.canPost
             ? [
                   {
                       title: 'New Post',
-                      href: '/posts/create',
+                      href: route('posts.create'),
                       icon: Plus,
                   },
               ]

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+class CanPostMiddleware
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        $user = Auth::user();
+
+        logger()->debug($user->email);
+        logger()->debug(config('posters'));
+
+        if (!in_array($user->email, config('posters'))) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized');
+        }
+
+        return $next($request);
+    }
+}

@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
+                'canPost' => in_array($request->user()?->email, config('posters', [])),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

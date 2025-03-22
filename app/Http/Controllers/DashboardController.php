@@ -28,7 +28,6 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'featured' => $featured,
             'posts' => $posts,
-            'canPost' => Auth::check() && Auth::id() === 1,
         ]);
     }
 
