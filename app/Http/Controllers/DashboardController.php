@@ -5,37 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     public function index() {
-        $featured = Post::with('votes', 'media')
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($featured) {
-            $featured->vote_count = $featured->voteCount();
-            $featured->preview_image = $featured->preview_image ? asset('storage/' . $featured->preview_image) : ($featured->media->firstWhere('type', 'image')?->url ?? null);
-            $featured->media = $featured->media->map(function ($media) {
-                $media->url = asset('storage/' . $media->path);
-                return $media;
-            });
-        }
-
-        $posts = $this->getPaginatedPosts($featured?->id);
-
-        return Inertia::render('dashboard', [
-            'featured' => $featured,
-            'posts' => $posts,
-        ]);
-    }
-
-    public function morePosts(Request $request) {
-        $featuredId = Post::orderBy('created_at', 'desc')->first()->id;
-        $posts = $this->getPaginatedPosts($featuredId);
-
-        return response()->json($posts);
+        return response()->json();
     }
 
     public function store(Request $request) {
@@ -89,20 +63,5 @@ class DashboardController extends Controller
         });
 
         return response()->json($posts);
-    }
-
-    private function getPaginatedPosts($featuredId = null) {
-        $posts = Post::with('votes', 'media')
-            ->where('id', '!=', $featuredId)
-            ->orderBy('created_at', 'desc')
-            ->paginate(9);
-
-        $posts->getCollection()->transform(function ($post) {
-            $post->vote_count = $post->voteCount();
-            $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
-            return $post->only(['id', 'title', 'preview_image', 'vote_count']);
-        });
-
-        return $posts;
     }
 }

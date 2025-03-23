@@ -9,6 +9,42 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    public function index(Request $request)
+    {
+        $featured = Post::orderByDesc('created_at')->first();
+
+        $pageNumber = $request->input('page', 1);
+        $pagination = Post::select(['id', 'title', 'created_at', 'preview_image'])
+            ->where('id', '!=', $featured?->id)
+            ->orderByDesc('created_at')
+            ->paginate(page: $pageNumber, perPage: 9);
+
+        $posts = $pagination->getCollection()->map(function ($post) {
+            $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
+            return $post->only(['id', 'title', 'preview_image']);
+        });
+
+        function processFeaturedPost(?Post $featured): ?Post {
+            if (!$featured) {
+                return null;
+            }
+
+            $featured->preview_image = $featured->preview_image ? asset('storage/' . $featured->preview_image) : ($featured->media->firstWhere('type', 'image')?->url ?? null);
+            $featured->media = $featured->media->map(function ($media) {
+                $media->url = asset('storage/' . $media->path);
+                return $media;
+            });
+
+            return $featured;
+        }
+
+        return Inertia::render('posts/index', [
+            'featured' => fn () => processFeaturedPost($featured),
+            'nextPageUrl' => $pagination->nextPageUrl(),
+            'posts' => Inertia::merge($posts),
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('posts/create');
