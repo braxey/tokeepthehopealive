@@ -42,7 +42,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const mainNavItems: NavItem[] = [
         {
             title: 'Posts',
-            href: '/posts/index',
+            href: '/posts',
             icon: null,
         },
         ...(auth.canPost
@@ -104,7 +104,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Sheet>
                     </div>
 
-                    <Link href="/posts/index" prefetch className="flex items-center space-x-2">
+                    <Link href="/posts" prefetch className="flex items-center space-x-2">
                         <AppLogo />
                     </Link>
 

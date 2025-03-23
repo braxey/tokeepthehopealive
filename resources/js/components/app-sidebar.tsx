@@ -10,7 +10,7 @@ import AppLogo from './app-logo';
 const mainNavItems: NavItem[] = [
     {
         title: 'Posts',
-        href: '/posts/index',
+        href: '/posts',
         icon: LayoutGrid,
     },
 ];
@@ -35,7 +35,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/posts/index" prefetch>
+                            <Link href="/posts" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

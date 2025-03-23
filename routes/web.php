@@ -15,7 +15,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/posts/index', action: [PostController::class, 'index'])->name('posts.index');
+    Route::get('/posts', action: [PostController::class, 'index'])->name('posts.index');
     Route::get('/search', [DashboardController::class, 'search'])->name('posts.search');
     Route::get('/posts/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
 
