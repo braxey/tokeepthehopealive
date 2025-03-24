@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
+import { SharedData } from '@/types';
 import { Comment, Post } from '@/types/models';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { ReactNode, useState } from 'react';
 
 type ShowProps = {
@@ -9,8 +10,14 @@ type ShowProps = {
     nextCommentPageUrl: string | null;
 };
 
+interface VoteState {
+    [commentId: number]: { vote_count: number; user_vote: number | null };
+}
+
 export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowProps) {
     const [showComments, setShowComments] = useState<boolean>(false);
+    const [localVotes, setLocalVotes] = useState<VoteState>({}); // Store votes by comment ID
+    const { auth } = usePage<SharedData>().props;
     const contentWithMedia: ReactNode[] = [];
     const extraMedia: ReactNode[] = [];
 
@@ -68,6 +75,24 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
         contentWithMedia.push(...extraMedia);
     }
 
+    const handleVoteClick = (commentId: number, value: number, voteCount: number, userVote: number | undefined | null) => {
+        if (!auth.user) {
+            alert('Please log in to vote.');
+            return;
+        }
+
+        if (userVote === undefined) userVote = null;
+
+        const newUserVote = userVote === value ? null : value;
+        const voteChange = userVote === value ? -value : userVote ? 2 * value : value;
+        const newVoteCount = voteCount + voteChange;
+
+        setLocalVotes((prev) => ({
+            ...prev,
+            [commentId]: { vote_count: newVoteCount, user_vote: newUserVote },
+        }));
+    };
+
     return (
         <AppLayout>
             <Head title={post.title} />
@@ -112,17 +137,55 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                                 {'Hide comments'}
                             </button>
                             {comments.length === 0 ? (
-                                <p className="text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
+                                <p className="mt-8 mb-4 text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
                             ) : (
                                 <div className="w-full max-w-3xl">
-                                    {comments.map((comment) => (
-                                        <div key={comment.id} className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4">
-                                            <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
-                                                {comment.user.name} &#183; {comment.time_since}
-                                            </p>
-                                            <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
-                                        </div>
-                                    ))}
+                                    {comments.map((comment) => {
+                                        const localVote = localVotes[comment.id] || {};
+                                        const voteCount = localVote.vote_count !== undefined ? localVote.vote_count : comment.vote_count || 0;
+                                        const userVote = localVote.user_vote !== undefined ? localVote.user_vote : comment.user_vote;
+
+                                        return (
+                                            <div
+                                                key={`comment-${comment.id}`}
+                                                className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4"
+                                            >
+                                                <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
+                                                    {comment.user.name} · {comment.time_since}
+                                                </p>
+                                                <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <Link
+                                                        href={`/comments/${comment.id}/vote`}
+                                                        only={['comments']}
+                                                        method="post"
+                                                        data={{ value: 1 }}
+                                                        preserveState
+                                                        preserveScroll
+                                                        onClick={() => handleVoteClick(comment.id, 1, voteCount, userVote)}
+                                                        className={`p-1 ${userVote === 1 ? 'text-green-500' : 'text-neutral-500'} hover:text-green-600`}
+                                                        disabled={!auth.user}
+                                                    >
+                                                        ▲
+                                                    </Link>
+                                                    <span className="text-neutral-900 dark:text-neutral-100">{voteCount}</span>
+                                                    <Link
+                                                        href={`/comments/${comment.id}/vote`}
+                                                        only={['comments']}
+                                                        method="post"
+                                                        data={{ value: -1 }}
+                                                        preserveState
+                                                        preserveScroll
+                                                        onClick={() => handleVoteClick(comment.id, -1, voteCount, userVote)}
+                                                        className={`p-1 ${userVote === -1 ? 'text-red-500' : 'text-neutral-500'} hover:text-red-600`}
+                                                        disabled={!auth.user}
+                                                    >
+                                                        ▼
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                     {!!nextCommentPageUrl && (
                                         <Link
                                             key={'load-more-comments'}

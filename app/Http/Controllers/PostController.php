@@ -76,12 +76,13 @@ class PostController extends Controller
         $commentPaginator = $post->comments()
             ->with(['votes', 'user'])
             ->orderByDesc('created_at')
-            ->paginate(page: $commentPageNumber, perPage: 3, pageName: 'commentPage');
+            ->paginate(page: $commentPageNumber, perPage: 5, pageName: 'commentPage');
 
         // Transform comments to include vote count and time since.
-        $commentPaginator->getCollection()->transform(function ($comment) {
-            $comment->vote_count = $comment->votes->sum('value');
+        $comments = $commentPaginator->getCollection()->map(function ($comment) use ($request) {
+            $comment->vote_count = $comment->votes->sum('vote');
             $comment->time_since = $comment->created_at ? $comment->created_at->diffForHumans(short: true) : 'Unknown time';
+            $comment->user_vote = $request->user() ? $comment->votes->where('user_id', $request->user()->id)->value('vote') : null;
             unset($comment->votes);
             return $comment;
         });
@@ -89,7 +90,7 @@ class PostController extends Controller
         return Inertia::render('posts/show', [
             'post' => $post,
             'nextCommentPageUrl' => $commentPaginator->nextPageUrl(),
-            'comments' => Inertia::merge($commentPaginator->getCollection()),
+            'comments' => Inertia::merge($comments),
         ]);
     }
 

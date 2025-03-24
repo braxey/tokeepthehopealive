@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,7 +17,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** ******************
- |      Posts       |
+ |       Posts      |
  * *************** **/
 Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('posts.index');
@@ -26,6 +27,13 @@ Route::prefix('posts')->group(function () {
         Route::get('/create', [PostController::class, 'showCreatePage'])->name('posts.create');
         Route::post('/', [PostController::class, 'store'])->name('posts.store');
     });
+});
+
+/** ******************
+ |       Votes      |
+ * *************** **/
+Route::middleware(['auth'])->group(function () {
+    Route::post('/comments/{comment}/vote', [VoteController::class, 'voteComment'])->name('comments.vote');
 });
 
 /** ******************

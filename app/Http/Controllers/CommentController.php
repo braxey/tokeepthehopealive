@@ -25,17 +25,4 @@ class CommentController extends Controller {
 
         return back()->with('success', 'Comment added!');
     }
-
-    public function index(Post $post) {
-        $comments = Comment::where('post_id', $post->id)
-            ->with('user', 'votes')
-            ->orderBy('created_at', 'asc')
-            ->get()
-            ->map(function ($comment) {
-                $comment->vote_count = $comment->voteCount();
-                return $comment;
-            });
-
-        return response()->json($comments);
-    }
 }
