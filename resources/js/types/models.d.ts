@@ -21,7 +21,7 @@ export interface Media {
 export type Comment = {
     id: number;
     body: string;
-    user: { name: string };
+    user: User;
     vote_count: number;
     time_since: string;
     user_vote?: number | null;

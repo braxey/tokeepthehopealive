@@ -31,7 +31,7 @@ class PostController extends Controller
 
         $posts = $pagination->getCollection()->map(function ($post) {
             $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
-            return $post->only(['id', 'title', 'preview_image']);
+            return $post->only(['id', 'title', 'preview_image', 'created_at']);
         });
 
         function processFeaturedPost(?Post $featured): ?Post {

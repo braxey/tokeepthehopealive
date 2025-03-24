@@ -107,7 +107,7 @@ export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) 
                             preserveScroll
                             prefetch
                             as="button"
-                            className="cursor-pointer rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
+                            className="cursor-pointer rounded-xl bg-none p-2 pt-4 pb-8 text-black dark:text-white"
                         >
                             {'Load More'}
                         </Link>

@@ -1,8 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import { SharedData } from '@/types';
 import { Comment, Post } from '@/types/models';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { ReactNode, useState } from 'react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { ReactNode, useRef, useState } from 'react';
 
 type ShowProps = {
     post: Post;
@@ -17,9 +17,24 @@ interface VoteState {
 export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowProps) {
     const [showComments, setShowComments] = useState<boolean>(false);
     const [localVotes, setLocalVotes] = useState<VoteState>({});
+    const [isTextareaFocused, setIsTextareaFocused] = useState<boolean>(false);
     const { auth } = usePage<SharedData>().props;
     const contentWithMedia: ReactNode[] = [];
     const extraMedia: ReactNode[] = [];
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Form for adding a comment
+    const {
+        data,
+        setData,
+        post: submitComment,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
+        body: '',
+    });
 
     post.body.forEach((section, index) => {
         contentWithMedia.push(
@@ -75,11 +90,25 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
         contentWithMedia.push(...extraMedia);
     }
 
+    // Deduplicate and sort comments
     const commentKeys: number[] = [];
-    const localComments: Comment[] = comments.filter((comment) => {
+    const uniqueComments: Comment[] = comments.filter((comment) => {
         const use = !commentKeys.includes(comment.id);
         if (use) commentKeys.push(comment.id);
         return use;
+    });
+
+    const localComments: Comment[] = uniqueComments.sort((a: Comment, b: Comment) => {
+        // If both comments are by the authenticated user, sort by created_at desc
+        if (auth.user && a.user.id === auth.user.id && b.user.id === auth.user.id) {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+        // If only 'a' is by the authenticated user, put it first
+        if (auth.user && a.user.id === auth.user.id) return -1;
+        // If only 'b' is by the authenticated user, put it first
+        if (auth.user && b.user.id === auth.user.id) return 1;
+        // Otherwise, sort by created_at desc
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
     const handleVoteClick = (commentId: number, value: number, voteCount: number, userVote: number | undefined | null) => {
@@ -98,6 +127,39 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
             ...prev,
             [commentId]: { vote_count: newVoteCount, user_vote: newUserVote },
         }));
+    };
+
+    const handleSubmitComment = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!auth.user) {
+            alert('Please log in to comment.');
+            return;
+        }
+
+        submitComment(`/posts/${post.id}/comments`, {
+            preserveScroll: true,
+            preserveState: true,
+            only: ['comments'],
+            onSuccess: () => {
+                reset('body');
+                setIsTextareaFocused(false);
+                router.visit(`/posts/${post.id}`, {
+                    preserveScroll: true,
+                    preserveState: true,
+                    only: ['comments'],
+                    onSuccess: () => {
+                        clearErrors();
+                    },
+                });
+            },
+        });
+    };
+
+    const handleCancelComment = () => {
+        reset('body');
+        clearErrors();
+        setIsTextareaFocused(false);
+        textareaRef.current?.blur();
     };
 
     return (
@@ -143,6 +205,43 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             >
                                 {'Hide comments'}
                             </button>
+
+                            {/* Add Comment Form */}
+                            <form onSubmit={handleSubmitComment} className="mt-4 w-full max-w-3xl">
+                                <textarea
+                                    ref={textareaRef}
+                                    value={data.body}
+                                    onChange={(e) => {
+                                        setData('body', e.target.value);
+                                        clearErrors();
+                                    }}
+                                    onFocus={() => setIsTextareaFocused(true)}
+                                    placeholder="Add a comment..."
+                                    className="min-h-[42px] w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-900 focus:ring-2 focus:ring-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100"
+                                    rows={3}
+                                    disabled={!auth.user || processing}
+                                />
+                                {errors.body && <p className="mt-1 text-sm text-red-500">{errors.body}</p>}
+                                {isTextareaFocused && (
+                                    <div className="mt-2 flex gap-2">
+                                        <button
+                                            type="submit"
+                                            disabled={!auth.user || processing}
+                                            className="rounded-lg bg-neutral-600 px-4 py-2 text-white hover:bg-neutral-700 disabled:bg-gray-400"
+                                        >
+                                            {processing ? 'Posting...' : 'Post Comment'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleCancelComment}
+                                            className="rounded-lg bg-neutral-400 px-4 py-2 text-white hover:bg-neutral-500"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                )}
+                            </form>
+
                             {localComments.length === 0 ? (
                                 <p className="mt-8 mb-4 text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
                             ) : (
