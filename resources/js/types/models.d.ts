@@ -23,4 +23,7 @@ export type Comment = {
     body: string;
     user: { name: string };
     vote_count: number;
+    time_since: string;
+    created_at: string;
+    [key: string]: unknown;
 };

@@ -60,8 +60,9 @@ class PostController extends Controller
      * @param  Post $post
      * @return InertiaResponse
      */
-    public function show(Post $post): InertiaResponse
+    public function show(Request $request, Post $post): InertiaResponse
     {
+        // Prepare post.
         $post->load('votes', 'media');
         $post->vote_count = $post->voteCount();
         $post->media = $post->media->sortBy('position')->map(function ($media) {
@@ -70,8 +71,25 @@ class PostController extends Controller
         });
         $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
 
+        // Prepare comments.
+        $commentPageNumber = $request->input('commentPage', 1);
+        $commentPaginator = $post->comments()
+            ->with(['votes', 'user'])
+            ->orderByDesc('created_at')
+            ->paginate(page: $commentPageNumber, perPage: 3, pageName: 'commentPage');
+
+        // Transform comments to include vote count and time since.
+        $commentPaginator->getCollection()->transform(function ($comment) {
+            $comment->vote_count = $comment->votes->sum('value');
+            $comment->time_since = $comment->created_at ? $comment->created_at->diffForHumans(short: true) : 'Unknown time';
+            unset($comment->votes);
+            return $comment;
+        });
+
         return Inertia::render('posts/show', [
             'post' => $post,
+            'nextCommentPageUrl' => $commentPaginator->nextPageUrl(),
+            'comments' => Inertia::merge($commentPaginator->getCollection()),
         ]);
     }
 

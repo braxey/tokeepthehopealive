@@ -1,17 +1,16 @@
 import AppLayout from '@/layouts/app-layout';
 import { Comment, Post } from '@/types/models';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { ReactNode, useState } from 'react';
 
 type ShowProps = {
     post: Post;
+    comments: Comment[];
+    nextCommentPageUrl: string | null;
 };
 
-export default function ShowPost() {
-    const { post } = usePage<ShowProps>().props;
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [loadingComments, setLoadingComments] = useState(false);
-
+export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowProps) {
+    const [showComments, setShowComments] = useState<boolean>(false);
     const contentWithMedia: ReactNode[] = [];
     const extraMedia: ReactNode[] = [];
 
@@ -69,14 +68,6 @@ export default function ShowPost() {
         contentWithMedia.push(...extraMedia);
     }
 
-    const loadComments = async () => {
-        setLoadingComments(true);
-        const response = await fetch(`/posts/${post.id}/comments`);
-        const data = await response.json();
-        setComments(data);
-        setLoadingComments(false);
-    };
-
     return (
         <AppLayout>
             <Head title={post.title} />
@@ -107,21 +98,47 @@ export default function ShowPost() {
                 </div>
 
                 {/* Comments Section */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border flex justify-center rounded-xl border bg-white p-6 dark:bg-neutral-800">
-                    <button onClick={loadComments} disabled={loadingComments} className="rounded-xl bg-none p-2">
-                        {loadingComments ? 'Loading comments...' : 'View comments'}
-                    </button>
-                    {comments.length > 0 && (
-                        <div className="mt-4">
-                            {comments.map((comment) => (
-                                <div key={comment.id} className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4">
-                                    <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
-                                    <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
-                                        - {comment.user.name} (Votes: {comment.vote_count})
-                                    </p>
+                <div className="border-sidebar-border/70 dark:border-sidebar-border flex flex-col items-center rounded-xl border bg-white p-6 dark:bg-neutral-800">
+                    {!showComments ? (
+                        <button onClick={() => setShowComments(true)} className="cursor-pointer rounded-xl bg-none p-2 text-black dark:text-white">
+                            {'View comments'}
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                onClick={() => setShowComments(false)}
+                                className="cursor-pointer rounded-xl bg-none p-2 text-black dark:text-white"
+                            >
+                                {'Hide comments'}
+                            </button>
+                            {comments.length === 0 ? (
+                                <p className="text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
+                            ) : (
+                                <div className="w-full max-w-3xl">
+                                    {comments.map((comment) => (
+                                        <div key={comment.id} className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4">
+                                            <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
+                                                {comment.user.name} &#183; {comment.time_since}
+                                            </p>
+                                            <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+                                        </div>
+                                    ))}
+                                    {!!nextCommentPageUrl && (
+                                        <Link
+                                            key={'load-more-comments'}
+                                            href={nextCommentPageUrl}
+                                            only={['nextCommentPageUrl', 'comments']}
+                                            preserveScroll
+                                            preserveState
+                                            prefetch
+                                            className="mt-4 block cursor-pointer text-center text-black dark:text-white"
+                                        >
+                                            {'Load more'}
+                                        </Link>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
