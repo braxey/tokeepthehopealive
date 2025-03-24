@@ -109,7 +109,7 @@ export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) 
                             as="button"
                             className="rounded-xl bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
                         >
-                            {"Load More"}
+                            {'Load More'}
                         </Link>
                     </div>
                 )}

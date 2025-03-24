@@ -6,10 +6,20 @@ use App\Models\Post;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Response as InertiaResponse;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    /** ******************
+     |     Display      |
+     * *************** **/
+
+    /**
+     * Display all posts.
+     * @param  Request $request
+     * @return InertiaResponse
+     */
+    public function index(Request $request): InertiaResponse
     {
         $featured = Post::orderByDesc('created_at')->first();
 
@@ -45,7 +55,35 @@ class PostController extends Controller
         ]);
     }
 
-    public function create()
+    /**
+     * Display one post, and maybe its comments.
+     * @param  Post $post
+     * @return InertiaResponse
+     */
+    public function show(Post $post): InertiaResponse
+    {
+        $post->load('votes', 'media');
+        $post->vote_count = $post->voteCount();
+        $post->media = $post->media->sortBy('position')->map(function ($media) {
+            $media->url = asset('storage/' . $media->path);
+            return $media;
+        });
+        $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
+
+        return Inertia::render('posts/show', [
+            'post' => $post,
+        ]);
+    }
+
+    /** ******************
+     |     Creation     |
+     * *************** **/
+
+    /**
+     * Display page to create a new post.
+     * @return InertiaResponse
+     */
+    public function showCreatePage()
     {
         return Inertia::render('posts/create');
     }
@@ -91,21 +129,6 @@ class PostController extends Controller
             }
         }
 
-        return redirect()->route('dashboard')->with('success', 'Post created!');
-    }
-
-    public function show(Post $post)
-    {
-        $post->load('votes', 'media');
-        $post->vote_count = $post->voteCount();
-        $post->media = $post->media->sortBy('position')->map(function ($media) {
-            $media->url = asset('storage/' . $media->path);
-            return $media;
-        });
-        $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
-
-        return Inertia::render('posts/show', [
-            'post' => $post,
-        ]);
+        return redirect()->route('posts.index')->with('success', 'Post created!');
     }
 }
