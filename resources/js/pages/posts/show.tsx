@@ -16,7 +16,7 @@ interface VoteState {
 
 export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowProps) {
     const [showComments, setShowComments] = useState<boolean>(false);
-    const [localVotes, setLocalVotes] = useState<VoteState>({}); // Store votes by comment ID
+    const [localVotes, setLocalVotes] = useState<VoteState>({});
     const { auth } = usePage<SharedData>().props;
     const contentWithMedia: ReactNode[] = [];
     const extraMedia: ReactNode[] = [];
@@ -74,6 +74,13 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
     if (extraMedia.length > 0) {
         contentWithMedia.push(...extraMedia);
     }
+
+    const commentKeys: number[] = [];
+    const localComments: Comment[] = comments.filter((comment) => {
+        const use = !commentKeys.includes(comment.id);
+        if (use) commentKeys.push(comment.id);
+        return use;
+    });
 
     const handleVoteClick = (commentId: number, value: number, voteCount: number, userVote: number | undefined | null) => {
         if (!auth.user) {
@@ -136,11 +143,11 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             >
                                 {'Hide comments'}
                             </button>
-                            {comments.length === 0 ? (
+                            {localComments.length === 0 ? (
                                 <p className="mt-8 mb-4 text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
                             ) : (
                                 <div className="w-full max-w-3xl">
-                                    {comments.map((comment) => {
+                                    {localComments.map((comment) => {
                                         const localVote = localVotes[comment.id] || {};
                                         const voteCount = localVote.vote_count !== undefined ? localVote.vote_count : comment.vote_count || 0;
                                         const userVote = localVote.user_vote !== undefined ? localVote.user_vote : comment.user_vote;
