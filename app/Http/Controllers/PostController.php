@@ -64,7 +64,8 @@ class PostController extends Controller
     {
         // Prepare post.
         $post->load('votes', 'media');
-        $post->vote_count = $post->voteCount();
+        $post->vote_count = $post->votes->sum('vote');
+        $post->user_vote = $request->user() ? $post->votes->where('user_id', $request->user()->id)->value('vote') : null;
         $post->media = $post->media->sortBy('position')->map(function ($media) {
             $media->url = asset('storage/' . $media->path);
             return $media;
@@ -76,7 +77,7 @@ class PostController extends Controller
         $commentPaginator = $post->comments()
             ->with(['votes', 'user'])
             ->orderByDesc('created_at')
-            ->paginate(page: $commentPageNumber, perPage: 5, pageName: 'commentPage');
+            ->paginate(page: $commentPageNumber, perPage: 10, pageName: 'commentPage');
 
         // Transform comments to include vote count and time since.
         $comments = $commentPaginator->getCollection()->map(function ($comment) use ($request) {

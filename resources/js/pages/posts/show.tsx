@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { SharedData } from '@/types';
 import { Comment, Post } from '@/types/models';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { ReactNode, useRef, useState } from 'react';
 
 type ShowProps = {
@@ -11,7 +11,7 @@ type ShowProps = {
 };
 
 interface VoteState {
-    [commentId: number]: { vote_count: number; user_vote: number | null };
+    [key: string]: { vote_count: number; user_vote: number | null };
 }
 
 export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowProps) {
@@ -99,15 +99,11 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
     });
 
     const localComments: Comment[] = uniqueComments.sort((a: Comment, b: Comment) => {
-        // If both comments are by the authenticated user, sort by created_at desc
         if (auth.user && a.user.id === auth.user.id && b.user.id === auth.user.id) {
             return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         }
-        // If only 'a' is by the authenticated user, put it first
         if (auth.user && a.user.id === auth.user.id) return -1;
-        // If only 'b' is by the authenticated user, put it first
         if (auth.user && b.user.id === auth.user.id) return 1;
-        // Otherwise, sort by created_at desc
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
@@ -143,14 +139,6 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
             onSuccess: () => {
                 reset('body');
                 setIsTextareaFocused(false);
-                router.visit(`/posts/${post.id}`, {
-                    preserveScroll: true,
-                    preserveState: true,
-                    only: ['comments'],
-                    onSuccess: () => {
-                        clearErrors();
-                    },
-                });
             },
         });
     };
@@ -169,6 +157,34 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                 {/* Title, Preview Image, and Summary */}
                 <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
                     <h1 className="mb-4 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
+                    {/* Post Voting */}
+                    <div className="mb-4 flex items-center justify-center gap-2">
+                        <Link
+                            href={`/posts/${post.id}/vote`}
+                            method="post"
+                            data={{ value: 1 }}
+                            preserveState
+                            preserveScroll
+                            except={['comments']}
+                            className={`p-1 ${post.user_vote === 1 ? 'text-green-500' : 'text-neutral-500'} hover:text-green-600`}
+                            disabled={!auth.user}
+                        >
+                            ▲
+                        </Link>
+                        <span className="text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
+                        <Link
+                            href={`/posts/${post.id}/vote`}
+                            method="post"
+                            data={{ value: -1 }}
+                            preserveState
+                            preserveScroll
+                            except={['comments']}
+                            className={`p-1 ${post.user_vote === -1 ? 'text-red-500' : 'text-neutral-500'} hover:text-red-600`}
+                            disabled={!auth.user}
+                        >
+                            ▼
+                        </Link>
+                    </div>
                     {post.preview_image && (
                         <div className="mb-6 flex flex-col items-center">
                             <img

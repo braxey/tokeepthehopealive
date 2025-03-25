@@ -3,7 +3,8 @@ export interface Post {
     title: string;
     summary: string;
     body: { [key: string]: string }[];
-    vote_count: number;
+    vote_count?: number;
+    user_vote?: number | null;
     preview_image: string | null;
     preview_caption: string | null;
     media: Media[];
