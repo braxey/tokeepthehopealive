@@ -14,7 +14,7 @@ export interface Media {
     id: number;
     path: string;
     type: string;
-    url: string;
+    url?: string;
     position: number;
     caption: string | null;
 }

@@ -25,6 +25,9 @@ Route::prefix('posts')->middleware(['auth'])->group(function () {
     Route::middleware(['can_post'])->group(function () {
         Route::get('/create', [PostController::class, 'showCreatePage'])->name('posts.create');
         Route::post('/', [PostController::class, 'store'])->name('posts.store');
+
+        Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
     });
 
     /** ******************

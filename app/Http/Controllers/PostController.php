@@ -151,4 +151,89 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('success', 'Post created!');
     }
+
+    public function edit(Post $post)
+    {
+        $post->load('media');
+        $post->media = $post->media->map(function ($media) {
+            $media->url = asset('storage/' . $media->path);
+            return $media;
+        });
+        $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
+
+        return Inertia::render('posts/edit', [
+            'post' => $post,
+        ]);
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|array|min:1',
+            'body.*.section_title' => 'nullable|string|max:255',
+            'body.*.section_text' => 'nullable|string',
+            'summary' => 'required|string',
+            'preview_image' => 'nullable|file|mimes:jpg,png,gif|max:10240',
+            'preview_caption' => 'nullable|string|max:255',
+            'media.*' => 'nullable|file|mimes:jpg,png,gif,mp4,webm|max:10240',
+            'media_positions' => 'nullable|array',
+            'media_positions.*' => 'integer',
+            'media_captions' => 'nullable|array',
+            'media_captions.*' => 'string|nullable|max:255',
+            'existing_media' => 'nullable|array',
+            'existing_media.*.id' => 'integer|exists:media,id',
+            'existing_media.*.position' => 'integer',
+            'existing_media.*.caption' => 'string|nullable|max:255',
+            'deleted_media' => 'nullable|array', // New field for media to delete
+            'deleted_media.*' => 'integer|exists:media,id',
+        ]);
+
+        // Update post attributes
+        $post->update([
+            'title' => $request->title,
+            'body' => $request->body,
+            'summary' => $request->summary,
+            'preview_image' => $request->hasFile('preview_image')
+                ? $request->file('preview_image')->store('posts', 'public')
+                : $post->preview_image,
+            'preview_caption' => $request->input('preview_caption'),
+        ]);
+
+        // Handle deletion of existing media
+        $deletedMediaIds = $request->input('deleted_media', []);
+        if (!empty($deletedMediaIds)) {
+            $post->media()->whereIn('id', $deletedMediaIds)->delete();
+        }
+
+        // Handle existing media updates (position, caption)
+        $existingMedia = $request->input('existing_media', []);
+        foreach ($existingMedia as $mediaData) {
+            $media = $post->media()->find($mediaData['id']);
+            if ($media) {
+                $media->update([
+                    'position' => $mediaData['position'] ?? $media->position,
+                    'caption' => $mediaData['caption'] ?? $media->caption,
+                ]);
+            }
+        }
+
+        // Handle new media uploads
+        if ($request->hasFile('media')) {
+            $positions = $request->input('media_positions', []);
+            $captions = $request->input('media_captions', []);
+            foreach ($request->file('media') as $index => $file) {
+                $path = $file->store('posts', 'public');
+                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
+                $post->media()->create([
+                    'path' => $path,
+                    'type' => $type,
+                    'position' => $positions[$index] ?? $index,
+                    'caption' => $captions[$index] ?? null,
+                ]);
+            }
+        }
+
+        return redirect()->route('posts.show', $post)->with('success', 'Post updated!');
+    }
 }
