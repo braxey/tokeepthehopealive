@@ -22,7 +22,7 @@ class CanPostMiddleware
         logger()->debug(config('posters'));
 
         if (!in_array($user->email, config('posters'))) {
-            return redirect()->route('dashboard')->with('error', 'Unauthorized');
+            return redirect()->route('posts.index')->with('error', 'Unauthorized');
         }
 
         return $next($request);

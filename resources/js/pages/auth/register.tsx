@@ -117,16 +117,14 @@ export default function Register() {
                     <div className="mt-2 text-center text-sm text-neutral-700 dark:text-neutral-300">
                         By signing up, you agree to our{' '}
                         <Link
-                            // href={route('privacy-policy')}
-                            href={route('posts.index')}
+                            href={route('privacy')}
                             className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                         >
                             Privacy Policy
                         </Link>{' '}
                         and{' '}
                         <Link
-                            // href={route('terms-of-service')}
-                            href={route('posts.index')}
+                            href={route('terms')}
                             className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                         >
                             Terms of Service

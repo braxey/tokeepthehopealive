@@ -15,7 +15,7 @@ import { Menu, Plus } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
-const rightNavItems: NavItem[] = [];
+const rightNavItems: NavItem[] = []; // Empty for now, can add external links if needed
 
 const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
@@ -28,13 +28,14 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const { auth } = page.props;
     const getInitials = useInitials();
 
-    const mainNavItems: NavItem[] = [
+    // Main nav items for authenticated users
+    const authNavItems: NavItem[] = [
         {
             title: 'Posts',
             href: '/posts',
             icon: null,
         },
-        ...(auth.canPost
+        ...(auth.user && auth.canPost
             ? [
                   {
                       title: 'New Post',
@@ -44,6 +45,22 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
               ]
             : []),
     ];
+
+    // Main nav items for unauthenticated users
+    const guestNavItems: NavItem[] = [
+        {
+            title: 'Log In',
+            href: '/login',
+            icon: null,
+        },
+        {
+            title: 'Sign Up',
+            href: '/register',
+            icon: null,
+        },
+    ];
+
+    const mainNavItems = auth.user ? authNavItems : guestNavItems;
 
     return (
         <>
@@ -125,9 +142,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            {/* <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
-                                <Search className="!size-5 opacity-80 group-hover:opacity-100" />
-                            </Button> */}
                             <div className="hidden lg:flex">
                                 {rightNavItems.map((item) => (
                                     <TooltipProvider key={item.title} delayDuration={0}>
@@ -151,21 +165,25 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 ))}
                             </div>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="size-10 rounded-full p-1">
-                                    <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
-                                        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                            {getInitials(auth.user.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56" align="end">
-                                <UserMenuContent user={auth.user} />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {auth.user ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="size-10 rounded-full p-1">
+                                        <Avatar className="size-8 overflow-hidden rounded-full">
+                                            <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                            <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                                {getInitials(auth.user.name)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="end">
+                                    <UserMenuContent user={auth.user} />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className="flex items-center space-x-2"></div>
+                        )}
                     </div>
                 </div>
             </div>

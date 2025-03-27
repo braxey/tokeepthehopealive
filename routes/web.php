@@ -1,19 +1,14 @@
 <?php
 
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\StaticController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
+Route::get('/', [StaticController::class, 'welcome'])->name('home');
+Route::get('/privacy', [StaticController::class, 'privacyPolicy'])->name('privacy');
+Route::get('/terms', [StaticController::class, 'termsOfService'])->name('terms');
 
 /** ******************
  |       Posts      |
