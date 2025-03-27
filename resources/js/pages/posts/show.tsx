@@ -23,7 +23,6 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
     const extraMedia: ReactNode[] = [];
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Form for adding a comment
     const {
         data,
         setData,

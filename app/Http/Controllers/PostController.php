@@ -72,6 +72,12 @@ class PostController extends Controller
         });
         $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
 
+        $firstTenComments = $post->comments()
+            ->with(['votes', 'user'])
+            ->orderByDesc('created_at')
+            ->paginate(page: 1, perPage: 10)
+            ->getCollection();
+
         // Prepare comments.
         $commentPageNumber = $request->input('commentPage', 1);
         $commentPaginator = $post->comments()
@@ -80,13 +86,14 @@ class PostController extends Controller
             ->paginate(page: $commentPageNumber, perPage: 10, pageName: 'commentPage');
 
         // Transform comments to include vote count and time since.
-        $comments = $commentPaginator->getCollection()->map(function ($comment) use ($request) {
-            $comment->vote_count = $comment->votes->sum('vote');
-            $comment->time_since = $comment->created_at ? $comment->created_at->diffForHumans(short: true) : 'Unknown time';
-            $comment->user_vote = $request->user() ? $comment->votes->where('user_id', $request->user()->id)->value('vote') : null;
-            unset($comment->votes);
-            return $comment;
-        });
+        $comments = $firstTenComments->concat($commentPaginator->getCollection())
+            ->map(function ($comment) use ($request) {
+                $comment->vote_count = $comment->votes->sum('vote');
+                $comment->time_since = $comment->created_at ? $comment->created_at->diffForHumans(short: true) : 'Unknown time';
+                $comment->user_vote = $request->user() ? $comment->votes->where('user_id', $request->user()->id)->value('vote') : null;
+                unset($comment->votes);
+                return $comment;
+            });
 
         return Inertia::render('posts/show', [
             'post' => $post,
