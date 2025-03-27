@@ -6,10 +6,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Welcome to To Keep The Hope Alive">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-            </Head>
+            <Head title="Welcome to To Keep The Hope Alive" />
             <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:p-8 dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 {/* Header with Navigation */}
                 <header className="mb-6 w-full max-w-4xl">
@@ -45,7 +42,7 @@ export default function Welcome() {
                     <div className="mb-8">
                         <h1 className="text-4xl font-semibold text-[#1b1b18] lg:text-5xl dark:text-[#EDEDEC]">To Keep The Hope Alive</h1>
                         <p className="mt-4 max-w-xl text-lg text-[#706f6c] dark:text-[#A1A09A]">
-                            A place where my sister shares testimonies of hope, resilience, and faith. Read stories that inspire and uplift.
+                            A place to discover testimonies of hope, resilience, and faith. Read stories that inspire and uplift.
                         </p>
                     </div>
 
