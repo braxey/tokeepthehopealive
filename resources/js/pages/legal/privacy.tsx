@@ -111,10 +111,10 @@ export default function PrivacyPolicy() {
                         <p>
                             To exercise these rights, contact us at{' '}
                             <a
-                                href="mailto:help@tokeepthehopealive.com"
+                                href="mailto:support@tokeepthehopealive.com"
                                 className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                             >
-                                help@tokeepthehopealive.com
+                                support@tokeepthehopealive.com
                             </a>
                             . We’ll respond within 45 days, extendable by 45 more if needed, per CCPA rules.
                         </p>
@@ -129,10 +129,10 @@ export default function PrivacyPolicy() {
                         <p>
                             For questions about this Privacy Policy or your rights, email us at{' '}
                             <a
-                                href="mailto:help@tokeepthehopealive.com"
+                                href="mailto:support@tokeepthehopealive.com"
                                 className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                             >
-                                help@tokeepthehopealive.com
+                                support@tokeepthehopealive.com
                             </a>{' '}
                             or write to Gillyware, LLC.
                         </p>

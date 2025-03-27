@@ -156,10 +156,10 @@ export default function TermsOfService() {
                         <p>
                             For questions about these Terms, contact us at{' '}
                             <a
-                                href="mailto:help@tokeepthehopealive.com"
+                                href="mailto:support@tokeepthehopealive.com"
                                 className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                             >
-                                help@tokeepthehopealive.com
+                                support@tokeepthehopealive.com
                             </a>{' '}
                             or write to Gillyware, LLC.
                         </p>
