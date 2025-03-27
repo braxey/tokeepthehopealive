@@ -3,6 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Discover testimonies of hope, resilience, and faith. Read stories that inspire and uplift.">
+
+        {{-- Favicons --}}
+        <link id="icon_favicon_svg" rel="icon" type="image/svg+xml" href="{{ url('favicon.svg') }}" sizes="any">
+        <link id="icon_favicon_ico" rel="icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
