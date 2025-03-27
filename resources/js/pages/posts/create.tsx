@@ -5,7 +5,7 @@ import { ChangeEvent, FormEvent } from 'react';
 export default function CreatePost() {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
-        summary: '', // New summary field
+        summary: '',
         body: [{ section_title: '', section_text: '' }],
         preview_image: null as File | null,
         preview_caption: '',
@@ -77,16 +77,14 @@ export default function CreatePost() {
 
     return (
         <AppLayout>
-            <Head title="Create Post" />
-            <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-4 rounded-xl p-4">
-                <form
-                    onSubmit={submit}
-                    className="border-sidebar-border/70 dark:border-sidebar-border flex flex-col gap-10 rounded-xl border bg-white p-6 dark:bg-neutral-800"
-                >
-                    <h1 className="text-center text-2xl font-bold text-neutral-900 dark:text-neutral-100">Create a New Post</h1>
+            <Head title="Create Testimony" />
+            <div className="mx-auto flex h-full w-full max-w-3xl flex-1 flex-col gap-6 p-6">
+                <form onSubmit={submit} className="flex flex-col gap-8 rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-900">
+                    <h1 className="text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100">Share a Testimony</h1>
 
+                    {/* Title */}
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="title" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        <label htmlFor="title" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             Title
                         </label>
                         <input
@@ -94,32 +92,40 @@ export default function CreatePost() {
                             type="text"
                             value={data.title}
                             onChange={(e) => setData('title', e.target.value)}
-                            className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
-                            placeholder="Enter Post Title"
+                            className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                            placeholder="Enter Testimony Title"
                         />
-                        {errors.title && <span className="text-sm text-red-500">{errors.title}</span>}
+                        {errors.title && <span className="text-sm text-red-600 dark:text-red-400">{errors.title}</span>}
                     </div>
 
+                    {/* Summary */}
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="summary" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        <label htmlFor="summary" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             Summary
                         </label>
                         <textarea
                             id="summary"
                             value={data.summary}
                             onChange={(e) => setData('summary', e.target.value)}
-                            className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                            className="min-h-[100px] rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                             placeholder="Enter a brief summary"
                         />
-                        {errors.summary && <span className="text-sm text-red-500">{errors.summary}</span>}
+                        {errors.summary && <span className="text-sm text-red-600 dark:text-red-400">{errors.summary}</span>}
                     </div>
 
+                    {/* Body Sections */}
                     <div className="flex flex-col gap-4">
-                        <label className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Body Sections</label>
+                        <label className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Body Sections</label>
                         {data.body.map((section, index) => (
-                            <div key={index} className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-4">
+                            <div
+                                key={index}
+                                className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800"
+                            >
                                 <div className="flex flex-col gap-2">
-                                    <label htmlFor={`section-title-${index}`} className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    <label
+                                        htmlFor={`section-title-${index}`}
+                                        className="text-sm font-semibold text-neutral-800 dark:text-neutral-200"
+                                    >
                                         Section Title (Optional)
                                     </label>
                                     <input
@@ -127,19 +133,19 @@ export default function CreatePost() {
                                         type="text"
                                         value={section.section_title}
                                         onChange={(e) => updateSection(index, 'section_title', e.target.value)}
-                                        className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                                        className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                                         placeholder="Enter Section Title"
                                     />
                                 </div>
                                 <div className="mt-4 flex flex-col gap-2">
-                                    <label htmlFor={`section-text-${index}`} className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    <label htmlFor={`section-text-${index}`} className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                                         Section Text (Optional)
                                     </label>
                                     <textarea
                                         id={`section-text-${index}`}
                                         value={section.section_text}
                                         onChange={(e) => updateSection(index, 'section_text', e.target.value)}
-                                        className="border-sidebar-border/70 dark:border-sidebar-border min-h-[100px] rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                                        className="min-h-[120px] rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                                         placeholder="Write Section Content"
                                     />
                                 </div>
@@ -147,7 +153,7 @@ export default function CreatePost() {
                                     <button
                                         type="button"
                                         onClick={() => removeSection(index)}
-                                        className="mt-2 text-sm text-red-500 hover:text-red-700"
+                                        className="mt-3 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                                     >
                                         Remove Section
                                     </button>
@@ -157,21 +163,22 @@ export default function CreatePost() {
                         <button
                             type="button"
                             onClick={addSection}
-                            className="mt-2 rounded-xl bg-neutral-200 px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-300 dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500"
+                            className="mt-2 rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:hover:bg-emerald-900"
                         >
                             Add Section
                         </button>
-                        {errors.body && <span className="text-sm text-red-500">{errors.body}</span>}
+                        {errors.body && <span className="text-sm text-red-600 dark:text-red-400">{errors.body}</span>}
                     </div>
 
+                    {/* Preview Image */}
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="preview_image" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        <label htmlFor="preview_image" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             Preview Image
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             <label
                                 htmlFor="preview_image"
-                                className="border-sidebar-border/70 dark:border-sidebar-border cursor-pointer rounded-xl border bg-neutral-100 px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500"
+                                className="cursor-pointer rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 transition hover:bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600"
                             >
                                 Choose File
                                 <input
@@ -183,36 +190,38 @@ export default function CreatePost() {
                                 />
                             </label>
                             {data.preview_image && (
-                                <span className="max-w-xs truncate text-sm text-neutral-700 dark:text-neutral-300">{data.preview_image.name}</span>
+                                <span className="truncate text-sm text-neutral-600 dark:text-neutral-400">{data.preview_image.name}</span>
                             )}
                         </div>
-                        {errors.preview_image && <span className="text-sm text-red-500">{errors.preview_image}</span>}
+                        {errors.preview_image && <span className="text-sm text-red-600 dark:text-red-400">{errors.preview_image}</span>}
                         {data.preview_image && (
-                            <div className="mt-2 flex flex-col gap-2">
-                                <label htmlFor="preview_caption" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                    Preview Image Caption (Optional)
+                            <div className="mt-4 flex flex-col gap-2">
+                                <img src={URL.createObjectURL(data.preview_image)} alt="Preview" className="max-h-40 rounded-lg object-cover" />
+                                <label htmlFor="preview_caption" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                                    Preview Caption (Optional)
                                 </label>
                                 <input
                                     id="preview_caption"
                                     type="text"
                                     value={data.preview_caption}
                                     onChange={handlePreviewCaptionChange}
-                                    className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
+                                    className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                                     placeholder="Enter Preview Caption"
                                 />
-                                {errors.preview_caption && <span className="text-sm text-red-500">{errors.preview_caption}</span>}
+                                {errors.preview_caption && <span className="text-sm text-red-600 dark:text-red-400">{errors.preview_caption}</span>}
                             </div>
                         )}
                     </div>
 
+                    {/* Additional Media */}
                     <div className="flex flex-col gap-2">
-                        <label htmlFor="media" className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        <label htmlFor="media" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             Additional Media (Images/Videos)
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             <label
                                 htmlFor="media"
-                                className="border-sidebar-border/70 dark:border-sidebar-border cursor-pointer rounded-xl border bg-neutral-100 px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500"
+                                className="cursor-pointer rounded-lg border border-neutral-300 bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 transition hover:bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600"
                             >
                                 Choose Files
                                 <input
@@ -225,60 +234,76 @@ export default function CreatePost() {
                                 />
                             </label>
                             {data.media.length > 0 && (
-                                <span className="max-w-xs truncate text-sm text-neutral-700 dark:text-neutral-300">
+                                <span className="truncate text-sm text-neutral-600 dark:text-neutral-400">
                                     {data.media.map((file) => file.name).join(', ')}
                                 </span>
                             )}
                         </div>
-                        {errors.media && <span className="text-sm text-red-500">{errors.media}</span>}
+                        {errors.media && <span className="text-sm text-red-600 dark:text-red-400">{errors.media}</span>}
                     </div>
 
+                    {/* Media Details */}
                     {data.media.length > 0 && (
-                        <div className="flex flex-col gap-2">
-                            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        <div className="flex flex-col gap-4">
+                            <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                                 Media Details (Position: 0 = After First Section, 1 = After Second, etc.)
                             </p>
                             {data.media.map((file, index) => (
-                                <div key={index} className="border-sidebar-border/70 dark:border-sidebar-border flex flex-col gap-2 border-t pt-2">
-                                    <span className="max-w-xs truncate text-sm text-neutral-700 dark:text-neutral-300">{file.name}</span>
-                                    <div className="flex items-center gap-2">
-                                        <label htmlFor={`position-${index}`} className="text-sm text-neutral-900 dark:text-neutral-100">
-                                            Position:
-                                        </label>
-                                        <input
-                                            id={`position-${index}`}
-                                            type="number"
-                                            min="0"
-                                            value={data.media_positions[index] ?? 0}
-                                            onChange={(e) => handlePositionChange(index, e.target.value)}
-                                            className="border-sidebar-border/70 dark:border-sidebar-border w-16 rounded-xl border bg-white p-1 text-center text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100"
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <label htmlFor={`caption-${index}`} className="text-sm text-neutral-900 dark:text-neutral-100">
-                                            Caption (Optional):
-                                        </label>
-                                        <input
-                                            id={`caption-${index}`}
-                                            type="text"
-                                            value={data.media_captions[index] ?? ''}
-                                            onChange={(e) => handleCaptionChange(index, e.target.value)}
-                                            className="border-sidebar-border/70 dark:border-sidebar-border flex-1 rounded-xl border bg-white p-2 text-neutral-900 placeholder-neutral-500 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400"
-                                            placeholder="Enter Caption (Optional)"
-                                        />
+                                <div
+                                    key={index}
+                                    className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800"
+                                >
+                                    <span className="mb-2 block truncate text-sm text-neutral-600 dark:text-neutral-400">{file.name}</span>
+                                    {file.type.startsWith('image/') && (
+                                        <img src={URL.createObjectURL(file)} alt={file.name} className="mb-3 max-h-32 rounded-lg object-cover" />
+                                    )}
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-3">
+                                            <label
+                                                htmlFor={`position-${index}`}
+                                                className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
+                                            >
+                                                Position:
+                                            </label>
+                                            <input
+                                                id={`position-${index}`}
+                                                type="number"
+                                                min="0"
+                                                value={data.media_positions[index] ?? 0}
+                                                onChange={(e) => handlePositionChange(index, e.target.value)}
+                                                className="w-20 rounded-lg border border-neutral-300 bg-white p-2 text-center text-neutral-900 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label
+                                                htmlFor={`caption-${index}`}
+                                                className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
+                                            >
+                                                Caption (Optional):
+                                            </label>
+                                            <input
+                                                id={`caption-${index}`}
+                                                type="text"
+                                                value={data.media_captions[index] ?? ''}
+                                                onChange={(e) => handleCaptionChange(index, e.target.value)}
+                                                className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                                                placeholder="Enter Caption"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
 
+                    {/* Submit Button */}
                     <div className="flex justify-center">
                         <button
                             type="submit"
                             disabled={processing}
-                            className="rounded-xl bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700 disabled:bg-emerald-300 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:disabled:bg-emerald-400"
+                            className="rounded-lg bg-emerald-600 px-6 py-3 text-base font-medium text-white shadow-md transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:disabled:bg-emerald-400"
                         >
-                            {processing ? 'Posting...' : 'Create Post'}
+                            {processing ? 'Posting...' : 'Share Testimony'}
                         </button>
                     </div>
                 </form>

@@ -37,28 +37,28 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
 
     post.body.forEach((section, index) => {
         contentWithMedia.push(
-            <div key={`section-${index}`} className="my-4">
-                {section.section_title && <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{section.section_title}</h2>}
-                {section.section_text && <p className="mt-2 text-neutral-900 dark:text-neutral-100">{section.section_text}</p>}
+            <div key={`section-${index}`} className="my-6">
+                {section.section_title && <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">{section.section_title}</h2>}
+                {section.section_text && <p className="mt-3 text-neutral-700 dark:text-neutral-300">{section.section_text}</p>}
             </div>,
         );
 
         const mediaAtPosition = post.media.filter((m) => m.position === index);
         mediaAtPosition.forEach((media) => {
             contentWithMedia.push(
-                <div key={`media-${media.id}`} className="my-4 flex flex-col items-center">
+                <div key={`media-${media.id}`} className="my-6 flex flex-col items-center">
                     {media.type === 'image' ? (
                         <img
                             src={media.url}
                             alt={media.caption || 'post media'}
-                            className="h-auto max-h-[300px] w-auto max-w-full rounded-xl object-contain"
+                            className="h-auto max-h-[400px] w-auto max-w-full rounded-lg object-contain shadow-md"
                         />
                     ) : (
-                        <video controls className="h-auto max-h-[300px] w-auto max-w-full rounded-xl">
+                        <video controls className="h-auto max-h-[400px] w-auto max-w-full rounded-lg shadow-md">
                             <source src={media.url} type={`video/${media.path.split('.').pop()}`} />
                         </video>
                     )}
-                    {media.caption && <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{media.caption}</p>}
+                    {media.caption && <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{media.caption}</p>}
                 </div>,
             );
         });
@@ -68,19 +68,19 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
     const leftoverMedia = post.media.filter((m) => m.position > maxSectionIndex);
     leftoverMedia.forEach((media) => {
         extraMedia.push(
-            <div key={`media-${media.id}`} className="my-4 flex flex-col items-center">
+            <div key={`media-${media.id}`} className="my-6 flex flex-col items-center">
                 {media.type === 'image' ? (
                     <img
                         src={media.url}
                         alt={media.caption || 'post media'}
-                        className="h-auto max-h-[300px] w-auto max-w-full rounded-xl object-contain"
+                        className="h-auto max-h-[400px] w-auto max-w-full rounded-lg object-contain shadow-md"
                     />
                 ) : (
-                    <video controls className="h-auto max-h-[300px] w-auto max-w-full rounded-xl">
+                    <video controls className="h-auto max-h-[400px] w-auto max-w-full rounded-lg shadow-md">
                         <source src={media.url} type={`video/${media.path.split('.').pop()}`} />
                     </video>
                 )}
-                {media.caption && <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{media.caption}</p>}
+                {media.caption && <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{media.caption}</p>}
             </div>,
         );
     });
@@ -152,12 +152,12 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
     return (
         <AppLayout>
             <Head title={post.title} />
-            <div className="flex h-full w-full max-w-7xl flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col gap-6 p-6">
                 {/* Title, Preview Image, and Summary */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
-                    <h1 className="mb-4 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
+                <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-neutral-900">
+                    <h1 className="mb-6 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
                     {/* Post Voting */}
-                    <div className="mb-4 flex items-center justify-center gap-2">
+                    <div className="mb-6 flex items-center justify-center gap-3">
                         <Link
                             href={`/posts/${post.id}/vote`}
                             method="post"
@@ -165,12 +165,12 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             preserveState
                             preserveScroll
                             except={['comments']}
-                            className={`p-1 ${post.user_vote === 1 ? 'text-green-500' : 'text-neutral-500'} hover:text-green-600`}
+                            className={`text-xl ${post.user_vote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
                             disabled={!auth.user}
                         >
                             ▲
                         </Link>
-                        <span className="text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
+                        <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
                         <Link
                             href={`/posts/${post.id}/vote`}
                             method="post"
@@ -178,7 +178,7 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             preserveState
                             preserveScroll
                             except={['comments']}
-                            className={`p-1 ${post.user_vote === -1 ? 'text-red-500' : 'text-neutral-500'} hover:text-red-600`}
+                            className={`text-xl ${post.user_vote === -1 ? 'text-red-500' : 'text-neutral-500'} transition hover:text-red-600`}
                             disabled={!auth.user}
                         >
                             ▼
@@ -189,40 +189,43 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             <img
                                 src={post.preview_image}
                                 alt={post.preview_caption || post.title}
-                                className="h-auto max-h-[500px] w-auto max-w-full rounded-xl object-contain"
+                                className="h-auto max-h-[500px] w-auto max-w-full rounded-lg object-contain shadow-md"
                             />
-                            {post.preview_caption && <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{post.preview_caption}</p>}
-                            <div className="mx-auto w-full max-w-3xl border-0 bg-transparent">
-                                <p className="mt-4 text-neutral-700 dark:text-neutral-300">{post.summary}</p>
-                            </div>
+                            {post.preview_caption && <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">{post.preview_caption}</p>}
+                            <p className="mt-4 text-neutral-700 dark:text-neutral-300">{post.summary}</p>
                         </div>
                     )}
                 </div>
 
                 {/* Post Content */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border bg-white p-6 dark:bg-neutral-800">
-                    <div className="mx-auto w-full max-w-3xl border-0 bg-transparent">
-                        <div className="prose dark:prose-invert">{contentWithMedia}</div>
-                    </div>
+                <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-neutral-900">
+                    <div className="prose dark:prose-invert">{contentWithMedia}</div>
                 </div>
 
                 {/* Comments Section */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border flex flex-col items-center rounded-xl border bg-white p-6 dark:bg-neutral-800">
+                <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-neutral-900">
                     {!showComments ? (
-                        <button onClick={() => setShowComments(true)} className="cursor-pointer rounded-xl bg-none p-2 text-black dark:text-white">
-                            {'View comments'}
-                        </button>
+                        <div className="flex w-full items-center justify-center">
+                            <button
+                                onClick={() => setShowComments(true)}
+                                className="rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:hover:bg-emerald-900"
+                            >
+                                View Comments
+                            </button>
+                        </div>
                     ) : (
                         <>
-                            <button
-                                onClick={() => setShowComments(false)}
-                                className="cursor-pointer rounded-xl bg-none p-2 text-black dark:text-white"
-                            >
-                                {'Hide comments'}
-                            </button>
+                            <div className="flex w-full items-center justify-center">
+                                <button
+                                    onClick={() => setShowComments(false)}
+                                    className="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                >
+                                    Hide Comments
+                                </button>
+                            </div>
 
                             {/* Add Comment Form */}
-                            <form onSubmit={handleSubmitComment} className="mt-4 w-full max-w-3xl">
+                            <form onSubmit={handleSubmitComment} className="mt-6">
                                 <textarea
                                     ref={textareaRef}
                                     value={data.body}
@@ -232,24 +235,24 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                                     }}
                                     onFocus={() => setIsTextareaFocused(true)}
                                     placeholder="Add a comment..."
-                                    className="min-h-[42px] w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-900 focus:ring-2 focus:ring-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100"
+                                    className="min-h-[100px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                                     rows={3}
                                     disabled={!auth.user || processing}
                                 />
-                                {errors.body && <p className="mt-1 text-sm text-red-500">{errors.body}</p>}
+                                {errors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.body}</p>}
                                 {isTextareaFocused && (
-                                    <div className="mt-2 flex gap-2">
+                                    <div className="mt-3 flex gap-3">
                                         <button
                                             type="submit"
                                             disabled={!auth.user || processing}
-                                            className="rounded-lg bg-neutral-600 px-4 py-2 text-white hover:bg-neutral-700 disabled:bg-gray-400"
+                                            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                                         >
                                             {processing ? 'Posting...' : 'Post Comment'}
                                         </button>
                                         <button
                                             type="button"
                                             onClick={handleCancelComment}
-                                            className="rounded-lg bg-neutral-400 px-4 py-2 text-white hover:bg-neutral-500"
+                                            className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
                                         >
                                             Cancel
                                         </button>
@@ -258,24 +261,21 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                             </form>
 
                             {localComments.length === 0 ? (
-                                <p className="mt-8 mb-4 text-neutral-900 dark:text-neutral-100">{'No comments yet.'}</p>
+                                <p className="mt-8 w-full text-center text-neutral-700 dark:text-neutral-300">No comments yet.</p>
                             ) : (
-                                <div className="w-full max-w-3xl">
+                                <div className="mt-8">
                                     {localComments.map((comment) => {
                                         const localVote = localVotes[comment.id] || {};
                                         const voteCount = localVote.vote_count !== undefined ? localVote.vote_count : comment.vote_count || 0;
                                         const userVote = localVote.user_vote !== undefined ? localVote.user_vote : comment.user_vote;
 
                                         return (
-                                            <div
-                                                key={`comment-${comment.id}`}
-                                                className="border-sidebar-border/70 dark:border-sidebar-border mt-4 border-t pt-4"
-                                            >
-                                                <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
+                                            <div key={`comment-${comment.id}`} className="border-t border-neutral-200 py-6 dark:border-neutral-700">
+                                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                                     {comment.user.name} · {comment.time_since}
                                                 </p>
-                                                <p className="text-neutral-900 dark:text-neutral-100">{comment.body}</p>
-                                                <div className="mt-2 flex items-center gap-2">
+                                                <p className="mt-2 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+                                                <div className="mt-3 flex items-center gap-3">
                                                     <Link
                                                         href={`/comments/${comment.id}/vote`}
                                                         only={['comments']}
@@ -284,7 +284,7 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                                                         preserveState
                                                         preserveScroll
                                                         onClick={() => handleVoteClick(comment.id, 1, voteCount, userVote)}
-                                                        className={`p-1 ${userVote === 1 ? 'text-green-500' : 'text-neutral-500'} hover:text-green-600`}
+                                                        className={`text-lg ${userVote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
                                                         disabled={!auth.user}
                                                     >
                                                         ▲
@@ -298,7 +298,7 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                                                         preserveState
                                                         preserveScroll
                                                         onClick={() => handleVoteClick(comment.id, -1, voteCount, userVote)}
-                                                        className={`p-1 ${userVote === -1 ? 'text-red-500' : 'text-neutral-500'} hover:text-red-600`}
+                                                        className={`text-lg ${userVote === -1 ? 'text-red-500' : 'text-neutral-500'} transition hover:text-red-600`}
                                                         disabled={!auth.user}
                                                     >
                                                         ▼
@@ -315,9 +315,9 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
                                             preserveScroll
                                             preserveState
                                             prefetch
-                                            className="mt-4 block cursor-pointer text-center text-black dark:text-white"
+                                            className="mt-6 block text-center text-sm font-medium text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                                         >
-                                            {'Load more'}
+                                            Load more
                                         </Link>
                                     )}
                                 </div>

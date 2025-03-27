@@ -159,6 +159,10 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Post created!');
     }
 
+    /** ******************
+     |       Edit       |
+     * *************** **/
+
     public function edit(Post $post)
     {
         $post->load('media');
