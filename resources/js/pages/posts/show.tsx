@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { SharedData } from '@/types';
 import { Comment, Post } from '@/types/models';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { ReactNode, useRef, useState } from 'react';
 
 type ShowProps = {
@@ -155,7 +155,18 @@ export default function ShowPost({ post, comments, nextCommentPageUrl }: ShowPro
             <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col gap-6 p-6">
                 {/* Title, Preview Image, and Summary */}
                 <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-neutral-900">
-                    <h1 className="mb-6 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100">{post.title}</h1>
+                    <h1
+                        className={
+                            'mb-6 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100' + (auth.canPost ? ' cursor-pointer' : '')
+                        }
+                        onClick={() => {
+                            if (auth.canPost) {
+                                router.get(route('posts.edit', { post: post.id }));
+                            }
+                        }}
+                    >
+                        {post.title}
+                    </h1>
                     {/* Post Voting */}
                     <div className="mb-6 flex items-center justify-center gap-3">
                         <Link
