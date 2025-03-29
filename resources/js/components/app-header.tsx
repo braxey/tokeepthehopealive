@@ -171,7 +171,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </div>
 
                         {auth.user && page.url.split('?')[0] === '/posts' && (
-                            <div className="relative flex items-center">
+                            <div className="relative flex items-center flex-shrink-1">
                                 <div className="relative">
                                     <Input
                                         type="text"
