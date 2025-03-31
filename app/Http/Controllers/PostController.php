@@ -196,7 +196,7 @@ class PostController extends Controller
             'existing_media.*.id' => 'integer|exists:media,id',
             'existing_media.*.position' => 'integer',
             'existing_media.*.caption' => 'string|nullable|max:255',
-            'deleted_media' => 'nullable|array', // New field for media to delete
+            'deleted_media' => 'nullable|array',
             'deleted_media.*' => 'integer|exists:media,id',
         ]);
 
@@ -229,7 +229,6 @@ class PostController extends Controller
             }
         }
 
-        // Handle new media uploads
         if ($request->hasFile('media')) {
             $positions = $request->input('media_positions', []);
             $captions = $request->input('media_captions', []);
