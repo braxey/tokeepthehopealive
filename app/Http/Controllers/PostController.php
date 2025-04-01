@@ -15,31 +15,54 @@ class PostController extends Controller
      * *************** **/
 
     /**
-     * Display all posts.
+     * Display all posts with optional search filtering.
      * @param  Request $request
      * @return InertiaResponse
      */
     public function index(Request $request): InertiaResponse
     {
-        $featured = Post::orderByDesc('created_at')->first();
+        // Get the search query from the request (e.g., ?search=term)
+        $search = $request->input('search');
 
+        // Base query for posts
+        $query = Post::query();
+
+        // Apply search filter if a search term is provided
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('summary', 'like', '%' . $search . '%')
+                    ->orWhereJsonContains('body', $search);
+            });
+        }
+
+        // Get the featured post (latest post matching the search, if any)
+        $featured = $query->orderByDesc('created_at')->first();
+
+        // Pagination for remaining posts
         $pageNumber = $request->input('page', 1);
-        $pagination = Post::select(['id', 'title', 'created_at', 'preview_image'])
-            ->where('id', '!=', $featured?->id)
+        $pagination = $query->select(['id', 'title', 'created_at', 'preview_image'])
+            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id)) // Exclude featured post if it exists
             ->orderByDesc('created_at')
             ->paginate(page: $pageNumber, perPage: 9);
 
+        // Transform posts collection
         $posts = $pagination->getCollection()->map(function ($post) {
-            $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : ($post->media->firstWhere('type', 'image')?->url ?? null);
+            $post->preview_image = $post->preview_image 
+                ? asset('storage/' . $post->preview_image) 
+                : ($post->media->firstWhere('type', 'image')?->url ?? null);
             return $post->only(['id', 'title', 'preview_image', 'created_at']);
         });
 
+        // Process featured post
         function processFeaturedPost(?Post $featured): ?Post {
             if (!$featured) {
                 return null;
             }
 
-            $featured->preview_image = $featured->preview_image ? asset('storage/' . $featured->preview_image) : ($featured->media->firstWhere('type', 'image')?->url ?? null);
+            $featured->preview_image = $featured->preview_image 
+                ? asset('storage/' . $featured->preview_image) 
+                : ($featured->media->firstWhere('type', 'image')?->url ?? null);
             $featured->media = $featured->media->map(function ($media) {
                 $media->url = asset('storage/' . $media->path);
                 return $media;
@@ -52,6 +75,7 @@ class PostController extends Controller
             'featured' => fn () => processFeaturedPost($featured),
             'nextPageUrl' => $pagination->nextPageUrl(),
             'posts' => Inertia::merge($posts),
+            'search' => $search, // Pass the search term back to the frontend
         ]);
     }
 

@@ -1,7 +1,7 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { Post } from '@/types/models';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 type PostIndexProps = {
     featured: Post | null;
@@ -10,6 +10,8 @@ type PostIndexProps = {
 };
 
 export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) {
+    const { props } = usePage();
+
     return (
         <AppLayout>
             <Head title="Testimonies" />
@@ -124,7 +126,7 @@ export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) 
                     <div className="mt-6 flex justify-center">
                         <Link
                             key={`load-more`}
-                            href={nextPageUrl}
+                            href={`${nextPageUrl}&search=${encodeURIComponent((props.search as string) || '')}`}
                             only={['nextPageUrl', 'posts']}
                             preserveScroll
                             prefetch
