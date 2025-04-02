@@ -3,18 +3,34 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class StaticController extends Controller
 {
-    public function welcome() {
+    /**
+     * Show welcome page.
+     * @return InertiaResponse
+     */
+    public function welcome(): InertiaResponse
+    {
         return Inertia::render('welcome');
     }
 
-    public function privacyPolicy() {
+    /**
+     * Show privacy policy.
+     * @return InertiaResponse
+     */
+    public function privacyPolicy(): InertiaResponse
+    {
         return Inertia::render('legal/privacy');
     }
 
-    public function termsOfService() {
+    /**
+     * Show terms of service.
+     * @return InertiaResponse
+     */
+    public function termsOfService(): InertiaResponse
+    {
         return Inertia::render('legal/terms');
     }
 }
