@@ -36,7 +36,7 @@ class PostController extends Controller
 
         $pageNumber = $request->input('page', 1);
         $pagination = $query->select(['id', 'title', 'created_at', 'preview_image'])
-            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id)) // Exclude featured post if it exists
+            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id))
             ->orderByDesc('created_at')
             ->paginate(page: $pageNumber, perPage: 9);
 
