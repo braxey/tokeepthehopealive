@@ -16,7 +16,7 @@ class CommentController extends Controller
     ) {}
 
     /**
-     * Submit a comment on a post.
+     * Comment on a post.
      * @param Request $request
      * @param Post $post
      * @return RedirectResponse
@@ -28,19 +28,21 @@ class CommentController extends Controller
             'body' => 'required|string|min:1|max:1000',
         ]);
 
+        // Insert comment.
         $post->comments()->create([
             'user_id' => $request->user()->id,
             'to_user_id' => $request->input('to_user_id'),
             'body' => $request->input('body'),
         ]);
 
+        // Increment reply count on post.
         $post->increment('reply_count');
 
         return back();
     }
 
     /**
-     * Submit a comment on another comment.
+     * Comment on another comment.
      * @param Request $request
      * @param Comment $comment
      * @return RedirectResponse
@@ -52,12 +54,14 @@ class CommentController extends Controller
             'body' => 'required|string|min:1|max:1000',
         ]);
 
+        // Insert comment.
         $comment->comments()->create([
             'user_id' => $request->user()->id,
             'to_user_id' => $request->input('to_user_id'),
             'body' => $request->input('body'),
         ]);
 
+        // Increment reply count on comment.
         $comment->increment('reply_count');
 
         return back();
