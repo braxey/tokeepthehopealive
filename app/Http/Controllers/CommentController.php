@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Services\CommentService;
-use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -14,7 +15,13 @@ class CommentController extends Controller
         protected CommentService $commentService,
     ) {}
 
-    public function onPost(Request $request, Post $post)
+    /**
+     * Submit a comment on a post.
+     * @param Request $request
+     * @param Post $post
+     * @return RedirectResponse
+     */
+    public function onPost(Request $request, Post $post): RedirectResponse
     {
         $request->validate([
             'to_user_id' => 'required|int|exists:users,id',
@@ -32,7 +39,13 @@ class CommentController extends Controller
         return back();
     }
 
-    public function onComment(Request $request, Comment $comment)
+    /**
+     * Submit a comment on another comment.
+     * @param Request $request
+     * @param Comment $comment
+     * @return RedirectResponse
+     */
+    public function onComment(Request $request, Comment $comment): RedirectResponse
     {
         $request->validate([
             'to_user_id' => 'required|int|exists:users,id',
@@ -50,12 +63,24 @@ class CommentController extends Controller
         return back();
     }
 
-    public function getComments(Request $request, Post $post)
+    /**
+     * Get 10 comments for a post with the current page and whether there are more pages.
+     * @param Request $request
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function getComments(Request $request, Post $post): JsonResponse
     {
         return response()->json($this->commentService->getCommentsForPost($post, $request->input('page', 1)));
     }
 
-    public function getReplies(Request $request, Comment $comment)
+    /**
+     * Get 10 comments for a top-level-comment with the current page and whether there are more pages.
+     * @param Request $request
+     * @param Comment $comment
+     * @return JsonResponse
+     */
+    public function getReplies(Request $request, Comment $comment): JsonResponse
     {
         return response()->json($this->commentService->getRepliesForComment($comment, $request->input('page', 1)));
     }
