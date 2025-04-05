@@ -52,23 +52,11 @@ class CommentController extends Controller
 
     public function getComments(Request $request, Post $post)
     {
-        try {
-            logger()->debug('here');
-            return response()->json($this->commentService->getCommentsForPost($post, $request->input('page', 1)));
-
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-        }
+        return response()->json($this->commentService->getCommentsForPost($post, $request->input('page', 1)));
     }
 
     public function getReplies(Request $request, Comment $comment)
     {
-        try {
-            logger()->debug('here');
-            return response()->json($this->commentService->getRepliesForComment($comment, $request->input('page', 1)));
-
-        } catch (Exception $e) {
-            logger()->error($e->getMessage());
-        }
+        return response()->json($this->commentService->getRepliesForComment($comment, $request->input('page', 1)));
     }
 }
