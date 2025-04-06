@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Media;
 use App\Models\Post;
 use App\Services\CommentService;

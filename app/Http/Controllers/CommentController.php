@@ -68,7 +68,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Get 10 comments for a post with the current page and whether there are more pages.
+     * Get a page of comments for a post with the current page and whether there are more pages.
      * @param Request $request
      * @param Post $post
      * @return JsonResponse
@@ -79,7 +79,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Get 10 comments for a top-level-comment with the current page and whether there are more pages.
+     * Get a page of comments for a top-level-comment with the current page and whether there are more pages.
      * @param Request $request
      * @param Comment $comment
      * @return JsonResponse
