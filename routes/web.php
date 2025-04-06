@@ -24,19 +24,25 @@ Route::prefix('posts')->middleware(['auth'])->group(function () {
         Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
     });
-
-    /** ******************
-     |     Comments     |
-        * *************** **/
-    Route::post('/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+/** ******************
+ |     Comments     |
+ * *************** **/
+Route::middleware(['auth'])->group(function () {
+    Route::post('/comments/{comment}/comment', [CommentController::class, 'onComment'])->name('comments.comment');
+    Route::post('/posts/{post}/comment', [CommentController::class, 'onPost'])->name('posts.comment');
+});
+
+Route::get('/comments/post/{post}', [CommentController::class, 'getComments'])->name('comments.post');
+Route::get('/comments/{comment}', [CommentController::class, 'getReplies'])->name('comments.comment');
 
 /** ******************
  |       Votes      |
  * *************** **/
 Route::middleware(['auth'])->group(function () {
-    Route::post('/comments/{comment}/vote', [VoteController::class, 'voteComment'])->name('comments.vote');
-    Route::post('/posts/{post}/vote', [VoteController::class, 'votePost'])->name('posts.vote');
+    Route::post('/comments/{comment}/vote', [VoteController::class, 'onComment'])->name('comments.vote');
+    Route::post('/posts/{post}/vote', [VoteController::class, 'onPost'])->name('posts.vote');
 });
 
 /** ******************

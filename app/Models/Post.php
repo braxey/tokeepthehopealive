@@ -2,30 +2,57 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $summary
+ * @property array $body
+ * @property string|null $preview_image
+ * @property string|null $preview_caption
+ * @property int $user_id
+ * @property int $vote_count
+ * @property int $reply_count
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class Post extends Model
 {
-    protected $fillable = ['user_id', 'title', 'body', 'summary', 'preview_image', 'preview_caption'];
+    protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count'];
     protected $casts = ['body' => 'array'];
+    protected $dates = ['created_at', 'updated_at'];
 
-    public function user() {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function comments() {
-        return $this->hasMany(Comment::class);
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
-    public function votes() {
+    public function votes(): MorphMany
+    {
         return $this->morphMany(Vote::class, 'votable');
     }
 
-    public function media() {
+    public function media(): MorphMany
+    {
         return $this->morphMany(Media::class, 'mediable');
     }
 
-    public function voteCount() {
-        return $this->votes->sum('vote');
+    /**
+     * Vote of the authenticated user on the post
+     * @return Vote|null
+     */
+    public function userVote(): ?Vote
+    {
+        return $this->votes()->firstWhere('user_id', Auth::id());
     }
 }

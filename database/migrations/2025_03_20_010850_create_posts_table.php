@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('preview_image')->nullable();
             $table->string('preview_caption')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('vote_count')->default(0);
+            $table->integer('reply_count')->default(0);
             $table->timestamps();
         });
     }

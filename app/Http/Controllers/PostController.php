@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
+use App\Models\Media;
 use App\Models\Post;
+use App\Services\CommentService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,49 +75,25 @@ class PostController extends Controller
     }
 
     /**
-     * Display one post, and maybe its comments.
+     * Display one post.
      * @param  Post $post
      * @return InertiaResponse
      */
-    public function show(Request $request, Post $post): InertiaResponse
+    public function show(Post $post, CommentService $commentService): InertiaResponse
     {
-        // Prepare post.
         $post->load('votes', 'media');
-        $post->vote_count = $post->votes->sum('vote');
-        $post->user_vote = $request->user() ? $post->votes->where('user_id', $request->user()->id)->value('vote') : null;
-        $post->media = $post->media->sortBy('position')->map(function ($media) {
-            $media->url = asset('storage/' . $media->path);
+        $post->offsetSet('user_vote', $post->userVote()?->vote);
+        $post->offsetSet('preview_image', $post->preview_image ? asset('storage/' . $post->preview_image) : null);
+        $post->offsetSet('media', $post->media->sortBy('position')->map(function (Media $media) {
+            $media->offsetSet('url', asset('storage/' . $media->path));
             return $media;
-        });
-        $post->preview_image = $post->preview_image ? asset('storage/' . $post->preview_image) : null;
+        }));
 
-        $firstTenComments = $post->comments()
-            ->with(['votes', 'user'])
-            ->orderByDesc('created_at')
-            ->paginate(page: 1, perPage: 10)
-            ->getCollection();
-
-        // Prepare comments.
-        $commentPageNumber = $request->input('commentPage', 1);
-        $commentPaginator = $post->comments()
-            ->with(['votes', 'user'])
-            ->orderByDesc('created_at')
-            ->paginate(page: $commentPageNumber, perPage: 10, pageName: 'commentPage');
-
-        // Transform comments to include vote count and time since.
-        $comments = $firstTenComments->concat($commentPaginator->getCollection())
-            ->map(function ($comment) use ($request) {
-                $comment->vote_count = $comment->votes->sum('vote');
-                $comment->time_since = $comment->created_at ? $comment->created_at->diffForHumans(short: true) : 'Unknown time';
-                $comment->user_vote = $request->user() ? $comment->votes->where('user_id', $request->user()->id)->value('vote') : null;
-                unset($comment->votes);
-                return $comment;
-            });
+        $comments = $commentService->getCommentsForPost($post, 1);
 
         return Inertia::render('posts/show', [
             'post' => $post,
-            'nextCommentPageUrl' => $commentPaginator->nextPageUrl(),
-            'comments' => Inertia::merge($comments),
+            'comments' => $comments,
         ]);
     }
 

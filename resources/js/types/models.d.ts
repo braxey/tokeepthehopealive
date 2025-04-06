@@ -1,10 +1,11 @@
 export interface Post {
     id: number;
+    user_id: number;
     title: string;
     summary: string;
     body: { [key: string]: string }[];
-    vote_count?: number;
-    user_vote?: number | null;
+    vote_count: number;
+    user_vote: number | null;
     preview_image: string | null;
     preview_caption: string | null;
     media: Media[];
@@ -21,11 +22,14 @@ export interface Media {
 
 export type Comment = {
     id: number;
+    user_id: number;
+    to_user_id: number;
+    commentable_type: 'App\\Models\\Post' | 'App\\Models\\Comment';
+    commentable_id: number;
     body: string;
-    user: User;
     vote_count: number;
-    time_since: string;
-    user_vote?: number | null;
+    reply_count: number;
     created_at: string;
+    updated_at: string;
     [key: string]: unknown;
 };

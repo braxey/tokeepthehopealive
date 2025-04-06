@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('votes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->morphs('votable'); // votable_id and votable_type
+            $table->morphs('votable');
             $table->integer('vote'); // 1 for upvote, -1 for downvote
             $table->timestamps();
         });
