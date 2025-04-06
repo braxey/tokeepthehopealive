@@ -1,5 +1,7 @@
 <?php
 
+use App\Constants\Disk;
+
 return [
 
     /*
@@ -60,6 +62,14 @@ return [
             'report' => false,
         ],
 
+        Disk::POSTS_PUBLIC => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/posts'),
+            'url' => env('APP_URL').'/storage/posts',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ]
     ],
 
     /*

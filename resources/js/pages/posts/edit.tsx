@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Media, Post } from '@/types/models';
-import { Head, useForm } from '@inertiajs/react';
-import { ChangeEvent, FormEvent } from 'react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 type EditProps = {
     post: Post & {
@@ -10,6 +10,8 @@ type EditProps = {
 };
 
 export default function EditPost({ post }: EditProps) {
+    const [deleting, setDeleting] = useState<boolean>(false);
+
     const {
         data,
         setData,
@@ -432,13 +434,25 @@ export default function EditPost({ post }: EditProps) {
                     </div>
 
                     {/* Submit Button */}
-                    <div className="flex justify-center">
+                    <div className="flex justify-center gap-5">
                         <button
                             type="submit"
-                            disabled={processing}
+                            disabled={processing || deleting}
                             className="rounded-lg bg-emerald-600 px-6 py-3 text-base font-medium text-white shadow-md transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:disabled:bg-emerald-400"
                         >
                             {processing ? 'Updating...' : 'Update Testimony'}
+                        </button>
+
+                        <button
+                            type="button"
+                            disabled={deleting || processing}
+                            onClick={() => {
+                                setDeleting(true);
+                                router.delete(route('posts.delete', { post: post.id }));
+                            }}
+                            className="rounded-lg bg-red-600 px-6 py-3 text-base font-medium text-white shadow-md transition hover:bg-red-700 disabled:bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 dark:disabled:bg-red-400"
+                        >
+                            {deleting ? 'Deleting...' : 'Delete Testimony'}
                         </button>
                     </div>
                 </form>

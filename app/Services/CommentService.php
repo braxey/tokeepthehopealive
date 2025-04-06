@@ -18,6 +18,7 @@ class CommentService
     {
         $commentPaginator = $post->comments()
             ->with(['votes', 'user'])
+            ->orderByDesc('vote_count')
             ->orderByDesc('created_at')
             ->paginate(page: $page, perPage: Pagination::COMMENTS_PER_PAGE);
 
@@ -53,7 +54,7 @@ class CommentService
     {
         $replyPaginator = $comment->comments()
             ->with(['votes', 'user'])
-            ->orderByDesc('created_at')
+            ->orderBy('created_at')
             ->paginate(page: $page, perPage: Pagination::COMMENTS_PER_PAGE);
 
         $replies = $replyPaginator->getCollection()->map(function (Comment $reply) {
