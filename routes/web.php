@@ -15,6 +15,7 @@ Route::get('/terms', [StaticController::class, 'termsOfService'])->name('terms')
  * *************** **/
 Route::prefix('posts')->middleware(['auth'])->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('posts.index');
+    Route::get('/load-more', [PostController::class, 'getPostsPage'])->name('posts.load-more');
     Route::get('/{post}', [PostController::class, 'show'])->where('post', '[0-9]+')->name('posts.show');
 
     Route::middleware(['can_post'])->group(function () {

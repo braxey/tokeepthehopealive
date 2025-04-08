@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\Pagination;
 use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Models\Media;
 use App\Models\Post;
 use App\Services\CommentService;
+use App\Services\PostService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,44 +25,40 @@ class PostController extends Controller
     /**
      * Display all posts with optional search filtering.
      */
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request, PostService $postService): InertiaResponse
     {
-        $search = $request->input('search');
-        $query = Post::query();
+        $request->validate([
+            'search' => 'nullable|string',
+        ]);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('summary', 'like', '%'.$search.'%')
-                    ->orWhereJsonContains('body', $search);
-            });
-        }
-
-        $featured = $query->orderByDesc('created_at')->first();
-        if ($featured && $featured->preview_image) {
-            $featured->preview_image = Storage::url($featured->preview_image);
-        }
-
-        $pageNumber = $request->input('page', 1);
-        $pagination = $query->select(['id', 'title', 'created_at', 'preview_image'])
-            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id))
-            ->orderByDesc('created_at')
-            ->paginate(page: $pageNumber, perPage: Pagination::POSTS_PER_PAGE);
-
-        $posts = $pagination->getCollection()->map(function (Post $post) {
-            $post->preview_image = $post->preview_image
-                ? Storage::url($post->preview_image)
-                : null;
-
-            return $post->only(['id', 'title', 'preview_image', 'created_at']);
-        });
+        $searchTerm = (string) $request->input('search');
+        $featuredPost = $postService->getFeaturedPost($searchTerm);
+        $otherPosts = $postService->getPostsPage($featuredPost, $searchTerm, 1);
 
         return Inertia::render('posts/index', [
-            'featured' => $featured,
-            'nextPageUrl' => $pagination->nextPageUrl(),
-            'posts' => Inertia::merge($posts),
-            'search' => $search,
+            'search' => $searchTerm,
+            'featured' => $featuredPost,
+            'otherPosts' => $otherPosts,
         ]);
+    }
+
+    /**
+     * Get a specific page of posts, used for loading more.
+     */
+    public function getPostsPage(Request $request, PostService $postService): JsonResponse
+    {
+        $request->validate([
+            'search' => 'nullable|string',
+            'page' => 'required|integer|min:1',
+        ]);
+
+        $searchTerm = (string) $request->input('search');
+        $pageNumber = $request->input('page');
+
+        $featuredPost = $postService->getFeaturedPost($searchTerm);
+        $otherPosts = $postService->getPostsPage($featuredPost, $searchTerm, $pageNumber);
+
+        return response()->json($otherPosts);
     }
 
     /**

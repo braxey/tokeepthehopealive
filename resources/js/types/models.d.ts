@@ -6,7 +6,7 @@ export interface Post {
     body: { [key: string]: string }[];
     vote_count: number;
     user_vote: number | null;
-    preview_image: string | null;
+    preview_image: string;
     preview_caption: string | null;
     media: Media[];
 }
