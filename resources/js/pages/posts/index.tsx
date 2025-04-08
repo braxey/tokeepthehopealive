@@ -1,21 +1,55 @@
+import { Input } from '@/components/ui/input';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { Post } from '@/types/models';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { debounce } from 'lodash';
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 type PostIndexProps = {
     featured: Post | null;
     nextPageUrl: string | null;
     posts: Post[];
+    search: string;
 };
 
-export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) {
-    const { props } = usePage();
+export default function Posts({ featured, nextPageUrl, posts, search }: PostIndexProps) {
+    const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>(search || '');
 
     return (
         <AppLayout>
             <Head title="Testimonies" />
             <div className="mx-auto flex h-full w-full max-w-6xl flex-1 flex-col gap-6 p-6">
+                <div className="relative">
+                    <Input
+                        type="text"
+                        placeholder="Search..."
+                        className={
+                            'h-9 w-64 rounded-md border-neutral-200 pr-4 pl-10 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:ring-offset-1 focus:outline-none [&:focus]:border-green-500 [&:focus]:ring-green-500 ' +
+                            (!showSearchBar && 'hidden')
+                        }
+                        value={searchQuery}
+                        onChange={(e) => {
+                            const q = e.target.value;
+                            setSearchQuery(q);
+                            debounce((query) => {
+                                router.get('/posts', { search: query, page: 1 }, { preserveState: true, replace: true });
+                            }, 500)(q);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                router.get('/posts', { search: searchQuery, page: 1 }, { preserveState: true, replace: true });
+                            }
+                        }}
+                    />
+                    <Search
+                        className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-500"
+                        onClick={() => setShowSearchBar(!showSearchBar)}
+                    />
+                </div>
+
                 {/* Featured Post */}
                 {featured && (
                     <div className="rounded-lg bg-white shadow-lg dark:bg-neutral-900">
@@ -126,7 +160,7 @@ export default function Posts({ featured, nextPageUrl, posts }: PostIndexProps) 
                     <div className="mt-6 flex justify-center">
                         <Link
                             key={`load-more`}
-                            href={`${nextPageUrl}&search=${encodeURIComponent((props.search as string) || '')}`}
+                            href={`${nextPageUrl}&search=${encodeURIComponent(search || '')}`}
                             only={['nextPageUrl', 'posts']}
                             preserveScroll
                             prefetch

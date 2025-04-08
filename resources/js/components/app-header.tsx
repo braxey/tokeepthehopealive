@@ -3,7 +3,6 @@ import { Icon } from '@/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,10 +10,8 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
-import { debounce } from 'lodash';
-import { Menu, Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
+import { Menu, Plus } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -29,7 +26,6 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
-    const [searchQuery, setSearchQuery] = useState<string>((page.props.search as string) || '');
     const getInitials = useInitials();
 
     // Main nav items for authenticated users
@@ -169,32 +165,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 ))}
                             </div>
                         </div>
-
-                        {auth.user && page.url.split('?')[0] === '/posts' && (
-                            <div className="relative flex flex-shrink-1 items-center">
-                                <div className="relative">
-                                    <Input
-                                        type="text"
-                                        placeholder="Search posts..."
-                                        className="h-9 w-64 rounded-md border-neutral-200 pr-4 pl-10 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:ring-offset-1 focus:outline-none [&:focus]:border-green-500 [&:focus]:ring-green-500"
-                                        value={searchQuery}
-                                        onChange={(e) => {
-                                            const q = e.target.value;
-                                            setSearchQuery(q);
-                                            debounce((query) => {
-                                                router.get('/posts', { search: query, page: 1 }, { preserveState: true, replace: true });
-                                            }, 500)(q);
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                router.get('/posts', { search: searchQuery, page: 1 }, { preserveState: true, replace: true });
-                                            }
-                                        }}
-                                    />
-                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-                                </div>
-                            </div>
-                        )}
 
                         {auth.user ? (
                             <DropdownMenu>
