@@ -12,9 +12,6 @@ class VoteController extends Controller
 {
     /**
      * Vote on a post.
-     * @param Request $request
-     * @param Post $post
-     * @return RedirectResponse
      */
     public function onPost(Request $request, Post $post): RedirectResponse
     {
@@ -37,7 +34,7 @@ class VoteController extends Controller
                     ? $post->decrement('vote_count')
                     : $post->increment('vote_count');
 
-            // If the user's previous vote on the post is not the same as the submitted vote.
+                // If the user's previous vote on the post is not the same as the submitted vote.
             } else {
                 // Update the existing vote entry.
                 $existingVote->update(['vote' => $value]);
@@ -48,7 +45,7 @@ class VoteController extends Controller
                     : $post->decrement('vote_count', 2);
             }
 
-        // If the user has not previously voted on the post.
+            // If the user has not previously voted on the post.
         } else {
             // Create the vote entry.
             $post->votes()->create(['user_id' => Auth::id(), 'vote' => $value]);
@@ -64,9 +61,6 @@ class VoteController extends Controller
 
     /**
      * Vote on a comment.
-     * @param Request $request
-     * @param Comment $comment
-     * @return RedirectResponse
      */
     public function onComment(Request $request, Comment $comment): RedirectResponse
     {
@@ -89,7 +83,7 @@ class VoteController extends Controller
                     ? $comment->decrement('vote_count')
                     : $comment->increment('vote_count');
 
-            // If the user's previous vote on the comment is not the same as the submitted vote.
+                // If the user's previous vote on the comment is not the same as the submitted vote.
             } else {
                 // Update the existing vote entry.
                 $existingVote->update(['vote' => $value]);
@@ -100,7 +94,7 @@ class VoteController extends Controller
                     : $comment->decrement('vote_count', 2);
             }
 
-        // If the user has not previously voted on the comment.
+            // If the user has not previously voted on the comment.
         } else {
             // Create the vote entry.
             $comment->votes()->create(['user_id' => Auth::id(), 'vote' => $value]);

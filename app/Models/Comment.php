@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 class Comment extends Model
 {
     protected $fillable = ['user_id', 'to_user_id', 'commentable_type', 'commentable_id', 'body', 'vote_count', 'reply_count'];
+
     protected $dates = ['created_at', 'updated_at'];
 
     public function commentable(): MorphTo
@@ -48,7 +49,6 @@ class Comment extends Model
 
     /**
      * Vote of the authenticated user on the comment
-     * @return Vote|null
      */
     public function userVote(): ?Vote
     {

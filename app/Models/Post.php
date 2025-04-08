@@ -24,7 +24,9 @@ use Illuminate\Support\Facades\Auth;
 class Post extends Model
 {
     protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count'];
+
     protected $casts = ['body' => 'array'];
+
     protected $dates = ['created_at', 'updated_at'];
 
     public function user(): BelongsTo
@@ -49,7 +51,6 @@ class Post extends Model
 
     /**
      * Vote of the authenticated user on the post
-     * @return Vote|null
      */
     public function userVote(): ?Vote
     {

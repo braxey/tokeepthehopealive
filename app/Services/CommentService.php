@@ -10,9 +10,6 @@ class CommentService
 {
     /**
      * Get a page of comments for a post with the current page and whether there are more pages.
-     * @param Post $post
-     * @param int $page
-     * @return array
      */
     public function getCommentsForPost(Post $post, int $page = 1): array
     {
@@ -40,15 +37,12 @@ class CommentService
                 'replies' => $replies,
                 'current_page' => $commentPaginator->currentPage(),
                 'has_more' => $commentPaginator->hasMorePages(),
-            ]
+            ],
         ];
     }
 
     /**
      * Get a page of comments for a comment with the current page and whether there are more pages.
-     * @param Comment $comment
-     * @param int $page
-     * @return array
      */
     public function getRepliesForComment(Comment $comment, int $page = 1): array
     {
@@ -70,13 +64,14 @@ class CommentService
             return $reply;
         });
 
-        $commentKey = 'comment-' . $comment->id;
+        $commentKey = 'comment-'.$comment->id;
+
         return [
             $commentKey => [
                 'replies' => $replies,
                 'current_page' => $replyPaginator->currentPage(),
                 'has_more' => $replyPaginator->hasMorePages(),
-            ]
+            ],
         ];
     }
 }

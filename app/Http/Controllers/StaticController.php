@@ -9,7 +9,6 @@ class StaticController extends Controller
 {
     /**
      * Show welcome page.
-     * @return InertiaResponse
      */
     public function welcome(): InertiaResponse
     {
@@ -18,7 +17,6 @@ class StaticController extends Controller
 
     /**
      * Show privacy policy.
-     * @return InertiaResponse
      */
     public function privacyPolicy(): InertiaResponse
     {
@@ -27,7 +25,6 @@ class StaticController extends Controller
 
     /**
      * Show terms of service.
-     * @return InertiaResponse
      */
     public function termsOfService(): InertiaResponse
     {

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Vote extends Model
 {
     protected $fillable = ['user_id', 'votable_type', 'votable_id', 'vote'];
+
     protected $dates = ['created_at', 'updated_at'];
 
     public function votable(): MorphTo

@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Media extends Model
 {
     protected $fillable = ['mediable_type', 'mediable_id', 'path', 'type', 'position', 'caption'];
+
     protected $dates = ['created_at', 'updated_at'];
 
     public function mediable(): MorphTo

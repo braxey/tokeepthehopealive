@@ -7,13 +7,12 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Services\CommentService;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Uid\UuidV4;
 
 class PostController extends Controller
 {
@@ -23,8 +22,6 @@ class PostController extends Controller
 
     /**
      * Display all posts with optional search filtering.
-     * @param  Request $request
-     * @return InertiaResponse
      */
     public function index(Request $request): InertiaResponse
     {
@@ -33,8 +30,8 @@ class PostController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('summary', 'like', '%' . $search . '%')
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('summary', 'like', '%'.$search.'%')
                     ->orWhereJsonContains('body', $search);
             });
         }
@@ -51,7 +48,7 @@ class PostController extends Controller
             ->paginate(page: $pageNumber, perPage: Pagination::POSTS_PER_PAGE);
 
         $posts = $pagination->getCollection()->map(function (Post $post) {
-            $post->preview_image = $post->preview_image 
+            $post->preview_image = $post->preview_image
                 ? Storage::url($post->preview_image)
                 : null;
 
@@ -68,8 +65,6 @@ class PostController extends Controller
 
     /**
      * Display one post.
-     * @param  Post $post
-     * @return InertiaResponse
      */
     public function show(Post $post, CommentService $commentService): InertiaResponse
     {
@@ -78,6 +73,7 @@ class PostController extends Controller
         $post->offsetSet('preview_image', $post->preview_image ? Storage::url($post->preview_image) : null);
         $post->offsetSet('media', $post->media->sortBy('position')->map(function (Media $media) {
             $media->offsetSet('url', Storage::url($media->path));
+
             return $media;
         }));
 
@@ -95,6 +91,7 @@ class PostController extends Controller
 
     /**
      * Display page to create a new post.
+     *
      * @return InertiaResponse
      */
     public function showCreatePage()
@@ -165,13 +162,13 @@ class PostController extends Controller
     /** ******************
      |       Edit       |
      * *************** **/
-
     public function edit(Post $post)
     {
         $post->load('media');
         $post->preview_image = $post->preview_image ? Storage::url($post->preview_image) : null;
         $post->media = $post->media->map(function (Media $media) {
             $media->offsetSet('url', Storage::url($media->path));
+
             return $media;
         });
 
@@ -224,7 +221,7 @@ class PostController extends Controller
         ]);
 
         $deletedMediaIds = $request->input('deleted_media', []);
-        if (!empty($deletedMediaIds)) {
+        if (! empty($deletedMediaIds)) {
             $mediaToDelete = $post->media()->whereIn('id', $deletedMediaIds)->get();
             $mediaToDelete->each(function (Media $media) {
                 Storage::delete($media->path);

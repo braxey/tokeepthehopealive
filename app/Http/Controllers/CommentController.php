@@ -17,9 +17,6 @@ class CommentController extends Controller
 
     /**
      * Comment on a post.
-     * @param Request $request
-     * @param Post $post
-     * @return RedirectResponse
      */
     public function onPost(Request $request, Post $post): RedirectResponse
     {
@@ -43,9 +40,6 @@ class CommentController extends Controller
 
     /**
      * Comment on another comment.
-     * @param Request $request
-     * @param Comment $comment
-     * @return RedirectResponse
      */
     public function onComment(Request $request, Comment $comment): RedirectResponse
     {
@@ -69,9 +63,6 @@ class CommentController extends Controller
 
     /**
      * Get a page of comments for a post with the current page and whether there are more pages.
-     * @param Request $request
-     * @param Post $post
-     * @return JsonResponse
      */
     public function getComments(Request $request, Post $post): JsonResponse
     {
@@ -80,9 +71,6 @@ class CommentController extends Controller
 
     /**
      * Get a page of comments for a top-level-comment with the current page and whether there are more pages.
-     * @param Request $request
-     * @param Comment $comment
-     * @return JsonResponse
      */
     public function getReplies(Request $request, Comment $comment): JsonResponse
     {
