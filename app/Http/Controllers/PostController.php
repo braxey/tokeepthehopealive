@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Constants\Pagination;
+use App\Http\Requests\Posts\StorePostRequest;
+use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Models\Media;
 use App\Models\Post;
 use App\Services\CommentService;
@@ -12,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Ramsey\Uuid\Uuid;
 
 class PostController extends Controller
 {
@@ -91,67 +92,53 @@ class PostController extends Controller
 
     /**
      * Display page to create a new post.
-     *
-     * @return InertiaResponse
      */
-    public function showCreatePage()
+    public function showCreatePage(): InertiaResponse
     {
         return Inertia::render('posts/create');
     }
 
-    public function store(Request $request)
+    /**
+     * Store a post.
+     */
+    public function store(StorePostRequest $request): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|array|min:1',
-            'body.*.section_title' => 'nullable|string|max:255',
-            'body.*.section_text' => 'nullable|string',
-            'summary' => 'required|string',
-            'preview_image' => 'nullable|file|mimes:jpg,png,gif|max:10240',
-            'preview_caption' => 'nullable|string|max:255',
-            'media.*' => 'nullable|file|mimes:jpg,png,gif,mp4,webm|max:10240',
-            'media_positions' => 'nullable|array',
-            'media_positions.*' => 'integer',
-            'media_captions' => 'nullable|array',
-            'media_captions.*' => 'string|nullable|max:255',
-        ]);
+        // Store preview image.
+        [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), uuidv4()];
+        $extension = $request->file('preview_image')->getClientOriginalExtension();
 
-        $previewImagePath = null;
-        if ($request->hasFile('preview_image')) {
-            [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), Uuid::uuid4()->toString()];
-            $extension = $request->file('preview_image')->getClientOriginalExtension();
+        $previewImagePath = "post_preview-$userId-$now-$uuid.$extension";
+        $request->file('preview_image')->storePubliclyAs($previewImagePath);
 
-            $previewImagePath = "post_preview-$userId-$now-$uuid.$extension";
-            $request->file('preview_image')->storePubliclyAs($previewImagePath);
-        }
-
+        // Store post.
         $post = Post::create([
-            'title' => $request->title,
-            'body' => $request->body,
-            'summary' => $request->summary,
-            'user_id' => Auth::id(),
+            'title' => $request->validated('title'),
+            'body' => $request->validated('body'),
+            'summary' => $request->validated('summary'),
+            'user_id' => $userId,
             'preview_image' => $previewImagePath,
-            'preview_caption' => $request->input('preview_caption'),
+            'preview_caption' => $request->validated('preview_caption'),
         ]);
 
+        // Store additional media.
         if ($request->hasFile('media')) {
-            $positions = $request->input('media_positions', []);
-            $captions = $request->input('media_captions', []);
+            $positions = $request->validated('media_positions', []);
+            $captions = $request->validated('media_captions', []);
 
-            [$userId, $now] = [Auth::id(), now()->getTimestamp()];
             foreach ($request->file('media') as $index => $file) {
-                [$uuid, $extension] = [Uuid::uuid4()->toString(), $file->getClientOriginalExtension()];
+                [$uuid, $extension] = [uuidv4(), $file->getClientOriginalExtension()];
+                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
 
+                // Store file.
                 $path = "post_media-$userId-$now-$uuid.$extension";
                 $file->storePubliclyAs($path);
 
-                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-
+                // Store media record.
                 $post->media()->create([
                     'path' => $path,
                     'type' => $type,
-                    'position' => $positions[$index] ?? $index,
-                    'caption' => $captions[$index] ?? null,
+                    'position' => data_get($positions, $index, $index),
+                    'caption' => data_get($captions, $index),
                 ]);
             }
         }
@@ -162,102 +149,95 @@ class PostController extends Controller
     /** ******************
      |       Edit       |
      * *************** **/
-    public function edit(Post $post)
+
+    /**
+     * Display page to edit an existing post.
+     */
+    public function edit(Post $post): InertiaResponse
     {
         $post->load('media');
-        $post->preview_image = $post->preview_image ? Storage::url($post->preview_image) : null;
-        $post->media = $post->media->map(function (Media $media) {
+        $post->offsetSet('preview_image', $post->preview_image ? Storage::url($post->preview_image) : null);
+        $post->offsetSet('media', $post->media->map(function (Media $media) {
             $media->offsetSet('url', Storage::url($media->path));
 
             return $media;
-        });
+        }));
 
         return Inertia::render('posts/edit', [
             'post' => $post,
         ]);
     }
 
-    public function update(Request $request, Post $post)
+    /**
+     * Update post.
+     */
+    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|array|min:1',
-            'body.*.section_title' => 'nullable|string|max:255',
-            'body.*.section_text' => 'nullable|string',
-            'summary' => 'required|string',
-            'preview_image' => 'nullable|file|mimes:jpg,png,gif|max:10240',
-            'preview_caption' => 'nullable|string|max:255',
-            'media.*' => 'nullable|file|mimes:jpg,png,gif,mp4,webm|max:10240',
-            'media_positions' => 'nullable|array',
-            'media_positions.*' => 'integer',
-            'media_captions' => 'nullable|array',
-            'media_captions.*' => 'string|nullable|max:255',
-            'existing_media' => 'nullable|array',
-            'existing_media.*.id' => 'integer|exists:media,id',
-            'existing_media.*.position' => 'integer',
-            'existing_media.*.caption' => 'string|nullable|max:255',
-            'deleted_media' => 'nullable|array',
-            'deleted_media.*' => 'integer|exists:media,id',
-        ]);
-
-        // Update post attributes
+        // Store new preview image.
         $previewImagePath = null;
+        [$userId, $now] = [Auth::id(), now()->getTimestamp()];
         if ($request->hasFile('preview_image')) {
-            [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), Uuid::uuid4()->toString()];
-            $extension = $request->file('preview_image')->getClientOriginalExtension();
-
+            // Store the new file.
+            [$uuid, $extension] = [uuidv4(), $request->file('preview_image')->getClientOriginalExtension()];
             $previewImagePath = "post_preview-$userId-$now-$uuid.$extension";
             $request->file('preview_image')->storePubliclyAs($previewImagePath);
+
+            // Delete previous file.
+            Storage::delete($post->preview_image);
         }
 
-        Storage::delete($post->preview_image);
-
+        // Update the post record.
         $post->update([
-            'title' => $request->title,
-            'body' => $request->body,
-            'summary' => $request->summary,
-            'preview_image' => $previewImagePath,
-            'preview_caption' => $request->input('preview_caption'),
+            'title' => $request->validated('title'),
+            'body' => $request->validated('body'),
+            'summary' => $request->validated('summary'),
+            'preview_image' => $previewImagePath ?: $post->preview_image,
+            'preview_caption' => $request->validated('preview_caption'),
         ]);
 
-        $deletedMediaIds = $request->input('deleted_media', []);
+        // Delete removed additional media.
+        $deletedMediaIds = $request->validated('deleted_media', []);
         if (! empty($deletedMediaIds)) {
             $mediaToDelete = $post->media()->whereIn('id', $deletedMediaIds)->get();
             $mediaToDelete->each(function (Media $media) {
+                // Delete the file.
                 Storage::delete($media->path);
+
+                // Delete the record.
                 $media->delete();
             });
         }
 
-        // Handle existing media updates (position, caption)
-        $existingMedia = $request->input('existing_media', []);
+        // Update existing media positions and indexes.
+        $existingMedia = $request->validated('existing_media', []);
         foreach ($existingMedia as $mediaData) {
             $media = $post->media()->find($mediaData['id']);
             if ($media) {
                 $media->update([
-                    'position' => $mediaData['position'] ?? $media->position,
-                    'caption' => $mediaData['caption'] ?? $media->caption,
+                    'position' => data_get($mediaData, 'position', $media->position),
+                    'caption' => data_get($mediaData, 'caption', $media->caption),
                 ]);
             }
         }
 
+        // Save new additional media.
         if ($request->hasFile('media')) {
-            [$userId, $now] = [Auth::id(), now()->getTimestamp()];
-
-            $positions = $request->input('media_positions', []);
-            $captions = $request->input('media_captions', []);
+            $positions = $request->validated('media_positions', []);
+            $captions = $request->validated('media_captions', []);
             foreach ($request->file('media') as $index => $file) {
-                [$uuid, $extension] = [Uuid::uuid4()->toString(), $file->getClientOriginalExtension()];
+                [$uuid, $extension] = [uuidv4(), $file->getClientOriginalExtension()];
+                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
 
+                // Store media file.
                 $path = "post_media-$userId-$now-$uuid.$extension";
                 $file->storePubliclyAs($path);
 
-                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
+                // Create new media record.
                 $post->media()->create([
                     'path' => $path,
                     'type' => $type,
-                    'position' => $positions[$index] ?? $index,
-                    'caption' => $captions[$index] ?? null,
+                    'position' => data_get($positions, $index, $index),
+                    'caption' => data_get($captions, $index),
                 ]);
             }
         }
@@ -268,17 +248,25 @@ class PostController extends Controller
     /** ******************
      |      Delete      |
      * *************** **/
+
+    /**
+     * Delete a post.
+     */
     public function delete(Post $post): RedirectResponse
     {
-        if ($post->preview_image) {
-            Storage::delete($post->preview_image);
-        }
+        // Delete the preview image.
+        Storage::delete($post->preview_image);
 
+        // Delete all additional media.
         $post->media->each(function (Media $media) {
+            // Delete the file.
             Storage::delete($media->path);
+
+            // Delete the media record.
             $media->delete();
         });
 
+        // Delete the post record.
         $post->delete();
 
         return to_route('posts.index');
