@@ -20,14 +20,16 @@ use Illuminate\Support\Facades\Auth;
  * @property int $reply_count
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Carbon|null $archived_at
+ * @property Carbon|null $deleted_at
  */
 class Post extends Model
 {
-    protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count'];
+    protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count', 'archived_at', 'deleted_at'];
 
     protected $casts = ['body' => 'array'];
 
-    protected $dates = ['created_at', 'updated_at'];
+    protected $dates = ['created_at', 'updated_at', 'archived_at', 'deleted_at'];
 
     public function user(): BelongsTo
     {

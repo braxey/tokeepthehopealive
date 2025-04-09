@@ -16,7 +16,7 @@ class VoteController extends Controller
     public function onPost(Request $request, Post $post): RedirectResponse
     {
         $request->validate([
-            'value' => 'required|in:1,-1',
+            'value' => 'required|in:1',
         ]);
 
         $value = $request->input('value');
@@ -24,26 +24,13 @@ class VoteController extends Controller
 
         // If the user has already voted on this post.
         if ($existingVote) {
-            // If the user's previous vote on the post is the same as the submitted vote.
-            if ($existingVote->vote === $value) {
-                // Delete the vote entry.
-                $existingVote->delete();
+            // Delete the vote entry.
+            $existingVote->delete();
 
-                // Remove the previous vote from the post's vote count.
-                $value === 1
-                    ? $post->decrement('vote_count')
-                    : $post->increment('vote_count');
-
-                // If the user's previous vote on the post is not the same as the submitted vote.
-            } else {
-                // Update the existing vote entry.
-                $existingVote->update(['vote' => $value]);
-
-                // Change the post's vote count by 2 to offset the previous opposite vote.
-                $value === 1
-                    ? $post->increment('vote_count', 2)
-                    : $post->decrement('vote_count', 2);
-            }
+            // Remove the previous vote from the post's vote count.
+            $value === 1
+                ? $post->decrement('vote_count')
+                : $post->increment('vote_count');
 
             // If the user has not previously voted on the post.
         } else {

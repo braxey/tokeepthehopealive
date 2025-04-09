@@ -106,7 +106,7 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
     return (
         <div key={commentKey} className={'border-t border-neutral-200 py-4 dark:border-neutral-700'}>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {comment.user?.name || 'Unknown User'} · {comment.time_since || 'Just now'}
+                {comment.user?.username || 'Unknown User'} · {comment.time_since || 'Just now'}
             </p>
             <p className="mt-1 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">

@@ -9,6 +9,8 @@ export interface Post {
     preview_image: string;
     preview_caption: string | null;
     media: Media[];
+    deleted_at: string | null;
+    archived_at: string | null;
 }
 
 export interface Media {

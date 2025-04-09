@@ -12,6 +12,7 @@ import { Link } from '@inertiajs/react';
 
 type RegisterForm = {
     name: string;
+    username: string;
     email: string;
     password: string;
     password_confirmation: string;
@@ -20,6 +21,7 @@ type RegisterForm = {
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
+        username: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -58,6 +60,25 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
+                        <Label htmlFor="username" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                            Username
+                        </Label>
+                        <Input
+                            id="username"
+                            type="text"
+                            required
+                            tabIndex={2}
+                            autoComplete="none"
+                            value={data.username}
+                            onChange={(e) => setData('username', e.target.value)}
+                            disabled={processing}
+                            placeholder="Username"
+                            className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                        />
+                        <InputError message={errors.username} className="mt-1 text-sm text-red-600 dark:text-red-400" />
+                    </div>
+
+                    <div className="grid gap-2">
                         <Label htmlFor="email" className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             Email Address
                         </Label>
@@ -65,7 +86,7 @@ export default function Register() {
                             id="email"
                             type="email"
                             required
-                            tabIndex={2}
+                            tabIndex={3}
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
@@ -84,7 +105,7 @@ export default function Register() {
                             id="password"
                             type="password"
                             required
-                            tabIndex={3}
+                            tabIndex={4}
                             autoComplete="new-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
@@ -103,7 +124,7 @@ export default function Register() {
                             id="password_confirmation"
                             type="password"
                             required
-                            tabIndex={4}
+                            tabIndex={5}
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
@@ -135,7 +156,7 @@ export default function Register() {
                     <Button
                         type="submit"
                         className="mt-4 w-full rounded-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
-                        tabIndex={5}
+                        tabIndex={6}
                         disabled={processing}
                     >
                         {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
@@ -147,7 +168,7 @@ export default function Register() {
                     Already have an account?{' '}
                     <TextLink
                         href={route('login')}
-                        tabIndex={6}
+                        tabIndex={7}
                         className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                     >
                         Log in

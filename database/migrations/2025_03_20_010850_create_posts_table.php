@@ -18,9 +18,10 @@ return new class extends Migration
             $table->json('body');
             $table->string('preview_image')->nullable();
             $table->string('preview_caption')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id');
             $table->integer('vote_count')->default(0);
             $table->integer('reply_count')->default(0);
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
         });
     }

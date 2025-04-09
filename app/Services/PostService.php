@@ -25,7 +25,10 @@ class PostService
         }
 
         // Get the featured post if one exists.
-        $featured = $query->orderByDesc('created_at')->first();
+        $featured = $query
+            ->whereNull('archived_at')
+            ->orderByDesc('created_at')
+            ->first();
 
         if (! $featured) {
             return null;
@@ -63,6 +66,7 @@ class PostService
 
         // Get the page of posts.
         $paginator = $query->select(['id', 'title', 'created_at', 'preview_image'])
+            ->whereNull('archived_at')
             ->whereNot('id', $featured->id) // Skip the featured post.
             ->orderByDesc('created_at')
             ->paginate(page: $page, perPage: Pagination::POSTS_PER_PAGE);

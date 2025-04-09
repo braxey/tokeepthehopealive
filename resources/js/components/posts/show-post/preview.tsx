@@ -27,18 +27,6 @@ export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
                     ▲
                 </Link>
                 <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
-                <Link
-                    href={`/posts/${post.id}/vote`}
-                    method="post"
-                    data={{ value: -1 }}
-                    preserveState
-                    preserveScroll
-                    except={['comments']}
-                    className={`text-xl ${post.user_vote === -1 ? 'text-red-500' : 'text-neutral-500'} transition hover:text-red-600`}
-                    disabled={!auth.user}
-                >
-                    ▼
-                </Link>
             </div>
             {post.preview_image && (
                 <div className="mb-6 flex flex-col items-center">

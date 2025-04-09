@@ -1,3 +1,4 @@
+import DeletePost from '@/components/posts/edit-posts/delete-post';
 import AppLayout from '@/layouts/app-layout';
 import { Media, Post } from '@/types/models';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -443,17 +444,7 @@ export default function EditPost({ post }: EditProps) {
                             {processing ? 'Updating...' : 'Update Testimony'}
                         </button>
 
-                        <button
-                            type="button"
-                            disabled={deleting || processing}
-                            onClick={() => {
-                                setDeleting(true);
-                                router.delete(route('posts.delete', { post: post.id }));
-                            }}
-                            className="rounded-lg bg-red-600 px-6 py-3 text-base font-medium text-white shadow-md transition hover:bg-red-700 disabled:bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 dark:disabled:bg-red-400"
-                        >
-                            {deleting ? 'Deleting...' : 'Delete Testimony'}
-                        </button>
+                        <DeletePost postId={post.id} deleting={deleting} setDeleting={setDeleting} processing={processing} />
                     </div>
                 </form>
             </div>
