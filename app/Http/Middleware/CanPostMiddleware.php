@@ -16,10 +16,8 @@ class CanPostMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
-
-        if (! $user->permission->canPost()) {
-            return redirect()->route('posts.index')->with('error', 'Unauthorized');
+        if (! Auth::user()->permission->canPost()) {
+            return to_route('posts.index')->with('error', 'Unauthorized');
         }
 
         return $next($request);
