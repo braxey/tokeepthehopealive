@@ -104,7 +104,7 @@ class PostController extends Controller
         [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), uuidv4()];
         $extension = $request->file('preview_image')->getClientOriginalExtension();
 
-        $previewImagePath = "post_preview-$userId-$now-$uuid.$extension";
+        $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
         $request->file('preview_image')->storePubliclyAs($previewImagePath);
 
         // Store post.
@@ -127,7 +127,7 @@ class PostController extends Controller
                 $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
 
                 // Store file.
-                $path = "post_media-$userId-$now-$uuid.$extension";
+                $path = "posts/post_media-$userId-$now-$uuid.$extension";
                 $file->storePubliclyAs($path);
 
                 // Store media record.
@@ -176,7 +176,7 @@ class PostController extends Controller
         if ($request->hasFile('preview_image')) {
             // Store the new file.
             [$uuid, $extension] = [uuidv4(), $request->file('preview_image')->getClientOriginalExtension()];
-            $previewImagePath = "post_preview-$userId-$now-$uuid.$extension";
+            $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
             $request->file('preview_image')->storePubliclyAs($previewImagePath);
 
             // Delete previous file.
@@ -226,7 +226,7 @@ class PostController extends Controller
                 $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
 
                 // Store media file.
-                $path = "post_media-$userId-$now-$uuid.$extension";
+                $path = "posts/post_media-$userId-$now-$uuid.$extension";
                 $file->storePubliclyAs($path);
 
                 // Create new media record.

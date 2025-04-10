@@ -1,7 +1,5 @@
 <?php
 
-use App\Constants\Disk;
-
 return [
 
     /*
@@ -58,15 +56,6 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
-            'report' => false,
-        ],
-
-        Disk::POSTS_PUBLIC => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/posts'),
-            'url' => env('APP_URL').'/storage/posts',
-            'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
