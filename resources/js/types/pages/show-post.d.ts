@@ -2,6 +2,7 @@ import { Comment, Post } from '@/types/models';
 
 export type Comment_ShowPost = Comment & {
     user: User;
+    to_user?: User;
     time_since: string;
     user_vote: number | null;
     [key: string]: unknown;

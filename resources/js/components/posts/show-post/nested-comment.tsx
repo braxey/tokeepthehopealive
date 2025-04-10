@@ -44,7 +44,7 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
     return (
         <div key={commentKey} className={'mt-2 ml-6 border-l-2 border-neutral-300 py-4 pl-4 dark:border-neutral-600'}>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {comment.user?.username || 'Unknown User'} · {comment.time_since || 'Just now'}
+                {comment.user?.username || '[deleted user]'} ► {comment.to_user?.username || '[deleted user]'} · {comment.time_since || 'Just now'}
             </p>
             <p className="mt-1 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">

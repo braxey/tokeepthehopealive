@@ -47,7 +47,7 @@ class CommentService
     public function getRepliesForComment(Comment $comment, int $page = 1): array
     {
         $replyPaginator = $comment->comments()
-            ->with(['votes', 'user'])
+            ->with(['votes', 'user', 'to_user'])
             ->orderBy('created_at')
             ->paginate(page: $page, perPage: Pagination::COMMENTS_PER_PAGE);
 
