@@ -1,7 +1,7 @@
 import DeletePost from '@/components/posts/edit-posts/delete-post';
 import AppLayout from '@/layouts/app-layout';
 import { Media, Post } from '@/types/models';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 type EditProps = {

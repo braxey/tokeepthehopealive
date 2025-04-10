@@ -35,7 +35,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             href: '/posts',
             icon: null,
         },
-        ...(auth.user && auth.canPost
+        ...(auth.user && auth.can_post
             ? [
                   {
                       title: 'New Post',

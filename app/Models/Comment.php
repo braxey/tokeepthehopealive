@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
  * @property int $vote_count
  * @property int $reply_count
  * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property Carbon|null $updated_at
  */
 class Comment extends Model
 {

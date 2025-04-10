@@ -55,7 +55,7 @@ export default function Welcome() {
                         >
                             Explore Testimonies
                         </Link>
-                        {auth.canPost && (
+                        {auth.can_post && (
                             <Link
                                 href={route('posts.create')}
                                 className="inline-block rounded-lg border border-emerald-600 px-6 py-3 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 dark:border-emerald-500 dark:text-emerald-500 dark:hover:bg-emerald-500/10"

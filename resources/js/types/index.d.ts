@@ -3,7 +3,7 @@ import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
-    canPost: boolean;
+    can_post: boolean;
 }
 
 export interface BreadcrumbItem {

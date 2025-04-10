@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $position
  * @property string|null $caption
  * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property Carbon|null $updated_at
  */
 class Media extends Model
 {

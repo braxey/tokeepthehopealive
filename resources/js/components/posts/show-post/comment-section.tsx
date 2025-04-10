@@ -40,10 +40,6 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
 
     const handleSubmitPostComment = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!auth.user) {
-            alert('Please log in to comment.');
-            return;
-        }
 
         submitPostComment(route('posts.comment', { post: post.id }), {
             preserveScroll: true,
@@ -112,14 +108,19 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                             placeholder="Add a comment..."
                             className="min-h-[100px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                             rows={3}
-                            disabled={!auth.user || postProcessing}
+                            disabled={!auth.user || !auth.user.email_verified_at || postProcessing}
                         />
                         {postErrors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{postErrors.body}</p>}
+                        {!auth.user && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Sign in before commenting.'}</p>}
+                        {auth.user && !auth.user.email_verified_at && (
+                            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Verify your email before commenting.'}</p>
+                        )}
+
                         {isTextareaFocused && (
                             <div className="mt-3 flex gap-3">
                                 <button
                                     type="submit"
-                                    disabled={!auth.user || postProcessing}
+                                    disabled={!auth.user || !auth.user.email_verified_at || postProcessing}
                                     className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                                 >
                                     {postProcessing ? 'Posting...' : 'Post Comment'}

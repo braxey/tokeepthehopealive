@@ -8,8 +8,8 @@ export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
     return (
         <>
             <h1
-                className={`mb-6 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100 ${auth.canPost ? 'cursor-pointer' : ''}`}
-                onClick={() => auth.canPost && router.get(route('posts.edit', { post: post.id }))}
+                className={`mb-6 text-center text-3xl font-bold text-neutral-900 dark:text-neutral-100 ${auth.can_post ? 'cursor-pointer' : ''}`}
+                onClick={() => auth.can_post && router.get(route('posts.edit', { post: post.id }))}
             >
                 {post.title}
             </h1>
@@ -22,7 +22,6 @@ export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
                     preserveScroll
                     except={['comments']}
                     className={`text-xl ${post.user_vote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
-                    disabled={!auth.user}
                 >
                     ▲
                 </Link>

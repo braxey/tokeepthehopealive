@@ -13,12 +13,12 @@ Route::get('/terms', [StaticController::class, 'termsOfService'])->name('terms')
 /** ******************
  |       Posts      |
  * *************** **/
-Route::prefix('posts')->middleware(['auth'])->group(function () {
+Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('posts.index');
     Route::get('/load-more', [PostController::class, 'getPostsPage'])->name('posts.load-more');
     Route::get('/{post}', [PostController::class, 'show'])->where('post', '[0-9]+')->name('posts.show');
 
-    Route::middleware(['can_post'])->group(function () {
+    Route::middleware(['auth', 'verified', 'can_post'])->group(function () {
         Route::get('/create', [PostController::class, 'showCreatePage'])->name('posts.create');
         Route::post('/', [PostController::class, 'store'])->name('posts.store');
 
@@ -32,7 +32,7 @@ Route::prefix('posts')->middleware(['auth'])->group(function () {
 /** ******************
  |     Comments     |
  * *************** **/
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/comments/{comment}/comment', [CommentController::class, 'onComment'])->name('comments.comment');
     Route::post('/posts/{post}/comment', [CommentController::class, 'onPost'])->name('posts.comment');
 });

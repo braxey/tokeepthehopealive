@@ -18,7 +18,7 @@ class CanPostMiddleware
     {
         $user = Auth::user();
 
-        if (! in_array($user->email, config('posters'))) {
+        if (! $user->permission->canPost()) {
             return redirect()->route('posts.index')->with('error', 'Unauthorized');
         }
 

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $votable_id
  * @property int $vote
  * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property Carbon|null $updated_at
  */
 class Vote extends Model
 {

@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
-                'canPost' => in_array($request->user()?->email, config('posters', [])),
+                'can_post' => (bool) $request->user()?->permission->canPost(),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
