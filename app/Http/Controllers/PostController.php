@@ -105,7 +105,10 @@ class PostController extends Controller
         $extension = $request->file('preview_image')->getClientOriginalExtension();
 
         $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
-        $request->file('preview_image')->storePubliclyAs($previewImagePath);
+        $file = $request->file('preview_image');
+        app()->isLocal() ? $file->storePubliclyAs($previewImagePath) : $file->storeAs($previewImagePath, [
+            'CacheControl' => 'max-age=31536000, public',
+        ]);
 
         // Store post.
         $post = Post::create([
@@ -128,7 +131,9 @@ class PostController extends Controller
 
                 // Store file.
                 $path = "posts/post_media-$userId-$now-$uuid.$extension";
-                $file->storePubliclyAs($path);
+                app()->isLocal() ? $file->storePubliclyAs($path) : $file->storeAs($path, [
+                    'CacheControl' => 'max-age=31536000, public',
+                ]);
 
                 // Store media record.
                 $post->media()->create([
@@ -177,7 +182,11 @@ class PostController extends Controller
             // Store the new file.
             [$uuid, $extension] = [uuidv4(), $request->file('preview_image')->getClientOriginalExtension()];
             $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
-            $request->file('preview_image')->storePubliclyAs($previewImagePath);
+
+            $file = $request->file('preview_image');
+            app()->isLocal() ? $file->storePubliclyAs($previewImagePath) : $file->storeAs($previewImagePath, [
+                'CacheControl' => 'max-age=31536000, public',
+            ]);
 
             // Delete previous file.
             Storage::delete($post->preview_image);
@@ -227,7 +236,9 @@ class PostController extends Controller
 
                 // Store media file.
                 $path = "posts/post_media-$userId-$now-$uuid.$extension";
-                $file->storePubliclyAs($path);
+                app()->isLocal() ? $file->storePubliclyAs($path) : $file->storeAs($path, [
+                    'CacheControl' => 'max-age=31536000, public',
+                ]);
 
                 // Create new media record.
                 $post->media()->create([

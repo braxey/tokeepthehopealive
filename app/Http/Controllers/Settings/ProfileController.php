@@ -41,7 +41,9 @@ class ProfileController extends Controller
             [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), uuidv4()];
             $extension = ($file = $request->file('avatar'))->getClientOriginalExtension();
             $path = "avatars/$userId-$now-$uuid.$extension";
-            app()->isLocal() ? $file->storePubliclyAs($path) : $file->storeAs($path);
+            app()->isLocal() ? $file->storePubliclyAs($path) : $file->storeAs($path, [
+                'CacheControl' => 'max-age=31536000, public',
+            ]);
 
             // Delete current pfp.
             if ($user->avatar) {
