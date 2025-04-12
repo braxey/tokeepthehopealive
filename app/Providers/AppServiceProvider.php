@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,10 +20,13 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(UrlGenerator $url): void
     {
-        $isProduction = config('app.env') === 'production';
-        Model::shouldBeStrict(! $isProduction);
-        DB::prohibitDestructiveCommands($isProduction);
+        Model::shouldBeStrict(! app()->isProduction());
+        DB::prohibitDestructiveCommands(app()->isProduction());
+
+        if (! app()->isLocal()) {
+            $url->forceSchema('https');
+        }
     }
 }
