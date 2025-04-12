@@ -26,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(app()->isProduction());
 
         if (! app()->isLocal()) {
-            $url->forceSchema('https');
+            $url->forceScheme('https');
         }
     }
 }
+ 
