@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -36,17 +37,25 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
+        $user = $request->user();
+
+        $sharedData = [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
-                'can_post' => (bool) $request->user()?->permission->canPost(),
+                'user' => $user,
+                'can_post' => (bool) $user?->permission->canPost(),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
         ];
+
+        if ($user && $user->avatar) {
+            data_set($sharedData, 'auth.avatar_url', Storage::url($user->avatar));
+        }
+
+        return $sharedData;
     }
 }

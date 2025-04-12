@@ -4,6 +4,7 @@ import type { Config } from 'ziggy-js';
 export interface Auth {
     user: User;
     can_post: boolean;
+    avatar_url?: string;
 }
 
 export interface BreadcrumbItem {
@@ -36,7 +37,8 @@ export interface User {
     name: string;
     username: string;
     email: string;
-    avatar?: string;
+    avatar: string | null;
+    avatar_url?: string;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;

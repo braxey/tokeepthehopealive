@@ -1,3 +1,5 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
 import { Comment_ShowPost, ShowPostTopLevelCommentProps } from '@/types/pages/show-post';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
@@ -6,6 +8,7 @@ import ShowPostNestedComment from './nested-comment';
 
 export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCommentProps) {
     const commentKey = `comment-${comment.id}`;
+    const getInitials = useInitials();
     const { auth } = usePage<SharedData>().props;
     const [userVote, setUserVote] = useState<number | null>(comment.user_vote);
     const [voteCount, setVoteCount] = useState<number>(comment.vote_count);
@@ -103,10 +106,18 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
 
     return (
         <div key={commentKey} className={'border-t border-neutral-200 py-4 dark:border-neutral-700'}>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {comment.user?.username || '[deleted user]'} · {comment.time_since || 'Just now'}
-            </p>
-            <p className="mt-1 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+            <div className="flex flex-row items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                <Avatar className="size-8 overflow-hidden rounded-full">
+                    <AvatarImage src={comment.user?.avatar_url} alt={comment.user?.username || ''} />
+                    <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                        {getInitials(comment.user?.username || '')}
+                    </AvatarFallback>
+                </Avatar>
+                <p>
+                    {comment.user?.username || '[deleted user]'} · {comment.time_since || 'Just now'}
+                </p>
+            </div>
+            <p className="mt-2 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <Link

@@ -1,3 +1,5 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
 import { ShowPostNestedCommentProps } from '@/types/pages/show-post';
 import { Link, useForm, usePage } from '@inertiajs/react';
@@ -6,6 +8,7 @@ import { FormEvent, useState } from 'react';
 export default function ShowPostNestedComment({ comment, topLevelCommentId, loadCommentsAfterReply }: ShowPostNestedCommentProps) {
     const commentKey = `comment-${comment.id}`;
     const { auth } = usePage<SharedData>().props;
+    const getInitials = useInitials();
     const [userVote, setUserVote] = useState<number | null>(comment.user_vote);
     const [voteCount, setVoteCount] = useState<number>(comment.vote_count);
     const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
@@ -43,10 +46,19 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
 
     return (
         <div key={commentKey} className={'mt-2 ml-6 border-l-2 border-neutral-300 py-4 pl-4 dark:border-neutral-600'}>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {comment.user?.username || '[deleted user]'} ► {comment.to_user?.username || '[deleted user]'} · {comment.time_since || 'Just now'}
-            </p>
-            <p className="mt-1 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+            <div className="flex flex-row items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                <Avatar className="size-8 overflow-hidden rounded-full">
+                    <AvatarImage src={comment.user?.avatar_url} alt={comment.user?.username} />
+                    <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                        {getInitials(comment.user?.username)}
+                    </AvatarFallback>
+                </Avatar>
+                <p>
+                    {comment.user?.username || '[deleted user]'} ► {comment.to_user?.username || '[deleted user]'} ·{' '}
+                    {comment.time_since || 'Just now'}
+                </p>
+            </div>
+            <p className="mt-2 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <Link

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,13 +30,28 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user()->fresh();
+        $user->fill($request->safe()->except(['avatar']));
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        if ($request->file('avatar') !== null) {
+            [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), uuidv4()];
+            $extension = ($file = $request->file('avatar'))->getClientOriginalExtension();
+            $path = "avatars/$userId-$now-$uuid.$extension";
+            app()->isLocal() ? $file->storePubliclyAs($path) : $file->storeAs($path);
+
+            // Delete current pfp.
+            if ($user->avatar) {
+                Storage::delete($user->avatar);
+            }
+
+            $user->avatar = $path;
+        }
+
+        $user->save();
 
         return to_route('profile.edit');
     }
@@ -50,6 +66,10 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        if ($user->avatar) {
+            Storage::delete($user->avatar);
+        }
 
         Auth::logout();
 

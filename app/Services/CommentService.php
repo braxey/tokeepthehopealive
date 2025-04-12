@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants\Pagination;
 use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class CommentService
 {
@@ -25,6 +26,11 @@ class CommentService
 
             // Get the user's vote on the comment.
             $comment->offsetSet('user_vote', $comment->userVote()?->vote);
+
+            // Set the avatar URL if a user has an avatar set.
+            if ($comment->user && $comment->user->avatar) {
+                $comment->user->avatar_url = Storage::url($comment->user->avatar);
+            }
 
             // Unset the votes so we don't send them to the frontend.
             unset($comment->votes);
@@ -57,6 +63,11 @@ class CommentService
 
             // Get the user's vote on the comment.
             $reply->offsetSet('user_vote', $reply->userVote()?->vote);
+
+            // Set the avatar URL if a user has an avatar set.
+            if ($reply->user && $reply->user->avatar) {
+                $reply->user->avatar_url = Storage::url($reply->user->avatar);
+            }
 
             // Unset the votes so we don't send them to the frontend.
             unset($reply->votes);
