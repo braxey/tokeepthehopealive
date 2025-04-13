@@ -20,7 +20,6 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
         post,
         processing: replyProcessing,
         errors: replyErrors,
-        reset: resetReply,
         clearErrors: clearReplyErrors,
     } = useForm<{
         body: string;
@@ -37,7 +36,8 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                resetReply('body');
+                setReplyData('body', '');
+                setShowReplyForm(false);
                 setIsTextareaFocused(false);
                 loadCommentsAfterReply();
             },

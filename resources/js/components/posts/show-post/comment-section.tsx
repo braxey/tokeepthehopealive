@@ -45,7 +45,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                resetPostComment('body');
+                setPostCommentData('body', '');
                 setIsTextareaFocused(false);
                 const params = new URLSearchParams({ page: String(1) });
 

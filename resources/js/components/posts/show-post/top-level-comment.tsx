@@ -36,7 +36,6 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
         post,
         processing: replyProcessing,
         errors: replyErrors,
-        reset: resetReply,
         clearErrors: clearReplyErrors,
     } = useForm<{
         body: string;
@@ -97,7 +96,8 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                resetReply('body');
+                setReplyData('body', '');
+                setShowReplyForm(false);
                 setIsTextareaFocused(false);
                 loadCommentsAfterReply();
             },
