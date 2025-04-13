@@ -7,6 +7,7 @@ import { FormEvent, useState } from 'react';
 export default function ShowPostCommentSection({ post, comments }: ShowPostCommentSectionProps) {
     const { auth } = usePage<SharedData>().props;
     const [showComments, setShowComments] = useState<boolean>(false);
+    const [commentCount, setCommentCount] = useState<number>(post.reply_count);
     const [topLevelComments, setTopLevelComments] = useState<Comment_ShowPost[]>(comments.post.replies);
     const [currentPage, setCurrentPage] = useState<number>(comments.post.current_page);
     const [hasMoreComments, setHasMoreComments] = useState<boolean>(comments.post.has_more);
@@ -47,6 +48,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
             onSuccess: () => {
                 setPostCommentData('body', '');
                 setIsTextareaFocused(false);
+                setCommentCount((prev) => prev + 1);
                 const params = new URLSearchParams({ page: String(1) });
 
                 fetch(`${route('comments.post', { post: post.id })}?${params.toString()}`, {
@@ -81,7 +83,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                         }}
                         className="rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:hover:bg-emerald-900"
                     >
-                        View Comments
+                        {commentCount === 1 ? 'Show 1 Comment' : `Show ${commentCount} Comments`}
                     </button>
                 </div>
             ) : (

@@ -15,6 +15,7 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
     const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
     const [currentReplyPage, setCurrentReplyPage] = useState<number>(1);
     const [hasMoreReplies, setHasMoreReplies] = useState<boolean>(comment.reply_count > 0);
+    const [replyCount, setReplyCount] = useState<number>(comment.reply_count);
     const [showReplies, setShowReplies] = useState<boolean>(false);
     const [replies, setReplies] = useState<Comment_ShowPost[]>([]);
     const [loadedReplies, setLoadedReplies] = useState<boolean>(false);
@@ -46,6 +47,10 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
     });
 
     const loadCommentsAfterReply = () => {
+        // This is called for top-level and nested comments after a successful reply,
+        // so we can increment the reply count for the top-level comment here.
+        setReplyCount((prev) => prev + 1);
+
         const params = new URLSearchParams({ page: String(1) });
 
         fetch(`${route('comments.comment', { comment: comment.id })}?${params.toString()}`, {
@@ -212,7 +217,7 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                     )}
                 </form>
             )}
-            {(comment.reply_count > 0 || replies.length > 0) && (
+            {(replyCount > 0 || replies.length > 0) && (
                 <button
                     disabled={loadingReplies}
                     onClick={() => {
@@ -224,7 +229,11 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                     }}
                     className="mt-4 w-full text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                 >
-                    {showReplies ? 'Hide Replies' : loadingReplies ? 'Loading replies...' : 'Show Replies'}
+                    {showReplies
+                        ? 'Hide Replies'
+                        : loadingReplies
+                          ? 'Loading replies...'
+                          : 'Show ' + (replyCount !== 1 ? replyCount + ' Replies' : 'Reply')}
                 </button>
             )}
             {showReplies && replies.length > 0 && (
