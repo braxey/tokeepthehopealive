@@ -233,7 +233,9 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                         ? 'Hide Replies'
                         : loadingReplies
                           ? 'Loading replies...'
-                          : 'Show ' + (replyCount !== 1 ? replyCount + ' Replies' : 'Reply')}
+                          : replyCount === 1
+                            ? 'Show 1 Reply'
+                            : `Show ${replyCount} Replies`}
                 </button>
             )}
             {showReplies && replies.length > 0 && (
