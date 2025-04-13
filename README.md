@@ -33,6 +33,6 @@ This project allows users to view and interact with testimonies:
 
 ## Environment Differences
 * **Database:** Locally, `sqlite` is used while `MySQL` is used when the app is deployed.
-* **Storage:** Locally, the `public` disk is used (the reason for setup step 3) while `s3` is used when the app is deployed.
+* **Storage:** Locally, the `public` disk is used (the reason for the symlink in setup step 2) while `s3` is used when the app is deployed.
   * Only the CloudFlare proxies can read the bucket images.
   * CF aggressively caches images since all uploaded images have a unique UUID v4 -- reducing requests to s3.
