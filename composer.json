@@ -1,15 +1,21 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "braxey/tokeepthehopealive",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Interact with the testimonies of others \"to keep the hope alive.\"",
     "keywords": [
-        "laravel",
-        "framework"
+        "hope",
+        "testimonies"
     ],
-    "license": "MIT",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Gillyware, LLC",
+            "email": "braxey@gillyware.com"
+        }
+    ],
     "require": {
-        "php": "^8.2",
+        "php": "8.4.*",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
@@ -53,6 +59,16 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "setup": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "composer install",
+            "npm install",
+            "npm run build",
+            "@php artisan storage:link",
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
