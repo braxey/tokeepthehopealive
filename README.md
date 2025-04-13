@@ -1,8 +1,8 @@
 # To Keep The Hope Alive
-This project is for my sister to share the testimonies of others. TKTHA began with Laravel's React Starter Kit.
+[tokeepthehopealive.com](tokeepthehopealive.com) is for my sister to share the testimonies of others. TKTHA began with Laravel's React Starter Kit.
 
 ## Overview
-This project allows users to view and interact with testimonies:
+TKTHA allows users to view and interact with testimonies:
 * Read access to posts and comments is unrestricted.
 * Authenticated users may vote on posts and comments.
 * Authenticated users with verified emails may comment.
