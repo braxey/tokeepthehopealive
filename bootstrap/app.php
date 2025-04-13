@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\TrustedProxies;
 use App\Http\Middleware\CanPostMiddleware;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -16,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(
-            at: '*',
+            at: TrustedProxies::IPS,
         );
 
         $middleware->encryptCookies(except: ['appearance']);
