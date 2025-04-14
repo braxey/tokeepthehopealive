@@ -69,7 +69,7 @@ final class CommentController extends Controller
      */
     public function getComments(Request $request, Post $post): JsonResponse
     {
-        return response()->json($this->commentService->getCommentsForPost($post, $request->input('page', 1)));
+        return response()->json($this->commentService->getCommentsForPost($post, (int) $request->input('page', 1)));
     }
 
     /**
@@ -77,6 +77,6 @@ final class CommentController extends Controller
      */
     public function getReplies(Request $request, Comment $comment): JsonResponse
     {
-        return response()->json($this->commentService->getRepliesForComment($comment, $request->input('page', 1)));
+        return response()->json($this->commentService->getRepliesForComment($comment, (int) $request->input('page', 1)));
     }
 }

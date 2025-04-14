@@ -55,7 +55,7 @@ final class PostController extends Controller
         ]);
 
         $searchTerm = (string) $request->input('search');
-        $pageNumber = $request->input('page');
+        $pageNumber = (int) $request->input('page');
 
         $featuredPost = $postService->getFeaturedPost($searchTerm);
         $otherPosts = $postService->getPostsPage($featuredPost, $searchTerm, $pageNumber);
