@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class Media extends Model
+final class Media extends Model
 {
     protected $fillable = ['mediable_type', 'mediable_id', 'path', 'type', 'position', 'caption'];
 

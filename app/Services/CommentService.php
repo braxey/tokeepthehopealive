@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Constants\Pagination;
@@ -8,7 +10,7 @@ use App\Models\Post;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
-class CommentService
+final class CommentService
 {
     /**
      * Get a page of comments for a post with the current page and whether there are more pages.

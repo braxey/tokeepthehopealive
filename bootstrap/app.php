@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Constants\TrustedProxies;
 use App\Http\Middleware\CanPostMiddleware;
 use App\Http\Middleware\HandleAppearance;

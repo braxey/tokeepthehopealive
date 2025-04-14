@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Constants\Pagination;
 use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
 
-class PostService
+final class PostService
 {
     /**
      * Get the featured post with optional searching.

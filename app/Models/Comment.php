@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -27,7 +29,7 @@ use Illuminate\Support\Facades\Auth;
  * @property Collection<Comment> $comments
  * @property Collection<Vote> $votes
  */
-class Comment extends Model
+final class Comment extends Model
 {
     protected $fillable = ['user_id', 'to_user_id', 'commentable_type', 'commentable_id', 'body', 'vote_count', 'reply_count'];
 
@@ -50,7 +52,7 @@ class Comment extends Model
 
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(self::class, 'commentable');
     }
 
     public function votes(): MorphMany

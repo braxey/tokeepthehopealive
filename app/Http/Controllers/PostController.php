@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Posts\StorePostRequest;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
-class PostController extends Controller
+final class PostController extends Controller
 {
     /** ******************
      |     Display      |

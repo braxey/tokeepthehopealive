@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\Permission;
@@ -22,7 +24,7 @@ use Illuminate\Notifications\Notifiable;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class User extends Authenticatable implements MustVerifyEmail
+final class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;

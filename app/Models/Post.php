@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -29,7 +31,7 @@ use Illuminate\Support\Facades\Auth;
  * @property Collection<Vote> $votes
  * @property Collection<Media> $media
  */
-class Post extends Model
+final class Post extends Model
 {
     protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count', 'archived_at', 'deleted_at'];
 

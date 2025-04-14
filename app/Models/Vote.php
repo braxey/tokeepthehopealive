@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class Vote extends Model
+final class Vote extends Model
 {
     protected $fillable = ['user_id', 'votable_type', 'votable_id', 'vote'];
 
