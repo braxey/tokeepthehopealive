@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -22,6 +23,11 @@ use Illuminate\Support\Facades\Auth;
  * @property Carbon|null $updated_at
  * @property Carbon|null $archived_at
  * @property Carbon|null $deleted_at
+ *
+ * @property User|null $user
+ * @property Collection<Comment> $comments
+ * @property Collection<Vote> $votes
+ * @property Collection<Media> $media
  */
 class Post extends Model
 {
@@ -56,6 +62,8 @@ class Post extends Model
      */
     public function userVote(): ?Vote
     {
-        return $this->votes()->firstWhere('user_id', Auth::id());
+        /** @var Vote|null $userVote */
+        $userVote = $this->votes()->firstWhere('user_id', Auth::id());
+        return $userVote;
     }
 }

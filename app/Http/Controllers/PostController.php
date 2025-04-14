@@ -204,7 +204,7 @@ class PostController extends Controller
         // Delete removed additional media.
         $deletedMediaIds = $request->validated('deleted_media', []);
         if (! empty($deletedMediaIds)) {
-            $mediaToDelete = $post->media()->whereIn('id', $deletedMediaIds)->get();
+            $mediaToDelete = $post->media->whereIn('id', $deletedMediaIds);
             $mediaToDelete->each(function (Media $media) {
                 // Delete the file.
                 Storage::delete($media->path);
@@ -217,7 +217,7 @@ class PostController extends Controller
         // Update existing media positions and indexes.
         $existingMedia = $request->validated('existing_media', []);
         foreach ($existingMedia as $mediaData) {
-            $media = $post->media()->find($mediaData['id']);
+            $media = $post->media->firstWhere('id', $mediaData['id']);
             if ($media) {
                 $media->update([
                     'position' => data_get($mediaData, 'position', $media->position),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Vote;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,8 +56,9 @@ class VoteController extends Controller
             'value' => 'required|in:1,-1',
         ]);
 
-        $value = $request->input('value');
+        /** @var Vote|null */
         $existingVote = $comment->votes()->firstWhere('user_id', Auth::id());
+        $value = $request->input('value');
 
         // If the user has already voted on this comment.
         if ($existingVote) {

@@ -11,11 +11,11 @@ enum Permission: int
 
     public function isAdmin(): bool
     {
-        return $this->value & self::Admin->value;
+        return (bool)($this->value & self::Admin->value);
     }
 
     public function canPost(): bool
     {
-        return $this->value & self::CanPost->value;
+        return (bool)($this->value & self::CanPost->value);
     }
 }

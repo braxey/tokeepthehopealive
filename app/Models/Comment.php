@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -20,6 +21,11 @@ use Illuminate\Support\Facades\Auth;
  * @property int $reply_count
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
+ *
+ * @property User|null $user
+ * @property User|null $to_user
+ * @property Collection<Comment> $comments
+ * @property Collection<Vote> $votes
  */
 class Comment extends Model
 {
@@ -57,6 +63,8 @@ class Comment extends Model
      */
     public function userVote(): ?Vote
     {
-        return $this->votes()->firstWhere('user_id', Auth::id());
+        /** @var Vote|null $userVote */
+        $userVote = $this->votes()->firstWhere('user_id', Auth::id());
+        return $userVote;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants\Pagination;
 use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class CommentService
@@ -20,7 +21,10 @@ class CommentService
             ->orderByDesc('created_at')
             ->paginate(page: $page, perPage: Pagination::COMMENTS_PER_PAGE);
 
-        $replies = $commentPaginator->getCollection()->map(function (Comment $comment) {
+        /** @var Collection<Comment> $replies */
+        $replies = $commentPaginator->getCollection();
+
+        $replies = $replies->map(function (Comment $comment) {
             // Get the time since the comment was posted.
             $comment->offsetSet('time_since', $comment->created_at->diffForHumans(short: true));
 
@@ -29,7 +33,7 @@ class CommentService
 
             // Set the avatar URL if a user has an avatar set.
             if ($comment->user && $comment->user->avatar) {
-                $comment->user->avatar_url = Storage::url($comment->user->avatar);
+                $comment->user->offsetSet('avatar_url', Storage::url($comment->user->avatar));
             }
 
             // Unset the votes so we don't send them to the frontend.
@@ -57,7 +61,10 @@ class CommentService
             ->orderBy('created_at')
             ->paginate(page: $page, perPage: Pagination::COMMENTS_PER_PAGE);
 
-        $replies = $replyPaginator->getCollection()->map(function (Comment $reply) {
+        /** @var Collection<Comment> $replies */
+        $replies = $replyPaginator->getCollection();
+
+        $replies = $replies->map(function (Comment $reply) {
             // Get the time since the comment was posted.
             $reply->offsetSet('time_since', $reply->created_at->diffForHumans(short: true));
 
@@ -66,7 +73,7 @@ class CommentService
 
             // Set the avatar URL if a user has an avatar set.
             if ($reply->user && $reply->user->avatar) {
-                $reply->user->avatar_url = Storage::url($reply->user->avatar);
+                $reply->user->offsetSet('avatar_url', Storage::url($reply->user->avatar));
             }
 
             // Unset the votes so we don't send them to the frontend.
