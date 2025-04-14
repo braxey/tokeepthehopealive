@@ -32,6 +32,9 @@ jobs:
       - name: Run Pint
         run: vendor/bin/pint
 
+      - name: Run Peck
+        run: vendor/bin/peck
+
       - name: Format Frontend
         run: npm run format
 
