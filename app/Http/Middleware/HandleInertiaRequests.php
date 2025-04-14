@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'can_post' => (bool) $user?->permission->canPost(),
             ],
             'ziggy' => fn (): array => [
-                ...(new Ziggy)->toArray(),
+                ...(new Ziggy())->toArray(),
                 'location' => $request->url(),
             ],
         ];
