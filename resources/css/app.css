@@ -156,4 +156,27 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    .post-show img,
+    .post-show video {
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .post-show h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0.75 0 0.75rem;
+    }
+    .post-show h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0.75 0 0.75rem;
+    }
+    .post-show p {
+        margin-top: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
 }

@@ -1,6 +1,6 @@
 import ShowPostTopLevelComment from '@/components/posts/show-post/top-level-comment';
 import { SharedData } from '@/types';
-import { Comment_ShowPost, ShowPostCommentSectionProps } from '@/types/pages/show-post';
+import { Comment_ShowPost, ShowPostCommentSectionProps } from '@/types/pages/posts/show';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 

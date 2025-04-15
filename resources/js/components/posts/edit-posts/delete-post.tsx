@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DeletePostProps } from '@/types/pages/edit-posts';
+import { DeletePostProps } from '@/types/pages/posts/edit';
 import { router } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
@@ -16,9 +16,9 @@ export default function DeletePost({ postId, deleting, processing, setDeleting }
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="rounded-lg bg-red-600 px-6 py-3 text-base font-medium text-white shadow-md transition hover:bg-red-700 disabled:bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 dark:disabled:bg-red-400">
-                    {deleting ? 'Deleting...' : 'Delete Testimony'}
-                </button>
+                <Button className="rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-md transition hover:bg-red-700 disabled:bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 dark:disabled:bg-red-400">
+                    {deleting ? 'Deleting...' : 'Delete'}
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>Are you sure you want to delete this testimony?</DialogTitle>

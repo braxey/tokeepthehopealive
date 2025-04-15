@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StaticController;
 use App\Http\Controllers\VoteController;
@@ -21,7 +22,7 @@ Route::prefix('posts')->group(function () {
     Route::get('/{post}', [PostController::class, 'show'])->where('post', '[0-9]+')->name('posts.show');
 
     Route::middleware(['auth', 'verified', 'can_post'])->group(function () {
-        Route::get('/create', [PostController::class, 'showCreatePage'])->name('posts.create');
+        Route::get('/create', [PostController::class, 'create'])->name('posts.create');
         Route::post('/', [PostController::class, 'store'])->name('posts.store');
 
         Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
@@ -42,12 +43,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/comments/post/{post}', [CommentController::class, 'getComments'])->name('comments.post');
 Route::get('/comments/{comment}', [CommentController::class, 'getReplies'])->name('comments.comment');
 
-/** ******************
- |       Votes      |
- * *************** **/
 Route::middleware(['auth'])->group(function () {
+
+    /** ******************
+     |       Votes      |
+    * *************** **/
+
     Route::post('/comments/{comment}/vote', [VoteController::class, 'onComment'])->name('comments.vote');
     Route::post('/posts/{post}/vote', [VoteController::class, 'onPost'])->name('posts.vote');
+
+    /** ******************
+     |       Media      |
+    * *************** **/
+
+    Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
 });
 
 /** ******************

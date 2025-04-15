@@ -8,7 +8,8 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
-        "types": "tsc --noEmit"
+        "types": "tsc --noEmit",
+        "postinstall": "node ./postinstall.js"
     },
     "keywords": [
         "hope",
@@ -46,12 +47,17 @@
         "@radix-ui/react-toggle-group": "^1.1.2",
         "@radix-ui/react-tooltip": "^1.1.8",
         "@tailwindcss/vite": "^4.0.6",
+        "@tinymce/tinymce-react": "^6.1.0",
         "@types/react": "^19.0.3",
         "@types/react-dom": "^19.0.2",
+        "@uppy/core": "^4.4.4",
+        "@uppy/xhr-upload": "^4.3.3",
         "@vitejs/plugin-react": "^4.3.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",
+        "dompurify": "^3.2.5",
+        "fs-extra": "^11.3.0",
         "globals": "^15.14.0",
         "laravel-vite-plugin": "^1.0",
         "lodash": "^4.17.21",
@@ -61,6 +67,7 @@
         "tailwind-merge": "^3.0.1",
         "tailwindcss": "^4.0.0",
         "tailwindcss-animate": "^1.0.7",
+        "tinymce": "^7.8.0",
         "typescript": "^5.7.2",
         "vite": "^6.0"
     },

@@ -1,4 +1,4 @@
-import { PostIndexOtherPostsProps } from '@/types/pages/index-posts';
+import { PostIndexOtherPostsProps } from '@/types/pages/posts';
 import { Link } from '@inertiajs/react';
 
 export default function OtherPosts({ posts }: PostIndexOtherPostsProps) {

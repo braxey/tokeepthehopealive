@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Auth;
  * @property int $id
  * @property string $title
  * @property string $summary
- * @property array $body
+ * @property string $body
+ * @property string $searchable_body
  * @property string|null $preview_image
  * @property string|null $preview_caption
  * @property int $user_id
@@ -33,9 +34,7 @@ use Illuminate\Support\Facades\Auth;
  */
 final class Post extends Model
 {
-    protected $fillable = ['title', 'summary', 'body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count', 'archived_at', 'deleted_at'];
-
-    protected $casts = ['body' => 'array'];
+    protected $fillable = ['title', 'summary', 'body', 'searchable_body', 'preview_image', 'preview_caption', 'user_id', 'vote_count', 'reply_count', 'archived_at', 'deleted_at'];
 
     protected $dates = ['created_at', 'updated_at', 'archived_at', 'deleted_at'];
 

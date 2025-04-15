@@ -1,4 +1,4 @@
-import { PostIndexFeaturedPostProps } from '@/types/pages/index-posts';
+import { PostIndexFeaturedPostProps } from '@/types/pages/posts';
 import { Link } from '@inertiajs/react';
 
 export default function FeaturedPostMobile({ featured }: PostIndexFeaturedPostProps) {

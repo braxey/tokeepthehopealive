@@ -1,17 +1,17 @@
 export interface Post {
     id: number;
-    user_id: number;
     title: string;
     summary: string;
-    body: { [key: string]: string }[];
+    body: string;
+    preview_image_url: string;
+    preview_caption: string | null;
+    user_id: number;
     vote_count: number;
     reply_count: number;
-    user_vote: number | null;
-    preview_image: string;
-    preview_caption: string | null;
-    media: Media[];
-    deleted_at: string | null;
     archived_at: string | null;
+    created_at: string;
+    updated_at: string;
+    user_vote?: number | null;
 }
 
 export interface Media {

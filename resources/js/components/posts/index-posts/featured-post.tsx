@@ -1,6 +1,6 @@
 import FeaturedPostDesktop from '@/components/posts/index-posts/featured-post-desktop';
 import FeaturedPostMobile from '@/components/posts/index-posts/featured-post-mobile';
-import { PostIndexFeaturedPostProps } from '@/types/pages/index-posts';
+import { PostIndexFeaturedPostProps } from '@/types/pages/posts';
 
 export default function FeaturedPost({ featured }: PostIndexFeaturedPostProps) {
     return (

@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input';
-import { PostIndexSearchBarProps } from '@/types/pages/index-posts';
+import { PostIndexSearchBarProps } from '@/types/pages/posts';
 import { router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useRef, useState } from 'react';

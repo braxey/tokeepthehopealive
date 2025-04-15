@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
-import { ShowPostNestedCommentProps } from '@/types/pages/show-post';
+import { ShowPostNestedCommentProps } from '@/types/pages/posts/show';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 

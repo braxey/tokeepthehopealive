@@ -4,7 +4,7 @@ import OtherPosts from '@/components/posts/index-posts/other-posts';
 import SearchBar from '@/components/posts/index-posts/search-bar';
 import AppLayout from '@/layouts/app-layout';
 import { Post } from '@/types/models';
-import { PostIndexProps } from '@/types/pages/index-posts';
+import { PostIndexProps } from '@/types/pages/posts';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 

@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Discover testimonies of hope, resilience, and faith. Read stories that inspire and uplift.">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- Favicons --}}
         <link id="icon_favicon_svg" rel="icon" type="image/svg+xml" href="{{ url('favicon.svg') }}" sizes="any">

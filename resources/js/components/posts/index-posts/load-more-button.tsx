@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { PostIndexLoadMoreButtonProps } from '@/types/pages/index-posts';
+import { PostIndexLoadMoreButtonProps } from '@/types/pages/posts';
 
 export default function LoadMoreButton({ handleLoadMore }: PostIndexLoadMoreButtonProps) {
     return (

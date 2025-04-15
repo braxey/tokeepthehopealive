@@ -1,5 +1,5 @@
 import { SharedData } from '@/types';
-import { ShowPostPreviewProps } from '@/types/pages/show-post';
+import { ShowPostPreviewProps } from '@/types/pages/posts/show';
 import { Link, router, usePage } from '@inertiajs/react';
 
 export default function ShowPostPreview({ post }: ShowPostPreviewProps) {

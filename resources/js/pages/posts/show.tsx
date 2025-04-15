@@ -1,7 +1,7 @@
 import ShowPostCommentSection from '@/components/posts/show-post/comment-section';
 import ShowPostPreviewAndContent from '@/components/posts/show-post/preview-and-content';
 import AppLayout from '@/layouts/app-layout';
-import { ShowPostProps } from '@/types/pages/show-post';
+import { ShowPostProps } from '@/types/pages/posts/show';
 import { Head } from '@inertiajs/react';
 
 export default function ShowPost({ post, comments }: ShowPostProps) {

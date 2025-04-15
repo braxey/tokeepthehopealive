@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
-import { Comment_ShowPost, ShowPostTopLevelCommentProps } from '@/types/pages/show-post';
+import { Comment_ShowPost, ShowPostTopLevelCommentProps } from '@/types/pages/posts/show';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 import ShowPostNestedComment from './nested-comment';

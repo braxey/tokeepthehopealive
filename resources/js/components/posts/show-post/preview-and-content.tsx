@@ -1,6 +1,6 @@
 import ShowPostContent from '@/components/posts/show-post/content';
 import ShowPostPreview from '@/components/posts/show-post/preview';
-import { ShowPostPreviewAndContentProps } from '@/types/pages/show-post';
+import { ShowPostPreviewAndContentProps } from '@/types/pages/posts/show';
 
 export default function ShowPostPreviewAndContent({ post }: ShowPostPreviewAndContentProps) {
     return (

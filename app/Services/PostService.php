@@ -22,7 +22,7 @@ final class PostService
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', '%'.$searchTerm.'%')
                     ->orWhere('summary', 'like', '%'.$searchTerm.'%')
-                    ->orWhereJsonContains('body', $searchTerm);
+                    ->orWhere('searchable_body', 'like', '%'.$searchTerm.'%');
             });
         }
 
@@ -62,7 +62,7 @@ final class PostService
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', '%'.$searchTerm.'%')
                     ->orWhere('summary', 'like', '%'.$searchTerm.'%')
-                    ->orWhereJsonContains('body', $searchTerm);
+                    ->orWhere('searchable_body', 'like', '%'.$searchTerm.'%');
             });
         }
 
