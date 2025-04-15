@@ -101,7 +101,7 @@ final class PostController extends Controller
     {
         // Store preview image
         $file = $request->file('preview_image');
-        $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEW);
+        $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEWS);
         $this->mediaService->storeFile($mediaDto);
 
         // Store post
@@ -142,7 +142,7 @@ final class PostController extends Controller
         $path = null;
         if ($request->hasFile('preview_image')) {
             $file = $request->file('preview_image');
-            $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEW);
+            $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEWS);
             $path = $mediaDto->getPath();
             $this->mediaService->storeFile($mediaDto);
 

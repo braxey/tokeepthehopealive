@@ -6,6 +6,7 @@ namespace App\Constants;
 
 final class MediaDirectory
 {
-    public const string PREVIEW = "posts/preview";
-    public const string ADDITIONAL = "posts/additional";
+    public const string AVATARS = "user/avatars";
+    public const string PREVIEWS = "post/previews";
+    public const string ADDITIONAL = "post/additional";
 }

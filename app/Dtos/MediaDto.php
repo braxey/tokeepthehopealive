@@ -24,7 +24,7 @@ final class MediaDto
         $this->uuid = uuidv4();
         $this->extension = $file->getClientOriginalExtension();
         $this->type = str_contains($file->getMimeType(), 'video') ? MediaType::VIDEO : MediaType::IMAGE;
-        $this->path = "{$this->storageDirectory}/{$this->type}-{$this->userId}-{$this->nowTimestamp}-{$this->uuid}.{$this->extension}";
+        $this->path = "{$this->storageDirectory}/{$this->userId}-{$this->nowTimestamp}-{$this->uuid}.{$this->extension}";
     }
 
     /**
