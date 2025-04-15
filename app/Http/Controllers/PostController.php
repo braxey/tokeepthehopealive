@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Constants\MediaDirectory;
+use App\Dtos\MediaDto;
 use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
-use App\Models\Media;
 use App\Models\Post;
 use App\Services\CommentService;
+use App\Services\MediaService;
 use App\Services\PostService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,18 +23,25 @@ use Mews\Purifier\Facades\Purifier;
 
 final class PostController extends Controller
 {
+    public function __construct(
+        private PostService $postService,
+        private CommentService $commentService,
+        private MediaService $mediaService,
+    ) {
+    }
+
     /**
      * Show all posts.
      */
-    public function index(Request $request, PostService $postService): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         $request->validate([
             'search' => 'nullable|string',
         ]);
 
         $searchTerm = (string) $request->input('search');
-        $featuredPost = $postService->getFeaturedPost($searchTerm);
-        $otherPosts = $postService->getPostsPage($featuredPost, $searchTerm, 1);
+        $featuredPost = $this->postService->getFeaturedPost($searchTerm);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, 1);
 
         return Inertia::render('posts/index', [
             'search' => $searchTerm,
@@ -44,7 +53,7 @@ final class PostController extends Controller
     /**
      * Get a page of posts.
      */
-    public function getPostsPage(Request $request, PostService $postService): JsonResponse
+    public function getPostsPage(Request $request): JsonResponse
     {
         $request->validate([
             'search' => 'nullable|string',
@@ -54,8 +63,8 @@ final class PostController extends Controller
         $searchTerm = (string) $request->input('search');
         $pageNumber = (int) $request->input('page');
 
-        $featuredPost = $postService->getFeaturedPost($searchTerm);
-        $otherPosts = $postService->getPostsPage($featuredPost, $searchTerm, $pageNumber);
+        $featuredPost = $this->postService->getFeaturedPost($searchTerm);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $pageNumber);
 
         return response()->json($otherPosts);
     }
@@ -63,13 +72,13 @@ final class PostController extends Controller
     /**
      * Show a single post.
      */
-    public function show(Post $post, CommentService $commentService): InertiaResponse
+    public function show(Post $post): InertiaResponse
     {
         $post->load('votes', 'media');
         $post->offsetSet('user_vote', $post->userVote()?->vote);
         $post->offsetSet('preview_image', $post->preview_image ? Storage::url($post->preview_image) : null);
 
-        $comments = $commentService->getCommentsForPost($post, 1);
+        $comments = $this->commentService->getCommentsForPost($post, 1);
 
         return Inertia::render('posts/show', [
             'post' => $post,
@@ -91,16 +100,9 @@ final class PostController extends Controller
     public function store(StorePostRequest $request): RedirectResponse
     {
         // Store preview image
-        $previewImagePath = null;
-        [$userId, $now, $uuid] = [Auth::id(), now()->getTimestamp(), uuidv4()];
-        if ($request->hasFile('preview_image')) {
-            $extension = $request->file('preview_image')->getClientOriginalExtension();
-            $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
-            $file = $request->file('preview_image');
-            app()->isLocal() ? $file->storePubliclyAs($previewImagePath) : $file->storeAs($previewImagePath, [
-                'CacheControl' => 'max-age=31536000, public',
-            ]);
-        }
+        $file = $request->file('preview_image');
+        $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEW);
+        $this->mediaService->storeFile($mediaDto);
 
         // Store post
         $post = Post::create([
@@ -108,15 +110,12 @@ final class PostController extends Controller
             'body' => $body = Purifier::clean($request->validated('body')),
             'searchable_body' => strip_tags($body),
             'summary' => $request->validated('summary'),
-            'user_id' => $userId,
-            'preview_image' => $previewImagePath,
+            'user_id' => Auth::id(),
+            'preview_image' => $mediaDto->getPath(),
             'preview_caption' => $request->validated('preview_caption'),
         ]);
 
-        // Link any uploaded media.
-        $uploadedMediaIds = session('uploaded_media_ids', []);
-        Media::query()->whereIn('id', $uploadedMediaIds)->update(['mediable_id' => $post->id]);
-        session()->forget('uploaded_media_ids');
+        $this->mediaService->syncMediaForPost($post);
 
         return to_route('posts.index')->with('success', 'Post created!');
     }
@@ -140,15 +139,12 @@ final class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
         // Store new preview image
-        $previewImagePath = null;
-        [$userId, $now] = [Auth::id(), now()->getTimestamp()];
+        $path = null;
         if ($request->hasFile('preview_image')) {
-            [$uuid, $extension] = [uuidv4(), $request->file('preview_image')->getClientOriginalExtension()];
-            $previewImagePath = "posts/post_preview-$userId-$now-$uuid.$extension";
             $file = $request->file('preview_image');
-            app()->isLocal() ? $file->storePubliclyAs($previewImagePath) : $file->storeAs($previewImagePath, [
-                'CacheControl' => 'max-age=31536000, public',
-            ]);
+            $mediaDto = new MediaDto(file: $file, storageDirectory: MediaDirectory::PREVIEW);
+            $path = $mediaDto->getPath();
+            $this->mediaService->storeFile($mediaDto);
 
             // Delete old preview image
             Storage::delete($post->preview_image);
@@ -160,14 +156,11 @@ final class PostController extends Controller
             'body' => $body = Purifier::clean($request->validated('body')),
             'searchable_body' => strip_tags($body),
             'summary' => $request->validated('summary'),
-            'preview_image' => $previewImagePath ?: $post->preview_image,
+            'preview_image' => $path ?: $post->preview_image,
             'preview_caption' => $request->validated('preview_caption'),
         ]);
 
-        // Link any uploaded media.
-        $uploadedMediaIds = session('uploaded_media_ids', []);
-        Media::query()->whereIn('id', $uploadedMediaIds)->update(['mediable_id' => $post->id]);
-        session()->forget('uploaded_media_ids');
+        $this->mediaService->syncMediaForPost($post);
 
         return to_route('posts.show', $post)->with('success', 'Post updated!');
     }
@@ -177,14 +170,8 @@ final class PostController extends Controller
      */
     public function delete(Post $post): RedirectResponse
     {
-        // Delete preview image
-        Storage::delete($post->preview_image);
-
-        // Delete media
-        $post->media->each(function (Media $media) {
-            Storage::delete($media->path);
-            $media->delete();
-        });
+        // Delete all media associated with the post.
+        $this->mediaService->deleteForPost($post);
 
         // Delete post
         $post->delete();

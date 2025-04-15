@@ -6,6 +6,8 @@
             "config",
             "debugbar",
             "dropdown",
+            "dto",
+            "dtos",
             "eslint",
             "favicon",
             "filesystems",

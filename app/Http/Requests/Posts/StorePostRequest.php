@@ -25,7 +25,7 @@ final class StorePostRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'preview_image' => ['nullable', 'image', 'max:5120'],
+            'preview_image' => ['image', 'max:5120'],
             'preview_caption' => ['nullable', 'string', 'max:255'],
             'summary' => ['required', 'string'],
             'body' => ['required', 'string'],
