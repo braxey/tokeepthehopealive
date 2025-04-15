@@ -18,7 +18,7 @@ export default function CreatePost() {
     return (
         <AppLayout>
             <Head title="Create Testimony" />
-            <div className="mx-auto flex h-full w-full max-w-3xl flex-1 flex-col gap-6 p-6">
+            <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col gap-6 p-6">
                 <div className="flex justify-end">
                     <Button
                         onClick={() => setIsPreviewMode(!isPreviewMode)}
@@ -27,6 +27,7 @@ export default function CreatePost() {
                         {isPreviewMode ? 'Back to Creating' : 'Preview'}
                     </Button>
                 </div>
+
                 {isPreviewMode ? (
                     <PostPreview
                         title={data.title}
