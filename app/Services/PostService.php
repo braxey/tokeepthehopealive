@@ -16,9 +16,9 @@ final class PostService
     /**
      * Get the featured post with optional searching.
      */
-    public function getFeaturedPost(string $searchTerm): ?Post
+    public function getFeaturedPost(string $searchTerm, string $order): ?Post
     {
-        $query = Post::query();
+        $query = Post::query()->whereNull('archived_at');
 
         // Apply search term if one is given.
         if ($searchTerm) {
@@ -29,11 +29,16 @@ final class PostService
             });
         }
 
+        // Apply ordering.
+        match($order) {
+            'popular' => $query->orderByDesc('vote_count')->orderByDesc('created_at'),
+            'oldest' => $query->orderBy('created_at'),
+            'recent' => $query->orderByDesc('created_at'),
+            default => $query->orderByDesc('created_at')
+        };
+
         // Get the featured post if one exists.
-        $featured = $query
-            ->whereNull('archived_at')
-            ->orderByDesc('created_at')
-            ->first();
+        $featured = $query->first();
 
         if (! $featured) {
             return null;
@@ -48,7 +53,7 @@ final class PostService
     /**
      * Get a page of posts for a post with the current page and whether there are more pages.
      */
-    public function getPostsPage(?Post $featured, string $searchTerm, int $page = 1): array
+    public function getPostsPage(?Post $featured, string $searchTerm, string $order, int $page = 1): array
     {
         if (! $featured) {
             return [
@@ -58,7 +63,9 @@ final class PostService
             ];
         }
 
-        $query = Post::query();
+        $query = Post::query()
+            ->whereNull('archived_at')
+            ->whereNot('id', $featured->id); // Skip the featured post.
 
         // Apply search term if one is given.
         if ($searchTerm) {
@@ -69,12 +76,17 @@ final class PostService
             });
         }
 
+        // Apply ordering.
+        match($order) {
+            'popular' => $query->orderByDesc('vote_count')->orderByDesc('created_at'),
+            'oldest' => $query->orderBy('created_at'),
+            'recent' => $query->orderByDesc('created_at'),
+            default => $query->orderByDesc('created_at')
+        };
+
         // Get the page of posts.
         $paginator = $query->select(['id', 'title', 'created_at', 'preview_image'])
-            ->whereNull('archived_at')
-            ->whereNot('id', $featured->id) // Skip the featured post.
-            ->orderByDesc('created_at')
-            ->paginate(page: $page, perPage: Pagination::POSTS_PER_PAGE);
+                        ->paginate(page: $page, perPage: Pagination::POSTS_PER_PAGE);
 
         // Set the preview image url for all the posts in the page.
         $posts = $paginator->getCollection()->map(function (Post $post) {

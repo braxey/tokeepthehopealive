@@ -1,15 +1,15 @@
 import FeaturedPost from '@/components/posts/index-posts/featured-post';
+import { PostFilters } from '@/components/posts/index-posts/filters';
 import LoadMoreButton from '@/components/posts/index-posts/load-more-button';
 import { NoPosts } from '@/components/posts/index-posts/no-posts';
 import OtherPosts from '@/components/posts/index-posts/other-posts';
-import SearchBar from '@/components/posts/index-posts/search-bar';
 import AppLayout from '@/layouts/app-layout';
 import { Post } from '@/types/models';
 import { PostIndexProps } from '@/types/pages/posts';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function PostIndex({ featured, otherPosts, search }: PostIndexProps) {
+export default function PostIndex({ featured, otherPosts, search, order }: PostIndexProps) {
     const [posts, setPosts] = useState<Post[]>(otherPosts.posts);
     const [currentPage, setCurrentPage] = useState<number>(otherPosts.current_page);
     const [hasMore, setHasMore] = useState<boolean>(otherPosts.has_more);
@@ -47,7 +47,7 @@ export default function PostIndex({ featured, otherPosts, search }: PostIndexPro
         <AppLayout>
             <Head title="Testimonies" />
             <div className="mx-auto flex h-full w-full max-w-6xl flex-1 flex-col gap-6 p-6">
-                <SearchBar search={search || ''} />
+                <PostFilters search={search || ''} order={order || 'recent'} />
 
                 {featured ? (
                     <>

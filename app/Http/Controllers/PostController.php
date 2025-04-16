@@ -36,14 +36,17 @@ final class PostController extends Controller
     {
         $request->validate([
             'search' => 'nullable|string',
+            'order' => 'nullable|string|in:popular,recent,oldest',
         ]);
 
         $searchTerm = (string) $request->input('search');
-        $featuredPost = $this->postService->getFeaturedPost($searchTerm);
-        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, 1);
+        $order = (string) $request->input('order', 'recent');
+        $featuredPost = $this->postService->getFeaturedPost($searchTerm, $order);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $order, 1);
 
         return Inertia::render('posts/index', [
             'search' => $searchTerm,
+            'order' => $order,
             'featured' => $featuredPost,
             'otherPosts' => $otherPosts,
         ]);
@@ -56,14 +59,16 @@ final class PostController extends Controller
     {
         $request->validate([
             'search' => 'nullable|string',
+            'order' => 'nullable|string|in:popular,recent,oldest',
             'page' => 'required|integer|min:1',
         ]);
 
         $searchTerm = (string) $request->input('search');
+        $order = (string) $request->input('order', 'recent');
         $pageNumber = (int) $request->input('page');
 
-        $featuredPost = $this->postService->getFeaturedPost($searchTerm);
-        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $pageNumber);
+        $featuredPost = $this->postService->getFeaturedPost($searchTerm, $order);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $order, $pageNumber);
 
         return response()->json($otherPosts);
     }
