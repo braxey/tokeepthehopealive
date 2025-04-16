@@ -20,7 +20,6 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
         post: submitPostComment,
         processing: postProcessing,
         errors: postErrors,
-        reset: resetPostComment,
         clearErrors: clearPostErrors,
     } = useForm<{
         body: string;
@@ -68,7 +67,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
     };
 
     const handleCancelPostComment = () => {
-        resetPostComment('body');
+        setPostCommentData('body', '');
         clearPostErrors();
         setIsTextareaFocused(false);
     };

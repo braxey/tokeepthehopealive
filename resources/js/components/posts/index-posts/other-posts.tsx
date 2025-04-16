@@ -12,7 +12,7 @@ export default function OtherPosts({ posts }: PostIndexOtherPostsProps) {
                 >
                     <div className="relative aspect-video">
                         <img
-                            src={post.preview_image}
+                            src={post.preview_image_url}
                             alt={post.title}
                             className="h-full w-full rounded-t-lg object-cover shadow-md"
                             style={{ objectPosition: 'center' }}

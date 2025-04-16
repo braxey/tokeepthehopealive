@@ -209,7 +209,10 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                     </button>
                     <button
                         type="button"
-                        onClick={() => setShowReplyForm(false)}
+                        onClick={() => {
+                            setShowReplyForm(false);
+                            setReplyData('body', '');
+                        }}
                         className="cursor-pointer rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
                     >
                         Cancel

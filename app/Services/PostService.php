@@ -37,7 +37,7 @@ final class PostService
         }
 
         // Set the url to the preview image.
-        $featured->offsetSet('preview_image', Storage::url($featured->preview_image));
+        $featured->offsetSet('preview_image_url', Storage::url($featured->preview_image));
 
         return $featured;
     }
@@ -75,9 +75,9 @@ final class PostService
 
         // Set the preview image url for all the posts in the page.
         $posts = $paginator->getCollection()->map(function (Post $post) {
-            $post->offsetSet('preview_image', Storage::url($post->preview_image));
+            $post->offsetSet('preview_image_url', Storage::url($post->preview_image));
 
-            return $post->only(['id', 'title', 'preview_image', 'created_at']);
+            return $post->only(['id', 'title', 'preview_image_url', 'created_at']);
         });
 
         return [
