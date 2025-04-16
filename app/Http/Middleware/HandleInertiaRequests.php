@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Services\MediaService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -55,7 +55,8 @@ final class HandleInertiaRequests extends Middleware
         ];
 
         if ($user && $user->avatar) {
-            data_set($sharedData, 'auth.avatar_url', Storage::url($user->avatar));
+            $mediaService = new MediaService();
+            data_set($sharedData, 'auth.avatar_url', $mediaService->getUrl($user->avatar));
         }
 
         return $sharedData;

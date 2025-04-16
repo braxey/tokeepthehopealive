@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Storage;
 final class MediaService
 {
     /**
+     * Return the media URL given the path.
+     */
+    public function getUrl(string $path): string
+    {
+        return Storage::url($path);
+    }
+
+    /**
      * Store a media file on the disk.
      */
     public function storeFile(MediaDto $dto): void
@@ -19,6 +27,16 @@ final class MediaService
         app()->isLocal()
           ? $dto->getFile()->storePubliclyAs($dto->getPath())
           : $dto->getFile()->storeAs($dto->getPath(), ['CacheControl' => 'max-age=31536000, public']);
+    }
+
+    /**
+     * Delete a media file off the disk.
+     */
+    public function deleteFile(string $path): void
+    {
+        if (Storage::exists($path)) {
+            Storage::delete($path);
+        }
     }
 
     /**

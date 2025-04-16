@@ -6,10 +6,13 @@ namespace App\Services;
 
 use App\Constants\Pagination;
 use App\Models\Post;
-use Illuminate\Support\Facades\Storage;
 
 final class PostService
 {
+    public function __construct(private MediaService $mediaService)
+    {
+    }
+
     /**
      * Get the featured post with optional searching.
      */
@@ -37,7 +40,7 @@ final class PostService
         }
 
         // Set the url to the preview image.
-        $featured->offsetSet('preview_image_url', Storage::url($featured->preview_image));
+        $featured->offsetSet('preview_image_url', $this->mediaService->getUrl($featured->preview_image));
 
         return $featured;
     }
@@ -75,7 +78,7 @@ final class PostService
 
         // Set the preview image url for all the posts in the page.
         $posts = $paginator->getCollection()->map(function (Post $post) {
-            $post->offsetSet('preview_image_url', Storage::url($post->preview_image));
+            $post->offsetSet('preview_image_url', $this->mediaService->getUrl($post->preview_image));
 
             return $post->only(['id', 'title', 'preview_image_url', 'created_at']);
         });

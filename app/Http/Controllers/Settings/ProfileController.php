@@ -13,7 +13,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,7 +47,7 @@ final class ProfileController extends Controller
 
             // Delete current pfp.
             if ($user->avatar) {
-                Storage::delete($user->avatar);
+                $mediaService->deleteFile($user->avatar);
             }
 
             $user->avatar = $mediaDto->getPath();
@@ -62,7 +61,7 @@ final class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, MediaService $mediaService): RedirectResponse
     {
         $request->validate([
             'password' => ['required', 'current_password'],
@@ -71,7 +70,7 @@ final class ProfileController extends Controller
         $user = $request->user();
 
         if ($user->avatar) {
-            Storage::delete($user->avatar);
+            $mediaService->deleteFile($user->avatar);
         }
 
         Auth::logout();

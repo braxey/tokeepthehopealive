@@ -9,7 +9,6 @@ use App\Dtos\MediaDto;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 final class MediaController extends Controller
 {
@@ -27,7 +26,7 @@ final class MediaController extends Controller
         $media = $mediaService->storeAdditionalMedia($dto);
 
         return response()->json([
-            'url' => Storage::url($media->path),
+            'url' => $mediaService->getUrl($media->path),
         ]);
     }
 }

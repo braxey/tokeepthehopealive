@@ -16,7 +16,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Mews\Purifier\Facades\Purifier;
@@ -76,7 +75,7 @@ final class PostController extends Controller
     {
         $post->load('votes', 'media');
         $post->offsetSet('user_vote', $post->userVote()?->vote);
-        $post->offsetSet('preview_image_url', Storage::url($post->preview_image));
+        $post->offsetSet('preview_image_url', $this->mediaService->getUrl($post->preview_image));
 
         $comments = $this->commentService->getCommentsForPost($post, 1);
 
@@ -126,7 +125,7 @@ final class PostController extends Controller
     public function edit(Post $post): InertiaResponse
     {
         $post->load('media');
-        $post->offsetSet('preview_image_url', Storage::url($post->preview_image));
+        $post->offsetSet('preview_image_url', $this->mediaService->getUrl($post->preview_image));
 
         return Inertia::render('posts/edit', [
             'post' => $post,
@@ -147,7 +146,7 @@ final class PostController extends Controller
             $this->mediaService->storeFile($mediaDto);
 
             // Delete old preview image
-            Storage::delete($post->preview_image);
+            $this->mediaService->deleteFile($post->preview_image);
         }
 
         // Update post
