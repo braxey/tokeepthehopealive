@@ -49,10 +49,10 @@ export default function PostIndex({ featured, otherPosts, search }: PostIndexPro
             <div className="mx-auto flex h-full w-full max-w-6xl flex-1 flex-col gap-6 p-6">
                 <SearchBar search={search || ''} />
 
-                {posts.length > 0 ? (
+                {featured ? (
                     <>
                         {/* Featured Post */}
-                        {featured && <FeaturedPost featured={featured} />}
+                        <FeaturedPost featured={featured} />
 
                         {/* Other Posts */}
                         <OtherPosts posts={posts} />
