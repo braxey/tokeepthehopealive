@@ -8,7 +8,7 @@ export default function OtherPosts({ posts }: PostIndexOtherPostsProps) {
                 <Link
                     key={post.id}
                     href={`/posts/${post.id}`}
-                    className="flex flex-col justify-end overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl dark:bg-neutral-900"
+                    className="flex flex-col justify-between overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl dark:bg-neutral-900"
                 >
                     <div className="relative aspect-video">
                         <img

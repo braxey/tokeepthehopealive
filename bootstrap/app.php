@@ -20,11 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustHosts(at: ['tokeepthehopealive.com', 'www.tokeepthehopealive.com'], subdomains: false);
-        // $middleware->trustProxies(
-        //     at: TrustedProxies::IPS,
-        //     headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO
-        // );
-        $middleware->trustProxies('*');
+        $middleware->trustProxies(
+            at: '*',
+            headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO
+        );
 
         $middleware->encryptCookies(except: ['appearance']);
 
