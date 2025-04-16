@@ -22,7 +22,7 @@ export default function CreatePost() {
                 <div className="flex justify-end">
                     <Button
                         onClick={() => setIsPreviewMode(!isPreviewMode)}
-                        className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                        className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                     >
                         {isPreviewMode ? 'Back to Creating' : 'Preview'}
                     </Button>
@@ -31,17 +31,17 @@ export default function CreatePost() {
                 {isPreviewMode ? (
                     <PostPreview
                         title={data.title}
-                        summary={data.summary}
-                        body={data.body}
                         previewImage={data.preview_image}
                         previewCaption={data.preview_caption}
+                        summary={data.summary}
+                        body={data.body}
                     />
                 ) : (
                     <PostForm
                         title={data.title}
-                        summary={data.summary}
                         previewImage={data.preview_image}
                         previewCaption={data.preview_caption}
+                        summary={data.summary}
                         body={data.body}
                         setValue={setData}
                         processing={processing}

@@ -97,7 +97,7 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
 
                     <Button
                         type="submit"
-                        className="mt-4 w-full rounded-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                        className="mt-4 w-full cursor-pointer rounded-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                         disabled={processing}
                     >
                         {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}

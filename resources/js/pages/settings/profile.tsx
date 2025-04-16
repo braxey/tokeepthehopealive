@@ -90,7 +90,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                                 <Input
                                     id="avatar"
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full cursor-pointer"
                                     onChange={(e) => {
                                         if (e.target.files && e.target.files[0]) {
                                             setData('avatar', e.target.files[0]);
@@ -164,7 +164,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                         href={route('verification.send')}
                                         method="post"
                                         as="button"
-                                        className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                        className="text-foreground cursor-pointer underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                     >
                                         Click here to resend the verification email.
                                     </Link>
@@ -179,7 +179,9 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
+                            <Button className="cursor-pointer" disabled={processing}>
+                                Save
+                            </Button>
 
                             <Transition
                                 show={recentlySuccessful}

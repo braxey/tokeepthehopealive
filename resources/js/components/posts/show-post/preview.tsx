@@ -21,16 +21,16 @@ export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
                     preserveState
                     preserveScroll
                     except={['comments']}
-                    className={`text-xl ${post.user_vote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
+                    className={`cursor-pointer text-xl ${post.user_vote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
                 >
                     ▲
                 </Link>
                 <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
             </div>
-            {post.preview_image && (
+            {post.preview_image_url && (
                 <div className="mb-6 flex flex-col items-center">
                     <img
-                        src={post.preview_image}
+                        src={post.preview_image_url}
                         alt={post.preview_caption || post.title}
                         className="h-auto max-h-[500px] w-auto max-w-full rounded-lg object-contain shadow-md"
                     />

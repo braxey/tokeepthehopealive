@@ -76,7 +76,7 @@ final class PostController extends Controller
     {
         $post->load('votes', 'media');
         $post->offsetSet('user_vote', $post->userVote()?->vote);
-        $post->offsetSet('preview_image', $post->preview_image ? Storage::url($post->preview_image) : null);
+        $post->offsetSet('preview_image_url', Storage::url($post->preview_image));
 
         $comments = $this->commentService->getCommentsForPost($post, 1);
 

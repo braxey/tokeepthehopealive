@@ -37,18 +37,18 @@ export default function EditPost({ post }: EditPostProps) {
                 {isPreviewMode ? (
                     <PostPreview
                         title={data.title}
-                        summary={data.summary}
-                        body={data.body}
                         previewImage={data.preview_image || post.preview_image_url}
                         previewCaption={data.preview_caption}
+                        summary={data.summary}
+                        body={data.body}
                     />
                 ) : (
                     <PostForm
                         post={post}
                         title={data.title}
-                        summary={data.summary}
                         previewImage={data.preview_image}
                         previewCaption={data.preview_caption}
+                        summary={data.summary}
                         body={data.body}
                         setValue={setData}
                         processing={processing}

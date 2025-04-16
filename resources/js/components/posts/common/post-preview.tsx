@@ -2,13 +2,13 @@ import DOMPurify from 'dompurify';
 
 interface PostPreviewProps {
     title: string;
-    summary: string;
-    body: string;
     previewImage: string | File | null;
     previewCaption: string;
+    summary: string;
+    body: string;
 }
 
-export function PostPreview({ title, summary, body, previewImage, previewCaption }: PostPreviewProps) {
+export function PostPreview({ title, previewImage, previewCaption, summary, body }: PostPreviewProps) {
     const sanitizedBody: string = DOMPurify.sanitize(body, {
         ADD_TAGS: ['h2', 'h3', 'video', 'source', 'p', 'br'],
         ADD_ATTR: ['loading', 'controls', 'src', 'type', 'style'],

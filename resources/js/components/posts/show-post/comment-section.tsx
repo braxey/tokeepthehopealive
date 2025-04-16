@@ -81,9 +81,9 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                         onClick={() => {
                             setShowComments(true);
                         }}
-                        className="rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:hover:bg-emerald-900"
+                        className="cursor-pointer rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:hover:bg-emerald-900"
                     >
-                        {commentCount === 1 ? 'Show 1 Comment' : `Show ${commentCount} Comments`}
+                        {commentCount === 1 ? 'Show 1 Comment' : commentCount === 0 ? 'Show Comments' : `Show ${commentCount} Comments`}
                     </button>
                 </div>
             ) : (
@@ -93,7 +93,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                             onClick={() => {
                                 setShowComments(false);
                             }}
-                            className="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                            className="cursor-pointer rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                         >
                             Hide Comments
                         </button>
@@ -123,14 +123,14 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                                 <button
                                     type="submit"
                                     disabled={!auth.user || !auth.user.email_verified_at || postProcessing}
-                                    className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                                    className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                                 >
-                                    {postProcessing ? 'Posting...' : 'Post Comment'}
+                                    {postProcessing ? 'Posting...' : 'Post'}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleCancelPostComment}
-                                    className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
+                                    className="cursor-pointer rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
                                 >
                                     Cancel
                                 </button>
@@ -170,7 +170,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                                                 setLoadingMoreComments(false);
                                             });
                                     }}
-                                    className="mt-4 w-full text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
+                                    className="mt-4 w-full cursor-pointer text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                                 >
                                     {loadingMoreComments ? 'Loading comments...' : 'Load More'}
                                 </button>

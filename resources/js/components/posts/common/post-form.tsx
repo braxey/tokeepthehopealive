@@ -55,7 +55,7 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
                             setValue('preview_image', e.target.files[0]);
                         }
                     }}
-                    className="rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                    className="cursor-pointer rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                 />
                 {errors.preview_image && <span className="text-sm text-red-600 dark:text-red-400">{errors.preview_image}</span>}
             </div>
@@ -105,7 +105,7 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
                 <Button
                     type="submit"
                     disabled={processing}
-                    className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                    className="cursor-pointer rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                 >
                     {post ? 'Update' : 'Create'}
                 </Button>
