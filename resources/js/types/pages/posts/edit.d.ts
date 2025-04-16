@@ -4,9 +4,14 @@ export interface EditPostProps {
     post: Post;
 }
 
+export interface ArchivePostProps {
+    postId: number;
+    disabled: boolean;
+    setArchiving: (archiving: boolean) => void;
+}
+
 export interface DeletePostProps {
     postId: number;
-    deleting: boolean;
-    processing: boolean;
+    disabled: boolean;
     setDeleting: (deleting: boolean) => void;
 }

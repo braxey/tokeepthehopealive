@@ -1,3 +1,4 @@
+import ArchivePost from '@/components/posts/edit-posts/archive-post';
 import DeletePost from '@/components/posts/edit-posts/delete-post';
 import { Button } from '@/components/ui/button';
 import { SharedData } from '@/types';
@@ -9,6 +10,7 @@ import { WysiwygEditor } from './wysiwyg-editor';
 export function PostForm({ post, title, summary, previewImage, previewCaption, body, setValue, submitForm, processing }: PostFormProps) {
     const { errors } = usePage<SharedData>().props;
     const [deleting, setDeleting] = useState<boolean>(false);
+    const [archiving, setArchiving] = useState<boolean>(false);
 
     return (
         <form
@@ -104,13 +106,15 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
             <div className="flex justify-center gap-5">
                 <Button
                     type="submit"
-                    disabled={processing}
+                    disabled={processing || archiving || deleting}
                     className="cursor-pointer rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                 >
                     {post ? 'Update' : 'Create'}
                 </Button>
 
-                {post && <DeletePost postId={post.id} deleting={deleting} setDeleting={setDeleting} processing={processing} />}
+                {post && <ArchivePost postId={post.id} setArchiving={setArchiving} disabled={processing || archiving || deleting} />}
+
+                {post && <DeletePost postId={post.id} setDeleting={setDeleting} disabled={processing || archiving || deleting} />}
             </div>
         </form>
     );

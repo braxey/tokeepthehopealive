@@ -2,16 +2,24 @@ import { Input } from '@/components/ui/input';
 import { PostIndexSearchBarProps } from '@/types/pages/posts';
 import { router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function SearchBar({ search, order, showSearchBar, setShowSearchBar }: PostIndexSearchBarProps) {
     const [searchBarActive, setSearchBarActive] = useState<boolean>(search.length > 0);
     const [searchQuery, setSearchQuery] = useState<string>(search || '');
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const timeoutRef = useRef<NodeJS.Timeout>(null);
+
+    useEffect(() => {
+        if (showSearchBar) {
+            searchInputRef.current?.focus();
+        }
+    }, [showSearchBar]);
 
     return (
         <div className="relative">
             <Input
+                ref={searchInputRef}
                 autoFocus={searchBarActive}
                 onFocus={() => setSearchBarActive(true)}
                 onBlur={() => setSearchBarActive(false)}

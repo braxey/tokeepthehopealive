@@ -170,6 +170,18 @@ final class PostController extends Controller
     }
 
     /**
+     * Archive a post.
+     */
+    public function archive(Post $post): RedirectResponse
+    {
+        $post->update([
+            'archived_at' => now(),
+        ]);
+
+        return to_route('posts.index');
+    }
+
+    /**
      * Delete a post and all associated media.
      */
     public function delete(Post $post): RedirectResponse

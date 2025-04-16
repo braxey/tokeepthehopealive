@@ -28,6 +28,7 @@ Route::prefix('posts')->group(function () {
         Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
 
+        Route::patch('/{post}', [PostController::class, 'archive'])->name('posts.archive');
         Route::delete('/{post}', [PostController::class, 'delete'])->name('posts.delete');
     });
 });

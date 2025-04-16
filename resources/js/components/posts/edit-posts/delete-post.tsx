@@ -4,7 +4,7 @@ import { DeletePostProps } from '@/types/pages/posts/edit';
 import { router } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
-export default function DeletePost({ postId, deleting, processing, setDeleting }: DeletePostProps) {
+export default function DeletePost({ postId, disabled, setDeleting }: DeletePostProps) {
     const deletePost: FormEventHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -17,7 +17,7 @@ export default function DeletePost({ postId, deleting, processing, setDeleting }
         <Dialog>
             <DialogTrigger asChild>
                 <Button className="cursor-pointer rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-md transition hover:bg-red-700 disabled:bg-red-400 dark:bg-red-500 dark:hover:bg-red-600 dark:disabled:bg-red-400">
-                    {deleting ? 'Deleting...' : 'Delete'}
+                    Delete
                 </Button>
             </DialogTrigger>
             <DialogContent>
@@ -31,8 +31,8 @@ export default function DeletePost({ postId, deleting, processing, setDeleting }
                             </Button>
                         </DialogClose>
 
-                        <Button variant="destructive" className="cursor-pointer" disabled={deleting || processing} asChild>
-                            <button type="submit">{deleting ? 'Deleting...' : 'Delete Testimony'}</button>
+                        <Button variant="destructive" className="cursor-pointer" disabled={disabled} asChild>
+                            <button type="submit">Delete</button>
                         </Button>
                     </DialogFooter>
                 </form>
