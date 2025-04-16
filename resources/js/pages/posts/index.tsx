@@ -1,5 +1,6 @@
 import FeaturedPost from '@/components/posts/index-posts/featured-post';
 import LoadMoreButton from '@/components/posts/index-posts/load-more-button';
+import { NoPosts } from '@/components/posts/index-posts/no-posts';
 import OtherPosts from '@/components/posts/index-posts/other-posts';
 import SearchBar from '@/components/posts/index-posts/search-bar';
 import AppLayout from '@/layouts/app-layout';
@@ -48,14 +49,20 @@ export default function PostIndex({ featured, otherPosts, search }: PostIndexPro
             <div className="mx-auto flex h-full w-full max-w-6xl flex-1 flex-col gap-6 p-6">
                 <SearchBar search={search || ''} />
 
-                {/* Featured Post */}
-                {featured && <FeaturedPost featured={featured} />}
+                {posts.length > 0 ? (
+                    <>
+                        {/* Featured Post */}
+                        {featured && <FeaturedPost featured={featured} />}
 
-                {/* Other Posts */}
-                <OtherPosts posts={posts} />
+                        {/* Other Posts */}
+                        <OtherPosts posts={posts} />
 
-                {/* Load More */}
-                {hasMore && <LoadMoreButton handleLoadMore={handleLoadMore} />}
+                        {/* Load More */}
+                        {hasMore && <LoadMoreButton handleLoadMore={handleLoadMore} />}
+                    </>
+                ) : (
+                    <NoPosts />
+                )}
             </div>
         </AppLayout>
     );
