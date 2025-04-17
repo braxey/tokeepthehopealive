@@ -47,10 +47,12 @@ export type ShowPostCommentSectionProps = ShowPostProps;
 
 export type ShowPostTopLevelCommentProps = {
     comment: Comment_ShowPost;
+    deleteComment: (commentId: number) => void;
 };
 
 export type ShowPostNestedCommentProps = {
     comment: Comment_ShowPost;
     topLevelCommentId: number;
     loadCommentsAfterReply: () => void;
+    deleteReply: (commentId: number) => void;
 };

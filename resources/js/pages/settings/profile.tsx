@@ -36,9 +36,9 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
     const { data, setData } = useForm<Required<ProfileForm>>({
         avatar: null,
-        name: auth.user.name,
-        username: auth.user.username,
-        email: auth.user.email,
+        name: auth.user?.name || '',
+        username: auth.user?.username || '',
+        email: auth.user?.email || '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -81,10 +81,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 <Avatar className="size-12 overflow-hidden rounded-full">
                                     <AvatarImage
                                         src={(data.avatar && URL.createObjectURL(data.avatar)) || auth.avatar_url}
-                                        alt={auth.user.username}
+                                        alt={auth.user?.username}
                                     />
                                     <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                        {getInitials(auth.user.username)}
+                                        {getInitials(auth.user?.username || '')}
                                     </AvatarFallback>
                                 </Avatar>
 
@@ -156,7 +156,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <InputError className="mt-2" message={errors.email} />
                         </div>
 
-                        {mustVerifyEmail && auth.user.email_verified_at === null && (
+                        {mustVerifyEmail && auth.user?.email_verified_at === null && (
                             <div>
                                 <p className="text-muted-foreground -mt-4 text-sm">
                                     Your email address is unverified.{' '}

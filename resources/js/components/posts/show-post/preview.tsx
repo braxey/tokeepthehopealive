@@ -1,6 +1,7 @@
 import { SharedData } from '@/types';
 import { ShowPostPreviewProps } from '@/types/pages/posts/show';
 import { Link, router, usePage } from '@inertiajs/react';
+import { ArrowBigUp } from 'lucide-react';
 
 export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
     const { auth } = usePage<SharedData>().props;
@@ -23,7 +24,7 @@ export default function ShowPostPreview({ post }: ShowPostPreviewProps) {
                     except={['comments']}
                     className={`cursor-pointer text-xl ${post.user_vote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
                 >
-                    ▲
+                    <ArrowBigUp />
                 </Link>
                 <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{post.vote_count}</span>
             </div>

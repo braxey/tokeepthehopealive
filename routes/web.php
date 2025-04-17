@@ -39,10 +39,15 @@ Route::prefix('posts')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/comments/{comment}/comment', [CommentController::class, 'onComment'])->name('comments.comment');
     Route::post('/posts/{post}/comment', [CommentController::class, 'onPost'])->name('posts.comment');
+
+    Route::middleware(['can_post'])->group(function () {
+        Route::delete("/comment/{comment}", [CommentController::class, 'delete'])->name('comment.delete');
+    });
 });
 
 Route::get('/comments/post/{post}', [CommentController::class, 'getComments'])->name('comments.post');
 Route::get('/comments/{comment}', [CommentController::class, 'getReplies'])->name('comments.comment');
+
 
 Route::middleware(['auth'])->group(function () {
 

@@ -1,4 +1,5 @@
 import ShowPostTopLevelComment from '@/components/posts/show-post/top-level-comment';
+import { csrfToken } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Comment_ShowPost, ShowPostCommentSectionProps } from '@/types/pages/posts/show';
 import { router, useForm, usePage } from '@inertiajs/react';
@@ -72,6 +73,23 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
         setIsTextareaFocused(false);
     };
 
+    const handleDeleteComment = (commentId: number): void => {
+        fetch(route('comment.delete', { comment: commentId }), {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+        })
+            .then(() => {
+                setTopLevelComments((prev) => prev.filter((c) => c.id !== commentId));
+                setCommentCount((prev) => prev - 1);
+            })
+            .catch(() => {
+                router.reload();
+            });
+    };
+
     return (
         <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-neutral-900">
             {!showComments ? (
@@ -142,7 +160,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                     ) : (
                         <div className="mt-8">
                             {topLevelComments.map((comment) => (
-                                <ShowPostTopLevelComment key={`comment-${comment.id}`} comment={comment} />
+                                <ShowPostTopLevelComment key={`comment-${comment.id}`} comment={comment} deleteComment={handleDeleteComment} />
                             ))}
                             {hasMoreComments && (
                                 <button

@@ -13,9 +13,8 @@ use Illuminate\Http\Request;
 
 final class CommentController extends Controller
 {
-    public function __construct(
-        protected CommentService $commentService,
-    ) {
+    public function __construct(protected CommentService $commentService)
+    {
     }
 
     /**
@@ -78,5 +77,28 @@ final class CommentController extends Controller
     public function getReplies(Request $request, Comment $comment): JsonResponse
     {
         return response()->json($this->commentService->getRepliesForComment($comment, (int) $request->input('page', 1)));
+    }
+
+    /**
+     * Delete a comment.
+     */
+    public function delete(Comment $comment): JsonResponse
+    {
+        // Decrement the parent's reply count.
+        $comment->commentable()->decrement('reply_count');
+
+        // Delete the associated votes.
+        $comment->votes()->delete();
+
+        // Delete the associated comments and their votes.
+        $comment->comments->each(function (Comment $c) {
+            $c->votes()->delete();
+            $c->delete();
+        });
+
+        // Delete the comment record.
+        $comment->delete();
+
+        return response()->json();
     }
 }

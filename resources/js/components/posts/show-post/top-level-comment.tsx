@@ -1,12 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
+import { csrfToken } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Comment_ShowPost, ShowPostTopLevelCommentProps } from '@/types/pages/posts/show';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { ArrowBigDown, ArrowBigUp, Dot, Trash2 } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import ShowPostNestedComment from './nested-comment';
 
-export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCommentProps) {
+export default function ShowPostTopLevelComment({ comment, deleteComment }: ShowPostTopLevelCommentProps) {
     const commentKey = `comment-${comment.id}`;
     const getInitials = useInitials();
     const { auth } = usePage<SharedData>().props;
@@ -114,6 +116,23 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
         });
     };
 
+    const handleDeleteReply = (commentId: number): void => {
+        fetch(route('comment.delete', { comment: commentId }), {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+        })
+            .then(() => {
+                setReplies((prev) => prev.filter((c) => c.id !== commentId));
+                setReplyCount((prev) => prev - 1);
+            })
+            .catch(() => {
+                router.reload();
+            });
+    };
+
     return (
         <div key={commentKey} className={'border-t border-neutral-200 py-4 dark:border-neutral-700'}>
             <div className="flex flex-row items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
@@ -123,9 +142,11 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                         {getInitials(comment.user?.username || '')}
                     </AvatarFallback>
                 </Avatar>
-                <p>
-                    {comment.user?.username || '[deleted user]'} · {comment.time_since || 'Just now'}
-                </p>
+                <div className="flex flex-row flex-wrap items-center justify-start gap-1">
+                    <p>{comment.user?.username || '[deleted user]'}</p>
+                    <Dot size={14} />
+                    <p>{comment.time_since || 'just now'}</p>
+                </div>
             </div>
             <p className="mt-2 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">
@@ -148,7 +169,7 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                         }}
                         className={`cursor-pointer text-lg ${userVote === 1 ? 'text-emerald-500' : 'text-neutral-500'} transition hover:text-emerald-600`}
                     >
-                        ▲
+                        <ArrowBigUp />
                     </Link>
                     <span className="text-neutral-900 dark:text-neutral-100">{voteCount}</span>
                     <Link
@@ -169,76 +190,89 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                         }}
                         className={`cursor-pointer text-lg ${userVote === -1 ? 'text-red-500' : 'text-neutral-500'} transition hover:text-red-600`}
                     >
-                        ▼
+                        <ArrowBigDown />
                     </Link>
-                    <button
-                        onClick={() => setShowReplyForm((prev) => !prev)}
-                        className="cursor-pointer text-sm text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
-                    >
-                        Reply
-                    </button>
+                    {auth.user && (auth.can_post || auth.user.id === comment.user?.id) && (
+                        <Trash2
+                            size={18}
+                            className="cursor-pointer text-lg text-neutral-500 transition hover:text-red-600"
+                            onClick={() => deleteComment(comment.id)}
+                        />
+                    )}
+                    {comment.user && (
+                        <button
+                            onClick={() => setShowReplyForm((prev) => !prev)}
+                            className="cursor-pointer text-sm text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
+                        >
+                            Reply
+                        </button>
+                    )}
                 </div>
             </div>
 
-            <form onSubmit={handleSubmitReplyComment} className={'mt-4 ' + (!showReplyForm && 'hidden')}>
-                <textarea
-                    ref={inputRef}
-                    value={replyData.body}
-                    onChange={(e) => {
-                        setReplyData('body', e.target.value);
-                        clearReplyErrors();
-                    }}
-                    className="min-h-[80px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
-                    placeholder="Add a reply..."
-                    rows={2}
-                    disabled={!auth.user || !auth.user.email_verified_at || replyProcessing}
-                />
-                {replyErrors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{replyErrors.body}</p>}
-                {!auth.user && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Sign in before commenting.'}</p>}
-                {auth.user && !auth.user.email_verified_at && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Verify your email before commenting.'}</p>
-                )}
-
-                <div className={'mt-3 flex gap-3'}>
-                    <button
-                        type="submit"
-                        disabled={!auth.user || !auth.user.email_verified_at || replyProcessing}
-                        className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
-                    >
-                        {replyProcessing ? 'Posting...' : 'Post'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setShowReplyForm(false);
-                            setReplyData('body', '');
+            {comment.user && (
+                <form onSubmit={handleSubmitReplyComment} className={'mt-4 ' + (!showReplyForm && 'hidden')}>
+                    <textarea
+                        ref={inputRef}
+                        value={replyData.body}
+                        onChange={(e) => {
+                            setReplyData('body', e.target.value);
+                            clearReplyErrors();
                         }}
-                        className="cursor-pointer rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
+                        className="min-h-[80px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                        placeholder="Add a reply..."
+                        rows={2}
+                        disabled={!auth.user || !auth.user.email_verified_at || replyProcessing}
+                    />
+                    {replyErrors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{replyErrors.body}</p>}
+                    {!auth.user && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Sign in before commenting.'}</p>}
+                    {auth.user && !auth.user.email_verified_at && (
+                        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{'Verify your email before commenting.'}</p>
+                    )}
+
+                    <div className={'mt-3 flex gap-3'}>
+                        <button
+                            type="submit"
+                            disabled={!auth.user || !auth.user.email_verified_at || replyProcessing}
+                            className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                        >
+                            {replyProcessing ? 'Posting...' : 'Post'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowReplyForm(false);
+                                setReplyData('body', '');
+                            }}
+                            className="cursor-pointer rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            )}
+            {(replyCount > 0 || replies.length > 0) && (
+                <div className="flex w-full items-center justify-center">
+                    <button
+                        disabled={loadingReplies}
+                        onClick={() => {
+                            setShowReplies((prev) => !prev);
+
+                            if (!loadedReplies) {
+                                loadMoreReplies();
+                            }
+                        }}
+                        className="mt-4 cursor-pointer text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
                     >
-                        Cancel
+                        {showReplies
+                            ? 'Hide Replies'
+                            : loadingReplies
+                              ? 'Loading replies...'
+                              : replyCount === 1
+                                ? 'Show 1 Reply'
+                                : `Show ${replyCount} Replies`}
                     </button>
                 </div>
-            </form>
-            {(replyCount > 0 || replies.length > 0) && (
-                <button
-                    disabled={loadingReplies}
-                    onClick={() => {
-                        setShowReplies((prev) => !prev);
-
-                        if (!loadedReplies) {
-                            loadMoreReplies();
-                        }
-                    }}
-                    className="mt-4 w-full cursor-pointer text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
-                >
-                    {showReplies
-                        ? 'Hide Replies'
-                        : loadingReplies
-                          ? 'Loading replies...'
-                          : replyCount === 1
-                            ? 'Show 1 Reply'
-                            : `Show ${replyCount} Replies`}
-                </button>
             )}
             {showReplies && replies.length > 0 && (
                 <div className="mt-4">
@@ -248,16 +282,19 @@ export default function ShowPostTopLevelComment({ comment }: ShowPostTopLevelCom
                             comment={nestedComment}
                             topLevelCommentId={comment.id}
                             loadCommentsAfterReply={loadCommentsAfterReply}
+                            deleteReply={handleDeleteReply}
                         />
                     ))}
                     {hasMoreReplies && (
-                        <button
-                            disabled={loadingReplies}
-                            onClick={loadMoreReplies}
-                            className="mt-4 w-full cursor-pointer text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
-                        >
-                            {loadingReplies ? 'Loading more replies...' : 'Load More Replies'}
-                        </button>
+                        <div className="flex w-full items-center justify-center">
+                            <button
+                                disabled={loadingReplies}
+                                onClick={loadMoreReplies}
+                                className="mt-4 cursor-pointer text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400"
+                            >
+                                {loadingReplies ? 'Loading more replies...' : 'Load More Replies'}
+                            </button>
+                        </div>
                     )}
                 </div>
             )}
