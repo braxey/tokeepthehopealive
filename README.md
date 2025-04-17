@@ -7,7 +7,7 @@ TKTHA allows users to view and interact with testimonies:
 * Authenticated users may vote on posts and comments.
 * Authenticated users with verified emails may comment.
 * Users with permission may post.
-  * See `/app/Enums/Permission.php` for the correct `users.permission` value.
+  * See `/app/Enums/Permission.php` for the correct `users.permission` value. For convenience, set `users.permission` to `3` for the user you want to have posting permissions.
 
 ## Dependencies
 * PHP 8.4
