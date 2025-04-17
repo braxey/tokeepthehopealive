@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
      |       Media      |
     * *************** **/
 
-    Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('can_post')->name('media.upload');
 });
 
 /** ******************

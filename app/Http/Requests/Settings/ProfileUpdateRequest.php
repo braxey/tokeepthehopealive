@@ -39,9 +39,8 @@ final class ProfileUpdateRequest extends FormRequest
 
             'avatar' => [
                 'nullable',
-                'file',
-                'mimes:jpg,jpeg,png,gif,webm,webp',
-                'max:2048',
+                'image',
+                'max:10240',
             ],
         ];
     }

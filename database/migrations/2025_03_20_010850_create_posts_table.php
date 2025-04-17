@@ -16,7 +16,8 @@ return new class () extends Migration {
             $table->id();
             $table->string('title');
             $table->text('summary');
-            $table->json('body');
+            $table->longText('body');
+            $table->longText('searchable_body');
             $table->string('preview_image')->nullable();
             $table->string('preview_caption')->nullable();
             $table->foreignId('user_id');

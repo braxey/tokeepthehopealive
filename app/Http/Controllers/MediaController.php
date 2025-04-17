@@ -18,7 +18,7 @@ final class MediaController extends Controller
     public function upload(Request $request, MediaService $mediaService): JsonResponse
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:jpeg,png,gif,mp4,webm', 'max:2048'],
+            'file' => ['required', 'file', 'mimes:jpeg,jpg,webp,png,gif,mp4,webm', 'max:10240'],
         ]);
 
         $file = $request->file('file');

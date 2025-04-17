@@ -9,65 +9,33 @@ import {
     WysiwygEditorProps,
 } from '@/types/pages/posts/common';
 import { Editor } from '@tinymce/tinymce-react';
-import Uppy, { Meta, UploadResult } from '@uppy/core';
-import XHRUpload from '@uppy/xhr-upload';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
     const [uploading, setUploading] = useState<boolean>(false);
-
-    const uppy = useMemo(
-        () =>
-            new Uppy({
-                autoProceed: true,
-                restrictions: {
-                    allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'],
-                    maxFileSize: 2 * 1024 * 1024,
-                },
-            }).use(XHRUpload, {
-                endpoint: route('media.upload'),
-                fieldName: 'file',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-                limit: 1,
-            }),
-        [],
-    );
 
     const handleMediaUpload: WysiwigTinyMceUploadHandler = async (blobInfo: WysiwigTinyMceBlobInfo, progress: WysiwigTinyMceProgressFn) => {
         setUploading(true);
         try {
             const file = blobInfo.blob();
-            if (file.size > 2 * 1024 * 1024) {
-                throw new Error('File size exceeds 2MB limit.');
+            if (file.size > 10 * 1024 * 1024) {
+                throw new Error('File size exceeds 10MB limit.');
             }
             if (!['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'].includes(file.type)) {
                 throw new Error('Only JPEG, PNG, GIF, MP4, and WebM are supported.');
             }
 
-            const result = await new Promise<UploadResult<Meta, Record<string, never>>>((resolve, reject) => {
-                uppy.addFile({
-                    source: 'tinymce',
-                    name: blobInfo.blob.name,
-                    type: file.type,
-                    data: file,
-                });
-                uppy.on('upload-progress', (file, prog) => {
-                    if (file && prog.bytesTotal && prog.bytesTotal > 0) {
-                        const percent = Math.round((prog.bytesUploaded / prog.bytesTotal) * 100);
-                        progress(percent);
-                    }
-                });
-                uppy.on('complete', (res) => resolve(res));
-                uppy.on('error', (err) => reject(err));
-            });
+            const formData = new FormData();
+            formData.append('file', file, blobInfo.filename());
 
-            if (result.successful && result.successful.length > 0) {
-                const { url } = result.successful[0].response?.body as WysiwigMediaUploadResponse;
-                return url;
+            const response = await uploadFile(formData, progress);
+
+            if (!response.ok) {
+                throw new Error('Upload failed.');
             }
-            throw new Error('Upload failed.');
+
+            const { url } = (await response.json()) as WysiwigMediaUploadResponse;
+            return url;
         } catch (error) {
             throw new Error(`Upload error: ${(error as Error).message}`);
         } finally {
@@ -96,23 +64,17 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
                     throw new Error('Only JPEG, PNG, GIF, MP4, and WebM are supported.');
                 }
 
-                const result = await new Promise<UploadResult<Meta, Record<string, never>>>((resolve, reject) => {
-                    uppy.addFile({
-                        source: 'file-picker',
-                        name: file.name,
-                        type: file.type,
-                        data: file,
-                    });
-                    uppy.on('complete', (res) => resolve(res));
-                    uppy.on('error', (err) => reject(err));
-                });
+                const formData = new FormData();
+                formData.append('file', file, file.name);
 
-                if (result.successful && result.successful.length > 0) {
-                    const { url } = result.successful[0].response?.body as WysiwigMediaUploadResponse;
-                    callback(url, { title: file.name });
-                } else {
+                const response = await uploadFile(formData);
+
+                if (!response.ok) {
                     throw new Error('Upload failed.');
                 }
+
+                const { url } = (await response.json()) as WysiwigMediaUploadResponse;
+                callback(url, { title: file.name });
             } catch (error) {
                 alert(`Upload error: ${(error as Error).message}`);
             } finally {
@@ -121,6 +83,44 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
         };
 
         input.click();
+    };
+
+    // Helper function to upload file with optional progress tracking
+    const uploadFile = (formData: FormData, progress?: WysiwigTinyMceProgressFn): Promise<Response> => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', route('media.upload'), true);
+
+            // Set CSRF token header
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+
+            // Handle progress for handleMediaUpload
+            if (progress) {
+                xhr.upload.onprogress = (event) => {
+                    if (event.lengthComputable) {
+                        const percent = Math.round((event.loaded / event.total) * 100);
+                        progress(percent);
+                    }
+                };
+            }
+
+            // Handle response
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(new Response(xhr.response, { status: xhr.status, statusText: xhr.statusText }));
+                } else {
+                    reject(new Error(`Upload failed with status ${xhr.status}`));
+                }
+            };
+
+            // Handle errors
+            xhr.onerror = () => reject(new Error('Network error during upload'));
+            xhr.onabort = () => reject(new Error('Upload aborted'));
+
+            // Send request
+            xhr.send(formData);
+        });
     };
 
     return (
@@ -135,13 +135,13 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
                     block_formats: 'Paragraph=p;Heading 2=h2;Heading 3=h3',
                     menubar: false,
                     content_style: `
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
-            img, video { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-            p + img, p + video { margin-top: 0.5rem; }
-            h2 { font-size: 1.5rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
-            h3 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.75rem; }
-            p { margin: 1rem 0; }
-          `,
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
+                        img, video { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                        p + img, p + video { margin-top: 0.5rem; }
+                        h2 { font-size: 1.5rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+                        h3 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.75rem; }
+                        p { margin: 1rem 0; }
+                    `,
                     paste_data_images: false,
                     images_upload_handler: handleMediaUpload,
                     file_picker_types: 'image media',

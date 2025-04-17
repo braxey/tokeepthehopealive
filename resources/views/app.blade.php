@@ -7,7 +7,6 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- Favicons --}}
-        <link id="icon_favicon_svg" rel="icon" type="image/svg+xml" href="{{ url('favicon.svg') }}" sizes="any">
         <link id="icon_favicon_ico" rel="icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
