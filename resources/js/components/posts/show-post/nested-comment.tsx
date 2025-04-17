@@ -111,7 +111,7 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
                     >
                         <ArrowBigDown />
                     </Link>
-                    {auth.user && (auth.can_post || auth.user.id === comment.user?.id) && (
+                    {auth.user && (auth.can_delete || auth.user.id === comment.user?.id) && (
                         <Trash2
                             size={18}
                             className="cursor-pointer text-lg text-neutral-500 transition hover:text-red-600"

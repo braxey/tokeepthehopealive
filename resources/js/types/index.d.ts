@@ -4,6 +4,7 @@ import type { Config } from 'ziggy-js';
 export interface Auth {
     user: User | null;
     can_post: boolean;
+    can_delete: boolean;
     avatar_url?: string;
 }
 

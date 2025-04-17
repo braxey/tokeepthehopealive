@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\CanDeleteCommentMiddleware;
+use App\Http\Middleware\CanDeleteMiddleware;
 use App\Http\Middleware\CanPostMiddleware;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -35,6 +37,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'can_post' => CanPostMiddleware::class,
+            'can_delete' => CanDeleteMiddleware::class,
+            'can_delete_comment' => CanDeleteCommentMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

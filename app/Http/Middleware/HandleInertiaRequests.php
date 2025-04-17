@@ -47,6 +47,7 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
                 'can_post' => (bool) $user?->permission->canPost(),
+                'can_delete' => (bool) $user?->permission->canDelete(),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy())->toArray(),

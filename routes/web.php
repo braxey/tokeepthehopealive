@@ -22,14 +22,19 @@ Route::prefix('posts')->group(function () {
     Route::get('/{post}', [PostController::class, 'show'])->where('post', '[0-9]+')->name('posts.show');
 
     Route::middleware(['auth', 'verified', 'can_post'])->group(function () {
-        Route::get('/create', [PostController::class, 'create'])->name('posts.create');
-        Route::post('/', [PostController::class, 'store'])->name('posts.store');
+        Route::middleware(['can_post'])->group(function () {
+            Route::get('/create', [PostController::class, 'create'])->name('posts.create');
+            Route::post('/', [PostController::class, 'store'])->name('posts.store');
 
-        Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-        Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
+            Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+            Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
 
-        Route::patch('/{post}', [PostController::class, 'archive'])->name('posts.archive');
-        Route::delete('/{post}', [PostController::class, 'delete'])->name('posts.delete');
+            Route::patch('/{post}', [PostController::class, 'archive'])->name('posts.archive');
+        });
+
+        Route::middleware(['can_delete'])->group(function () {
+            Route::delete('/{post}', [PostController::class, 'delete'])->name('posts.delete');
+        });
     });
 });
 
@@ -40,7 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/comments/{comment}/comment', [CommentController::class, 'onComment'])->name('comments.comment');
     Route::post('/posts/{post}/comment', [CommentController::class, 'onPost'])->name('posts.comment');
 
-    Route::middleware(['can_post'])->group(function () {
+    Route::middleware(['can_delete_comment'])->group(function () {
         Route::delete("/comment/{comment}", [CommentController::class, 'delete'])->name('comment.delete');
     });
 });
