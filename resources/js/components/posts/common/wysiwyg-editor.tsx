@@ -1,3 +1,4 @@
+import { SharedData } from '@/types';
 import {
     FilePickerCallback,
     WysiwigMediaUploadResponse,
@@ -8,10 +9,12 @@ import {
     WysiwigTinyMceVideoData,
     WysiwygEditorProps,
 } from '@/types/pages/posts/common';
+import { usePage } from '@inertiajs/react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useState } from 'react';
 
 export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
+    const { csrf } = usePage<SharedData>().props;
     const [uploading, setUploading] = useState<boolean>(false);
 
     const handleMediaUpload: WysiwigTinyMceUploadHandler = async (blobInfo: WysiwigTinyMceBlobInfo, progress: WysiwigTinyMceProgressFn) => {
@@ -91,9 +94,7 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', route('media.upload'), true);
 
-            // Set CSRF token header
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
 
             // Handle progress for handleMediaUpload
             if (progress) {

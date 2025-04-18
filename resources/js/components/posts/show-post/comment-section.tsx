@@ -1,12 +1,11 @@
 import ShowPostTopLevelComment from '@/components/posts/show-post/top-level-comment';
-import { csrfToken } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Comment_ShowPost, ShowPostCommentSectionProps } from '@/types/pages/posts/show';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
 export default function ShowPostCommentSection({ post, comments }: ShowPostCommentSectionProps) {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, csrf } = usePage<SharedData>().props;
     const [showComments, setShowComments] = useState<boolean>(false);
     const [commentCount, setCommentCount] = useState<number>(post.reply_count);
     const [topLevelComments, setTopLevelComments] = useState<Comment_ShowPost[]>(comments.post.replies);
@@ -83,7 +82,7 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
+                'X-CSRF-TOKEN': csrf,
             },
         })
             .then((response) => {

@@ -56,3 +56,7 @@ export type ShowPostNestedCommentProps = {
     loadCommentsAfterReply: () => void;
     deleteReply: (commentId: number) => void;
 };
+
+export type DeleteCommentProps = {
+    deleteComment: () => void;
+};

@@ -1,17 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
-import { csrfToken } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Comment_ShowPost, ShowPostTopLevelCommentProps } from '@/types/pages/posts/show';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { ArrowBigDown, ArrowBigUp, Dot, Trash2 } from 'lucide-react';
+import { ArrowBigDown, ArrowBigUp, Dot } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import DeleteComment from './delete-comment';
 import ShowPostNestedComment from './nested-comment';
 
 export default function ShowPostTopLevelComment({ comment, deleteComment }: ShowPostTopLevelCommentProps) {
     const commentKey = `comment-${comment.id}`;
     const getInitials = useInitials();
-    const { auth } = usePage<SharedData>().props;
+    const { auth, csrf } = usePage<SharedData>().props;
     const [userVote, setUserVote] = useState<number | null>(comment.user_vote);
     const [voteCount, setVoteCount] = useState<number>(comment.vote_count);
     const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
@@ -131,11 +131,12 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
+                'X-CSRF-TOKEN': csrf,
             },
         })
             .then((response) => {
                 if (!response.ok) {
+                    console.log(response.body);
                     throw new Error(String(response.status));
                 }
                 return response.json();
@@ -209,11 +210,7 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                         <ArrowBigDown />
                     </Link>
                     {auth.user && (auth.can_delete || auth.user.id === comment.user?.id) && (
-                        <Trash2
-                            size={18}
-                            className="cursor-pointer text-lg text-neutral-500 transition hover:text-red-600"
-                            onClick={() => deleteComment(comment.id)}
-                        />
+                        <DeleteComment deleteComment={() => deleteComment(comment.id)} />
                     )}
                     {comment.user && (
                         <button

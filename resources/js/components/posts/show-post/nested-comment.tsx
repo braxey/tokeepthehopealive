@@ -3,8 +3,9 @@ import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
 import { ShowPostNestedCommentProps } from '@/types/pages/posts/show';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowBigDown, ArrowBigUp, ChevronRightIcon, Dot, Trash2 } from 'lucide-react';
+import { ArrowBigDown, ArrowBigUp, ChevronRightIcon, Dot } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import DeleteComment from './delete-comment';
 
 export default function ShowPostNestedComment({ comment, topLevelCommentId, loadCommentsAfterReply, deleteReply }: ShowPostNestedCommentProps) {
     const commentKey = `comment-${comment.id}`;
@@ -112,10 +113,8 @@ export default function ShowPostNestedComment({ comment, topLevelCommentId, load
                         <ArrowBigDown />
                     </Link>
                     {auth.user && (auth.can_delete || auth.user.id === comment.user?.id) && (
-                        <Trash2
-                            size={18}
-                            className="cursor-pointer text-lg text-neutral-500 transition hover:text-red-600"
-                            onClick={() => {
+                        <DeleteComment
+                            deleteComment={() => {
                                 deleteReply(comment.id);
                             }}
                         />

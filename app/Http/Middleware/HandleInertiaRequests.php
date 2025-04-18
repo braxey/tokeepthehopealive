@@ -44,6 +44,7 @@ final class HandleInertiaRequests extends Middleware
         $sharedData = [
             ...parent::share($request),
             'name' => config('app.name'),
+            'csrf' => csrf_token(),
             'auth' => [
                 'user' => $user,
                 'can_post' => (bool) $user?->permission->canPost(),
