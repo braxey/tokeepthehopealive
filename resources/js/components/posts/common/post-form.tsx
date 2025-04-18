@@ -8,7 +8,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { WysiwygEditor } from './wysiwyg-editor';
 
 export function PostForm({ post, title, summary, previewImage, previewCaption, body, setValue, submitForm, processing }: PostFormProps) {
-    const { errors } = usePage<SharedData>().props;
+    const { auth, errors } = usePage<SharedData>().props;
     const [deleting, setDeleting] = useState<boolean>(false);
     const [archiving, setArchiving] = useState<boolean>(false);
 
@@ -114,7 +114,7 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
 
                 {post && <ArchivePost postId={post.id} setArchiving={setArchiving} disabled={processing || archiving || deleting} />}
 
-                {post && <DeletePost postId={post.id} setDeleting={setDeleting} disabled={processing || archiving || deleting} />}
+                {post && auth.can_delete && <DeletePost postId={post.id} setDeleting={setDeleting} disabled={processing || archiving || deleting} />}
             </div>
         </form>
     );

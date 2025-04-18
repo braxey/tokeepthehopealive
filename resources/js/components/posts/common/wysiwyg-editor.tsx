@@ -130,6 +130,7 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
                 value={content}
                 onEditorChange={onChange}
                 init={{
+                    license_key: 'gpl',
                     plugins: 'image media link',
                     toolbar: 'undo redo | bold italic | blocks | link image media',
                     block_formats: 'Paragraph=p;Heading 2=h2;Heading 3=h3',
