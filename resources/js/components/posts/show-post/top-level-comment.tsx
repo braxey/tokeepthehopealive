@@ -66,7 +66,12 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+                return response.json();
+            })
             .then((data) => {
                 setReplies((prev) => deduplicateComments([...data[commentKey].replies, ...prev]));
 
@@ -89,7 +94,12 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+                return response.json();
+            })
             .then((data) => {
                 setReplies((prev) => deduplicateComments([...prev, ...data[commentKey].replies]));
                 setCurrentReplyPage(data[commentKey].current_page);
@@ -124,6 +134,12 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                 'X-CSRF-TOKEN': csrfToken(),
             },
         })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+                return response.json();
+            })
             .then(() => {
                 setReplies((prev) => prev.filter((c) => c.id !== commentId));
                 setReplyCount((prev) => prev - 1);

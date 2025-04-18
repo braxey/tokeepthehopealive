@@ -56,7 +56,12 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                         'Content-Type': 'application/json',
                     },
                 })
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(String(response.status));
+                        }
+                        return response.json();
+                    })
                     .then((data) => {
                         setTopLevelComments((prev) => deduplicateComments([...data.post.replies, ...prev]));
                     })
@@ -81,6 +86,12 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                 'X-CSRF-TOKEN': csrfToken(),
             },
         })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+                return response.json();
+            })
             .then(() => {
                 setTopLevelComments((prev) => prev.filter((c) => c.id !== commentId));
                 setCommentCount((prev) => prev - 1);
@@ -174,7 +185,12 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                                                 'Content-Type': 'application/json',
                                             },
                                         })
-                                            .then((response) => response.json())
+                                            .then((response) => {
+                                                if (!response.ok) {
+                                                    throw new Error(String(response.status));
+                                                }
+                                                return response.json();
+                                            })
                                             .then((data) => {
                                                 setTopLevelComments((prev) => deduplicateComments([...prev, ...data.post.replies]));
                                                 setCurrentPage(data.post.current_page);

@@ -32,7 +32,12 @@ export default function PostIndex({ featured, otherPosts, search, order }: PostI
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+                return response.json();
+            })
             .then((data) => {
                 setPosts((prev) => deduplicatePosts([...prev, ...data.posts]));
                 setCurrentPage(data.current_page);
