@@ -164,7 +164,7 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                     <p>{comment.time_since || 'just now'}</p>
                 </div>
             </div>
-            <p className="mt-2 text-neutral-900 dark:text-neutral-100">{comment.body}</p>
+            <p className="mt-2 wrap-break-word text-neutral-900 dark:text-neutral-100">{comment.body}</p>
             <div className="mt-2 flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <Link
@@ -235,9 +235,10 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
                             setReplyData('body', e.target.value);
                             clearReplyErrors();
                         }}
-                        className="min-h-[80px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                        className="min-h-[50px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
                         placeholder="Add a reply..."
                         rows={2}
+                        maxLength={255}
                         disabled={!auth.user || !auth.user.email_verified_at || replyProcessing}
                     />
                     {replyErrors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{replyErrors.body}</p>}

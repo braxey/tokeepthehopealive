@@ -57,8 +57,8 @@ export function WysiwygEditor({ content, onChange }: WysiwygEditorProps) {
             setUploading(true);
             try {
                 const file = input.files[0];
-                if (file.size > 2 * 1024 * 1024) {
-                    throw new Error('File size exceeds 2MB limit.');
+                if (file.size > 10 * 1024 * 1024) {
+                    throw new Error('File size exceeds 10MB limit.');
                 }
                 if (!['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'].includes(file.type)) {
                     throw new Error('Only JPEG, PNG, GIF, MP4, and WebM are supported.');

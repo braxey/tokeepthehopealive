@@ -136,8 +136,9 @@ export default function ShowPostCommentSection({ post, comments }: ShowPostComme
                             }}
                             onFocus={() => setIsTextareaFocused(true)}
                             placeholder="Add a comment..."
-                            className="min-h-[100px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
-                            rows={3}
+                            className="min-h-[50px] w-full rounded-lg border border-neutral-300 bg-white p-3 text-neutral-900 placeholder-neutral-400 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:border-emerald-400 dark:focus:ring-emerald-600/20"
+                            rows={2}
+                            maxLength={255}
                             disabled={!auth.user || !auth.user.email_verified_at || postProcessing}
                         />
                         {postErrors.body && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{postErrors.body}</p>}

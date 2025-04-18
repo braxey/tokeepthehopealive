@@ -24,7 +24,7 @@ final class CommentController extends Controller
     {
         $request->validate([
             'to_user_id' => 'required|int|exists:users,id',
-            'body' => 'required|string|min:1|max:1000',
+            'body' => 'required|string|min:1|max:255',
         ]);
 
         // Insert comment.
@@ -47,7 +47,7 @@ final class CommentController extends Controller
     {
         $request->validate([
             'to_user_id' => 'required|int|exists:users,id',
-            'body' => 'required|string|min:1|max:1000',
+            'body' => 'required|string|min:1|max:255',
         ]);
 
         // Insert comment.
