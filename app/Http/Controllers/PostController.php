@@ -180,10 +180,14 @@ final class PostController extends Controller
     /**
      * Archive a post.
      */
-    public function archive(Post $post): RedirectResponse
+    public function archive(Request $request, Post $post): RedirectResponse
     {
+        $request->validate([
+            'archive' => 'required|boolean',
+        ]);
+
         $post->update([
-            'archived_at' => now(),
+            'archived_at' => $request->archive ? now() : null,
         ]);
 
         return to_route('posts.index');

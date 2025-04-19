@@ -5,7 +5,7 @@ export interface EditPostProps {
 }
 
 export interface ArchivePostProps {
-    postId: number;
+    post: Post;
     disabled: boolean;
     setArchiving: (archiving: boolean) => void;
 }

@@ -10,7 +10,7 @@ export default function OtherPosts({ posts }: PostIndexOtherPostsProps) {
                     href={`/posts/${post.id}`}
                     className="flex flex-col justify-between overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl dark:bg-neutral-900"
                 >
-                    <div className="relative aspect-video">
+                    <div className="relative aspect-video overflow-hidden">
                         <img
                             src={post.preview_image_url}
                             alt={post.title}

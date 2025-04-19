@@ -112,7 +112,7 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
                     {post ? 'Update' : 'Create'}
                 </Button>
 
-                {post && <ArchivePost postId={post.id} setArchiving={setArchiving} disabled={processing || archiving || deleting} />}
+                {post && <ArchivePost post={post} setArchiving={setArchiving} disabled={processing || archiving || deleting} />}
 
                 {post && auth.can_delete && <DeletePost postId={post.id} setDeleting={setDeleting} disabled={processing || archiving || deleting} />}
             </div>
