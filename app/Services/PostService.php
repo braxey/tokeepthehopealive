@@ -79,11 +79,9 @@ final class PostService
 
         // Apply search term if one is given.
         if ($dto->searchTerm) {
-            $query->where(function ($q) use ($dto) {
-                $q->where('title', 'like', '%'.$dto->searchTerm.'%')
-                    ->orWhere('summary', 'like', '%'.$dto->searchTerm.'%')
-                    ->orWhere('searchable_body', 'like', '%'.$dto->searchTerm.'%');
-            });
+            $query->whereAny([
+                'title', 'summary', 'searchable_body'
+            ], 'like', '%'.$dto->searchTerm.'%');
         }
 
         // Apply filtering (only allowed for users with permission to post).
