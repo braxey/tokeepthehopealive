@@ -84,8 +84,13 @@ final class PostController extends Controller
     /**
      * Show a single post.
      */
-    public function show(Post $post): InertiaResponse
+    public function show(Post $post): InertiaResponse|RedirectResponse
     {
+        // Only users who can post may view archived posts.
+        if ($post->archived_at && !Auth::user()?->permission->canPost()) {
+            return to_route('posts.index');
+        }
+
         $post->load('votes', 'media');
         $post->offsetSet('user_vote', $post->userVote()?->vote);
         $post->offsetSet('preview_image_url', $this->mediaService->getUrl($post->preview_image));

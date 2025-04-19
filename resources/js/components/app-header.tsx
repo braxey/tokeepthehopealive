@@ -11,7 +11,7 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, Plus } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -38,9 +38,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         ...(auth.user && auth.can_post
             ? [
                   {
-                      title: 'New Post',
+                      title: 'Create Post',
                       href: '/posts/create',
-                      icon: Plus,
+                      icon: null,
                   },
               ]
             : []),

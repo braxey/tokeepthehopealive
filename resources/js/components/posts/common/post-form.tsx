@@ -44,9 +44,7 @@ export function PostForm({ post, title, summary, previewImage, previewCaption, b
                     Preview Image
                 </label>
 
-                {post && !previewImage && (
-                    <img src={post.preview_image_url} alt="Current preview" className="mb-4 max-h-40 rounded-lg object-cover" />
-                )}
+                {post && !previewImage && <img src={post.preview_image_url} alt="Current preview" className="mb-4 rounded-lg" />}
 
                 <input
                     id="preview_image"
