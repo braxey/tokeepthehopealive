@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Constants\Pagination;
+use App\Constants\PostFilter;
+use App\Constants\PostOrder;
+use App\Dtos\GetPostsDto;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 final class PostService
 {
@@ -16,29 +21,10 @@ final class PostService
     /**
      * Get the featured post with optional searching.
      */
-    public function getFeaturedPost(string $searchTerm, string $order): ?Post
+    public function getFeaturedPost(GetPostsDto $dto): ?Post
     {
-        $query = Post::query()->whereNull('archived_at');
-
-        // Apply search term if one is given.
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('summary', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('searchable_body', 'like', '%'.$searchTerm.'%');
-            });
-        }
-
-        // Apply ordering.
-        match($order) {
-            'popular' => $query->orderByDesc('vote_count')->orderByDesc('created_at'),
-            'oldest' => $query->orderBy('created_at'),
-            'recent' => $query->orderByDesc('created_at'),
-            default => $query->orderByDesc('created_at')
-        };
-
         // Get the featured post if one exists.
-        $featured = $query->first();
+        $featured = $this->buildPostQuery($dto)->first();
 
         if (! $featured) {
             return null;
@@ -53,7 +39,7 @@ final class PostService
     /**
      * Get a page of posts for a post with the current page and whether there are more pages.
      */
-    public function getPostsPage(?Post $featured, string $searchTerm, string $order, int $page = 1): array
+    public function getPostsPage(?Post $featured, GetPostsDto $dto): array
     {
         if (! $featured) {
             return [
@@ -63,30 +49,12 @@ final class PostService
             ];
         }
 
-        $query = Post::query()
-            ->whereNull('archived_at')
+        $query = $this->buildPostQuery($dto)
             ->whereNot('id', $featured->id); // Skip the featured post.
-
-        // Apply search term if one is given.
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('summary', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('searchable_body', 'like', '%'.$searchTerm.'%');
-            });
-        }
-
-        // Apply ordering.
-        match($order) {
-            'popular' => $query->orderByDesc('vote_count')->orderByDesc('created_at'),
-            'oldest' => $query->orderBy('created_at'),
-            'recent' => $query->orderByDesc('created_at'),
-            default => $query->orderByDesc('created_at')
-        };
 
         // Get the page of posts.
         $paginator = $query->select(['id', 'title', 'created_at', 'preview_image'])
-                        ->paginate(page: $page, perPage: Pagination::POSTS_PER_PAGE);
+                        ->paginate(page: $dto->pageNumber, perPage: Pagination::POSTS_PER_PAGE);
 
         // Set the preview image url for all the posts in the page.
         $posts = $paginator->getCollection()->map(function (Post $post) {
@@ -100,5 +68,42 @@ final class PostService
             'current_page' => $paginator->currentPage(),
             'has_more' => $paginator->hasMorePages(),
         ];
+    }
+
+    /**
+     * @return Builder<Post>
+     */
+    private function buildPostQuery(GetPostsDto $dto): Builder
+    {
+        $query = Post::query();
+
+        // Apply search term if one is given.
+        if ($dto->searchTerm) {
+            $query->where(function ($q) use ($dto) {
+                $q->where('title', 'like', '%'.$dto->searchTerm.'%')
+                    ->orWhere('summary', 'like', '%'.$dto->searchTerm.'%')
+                    ->orWhere('searchable_body', 'like', '%'.$dto->searchTerm.'%');
+            });
+        }
+
+        // Apply filtering (only allowed for users with permission to post).
+        Auth::user()?->permission->canPost()
+            ? match($dto->filter) {
+                PostFilter::ALL => $query,
+                PostFilter::PUBLISHED => $query->whereNull('archived_at'),
+                PostFilter::ARCHIVED => $query->whereNotNull('archived_at'),
+                default => $query->whereNull('archived_at')
+            }
+        : $query->whereNull('archived_at');
+
+        // Apply ordering.
+        match($dto->order) {
+            PostOrder::POPULAR => $query->orderByDesc('vote_count')->orderByDesc('created_at'),
+            PostOrder::OLDEST => $query->orderBy('created_at'),
+            PostOrder::RECENT => $query->orderByDesc('created_at'),
+            default => $query->orderByDesc('created_at')
+        };
+
+        return $query;
     }
 }

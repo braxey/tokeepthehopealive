@@ -3,16 +3,22 @@ import { PostFilters } from '@/components/posts/index-posts/filters';
 import LoadMoreButton from '@/components/posts/index-posts/load-more-button';
 import { NoPosts } from '@/components/posts/index-posts/no-posts';
 import OtherPosts from '@/components/posts/index-posts/other-posts';
+import { PostFilter, PostOrder } from '@/constants/posts';
 import AppLayout from '@/layouts/app-layout';
 import { Post } from '@/types/models';
-import { PostIndexProps } from '@/types/pages/posts';
+import { PostIndexProps, PostQuery } from '@/types/pages/posts';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function PostIndex({ featured, otherPosts, search, order }: PostIndexProps) {
+export default function PostIndex({ featured, otherPosts, search, order, filter }: PostIndexProps) {
     const [posts, setPosts] = useState<Post[]>(otherPosts.posts);
     const [currentPage, setCurrentPage] = useState<number>(otherPosts.current_page);
     const [hasMore, setHasMore] = useState<boolean>(otherPosts.has_more);
+    const query: PostQuery = {
+        search: search || '',
+        order: order || PostOrder.RECENT,
+        filter: filter || PostFilter.PUBLISHED,
+    };
 
     function deduplicatePosts(posts: Post[]): Post[] {
         const seenIds = new Set<number>();
@@ -52,7 +58,7 @@ export default function PostIndex({ featured, otherPosts, search, order }: PostI
         <AppLayout>
             <Head title="Testimonies" />
             <div className="mx-auto flex h-full w-full max-w-6xl flex-1 flex-col gap-6 p-6">
-                <PostFilters search={search || ''} order={order || 'recent'} />
+                <PostFilters query={query} />
 
                 {featured ? (
                     <>

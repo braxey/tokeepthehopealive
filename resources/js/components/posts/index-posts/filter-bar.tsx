@@ -1,21 +1,21 @@
-import { PostOrder } from '@/constants/posts';
+import { PostFilter } from '@/constants/posts';
 import { cn } from '@/lib/utils';
-import { PostIndexOrderProps, PostIndexOrderTab } from '@/types/pages/posts';
+import { PostIndexFilterTab, PostIndexOrderProps } from '@/types/pages/posts';
 import { router } from '@inertiajs/react';
 
-export default function OrderBar({ query }: PostIndexOrderProps) {
-    const tabs: PostIndexOrderTab[] = [
+export default function FilterBar({ query }: PostIndexOrderProps) {
+    const tabs: PostIndexFilterTab[] = [
         {
-            title: 'Recent',
-            value: PostOrder.RECENT,
+            title: 'Published',
+            value: PostFilter.PUBLISHED,
         },
         {
-            title: 'Popular',
-            value: PostOrder.POPULAR,
+            title: 'Archived',
+            value: PostFilter.ARCHIVED,
         },
         {
-            title: 'Oldest',
-            value: PostOrder.OLDEST,
+            title: 'All',
+            value: PostFilter.ALL,
         },
     ];
 
@@ -27,13 +27,13 @@ export default function OrderBar({ query }: PostIndexOrderProps) {
                     onClick={() =>
                         router.get(
                             '/posts',
-                            { search: query.search, order: value, filter: query.filter, page: 1 },
+                            { search: query.search, order: query.order, filter: value, page: 1 },
                             { preserveState: false, replace: true },
                         )
                     }
                     className={cn(
                         'flex cursor-pointer items-center rounded-md px-3.5 py-1.5 transition-colors',
-                        value === query.order
+                        value === query.filter
                             ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
                             : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
                     )}

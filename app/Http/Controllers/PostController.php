@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Constants\MediaDirectory;
+use App\Constants\PostFilter;
+use App\Constants\PostOrder;
+use App\Dtos\GetPostsDto;
 use App\Dtos\MediaDto;
 use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
@@ -34,19 +37,23 @@ final class PostController extends Controller
      */
     public function index(Request $request): InertiaResponse
     {
+        $orders = PostOrder::allSerialized();
+        $filters = PostFilter::allSerialized();
+
         $request->validate([
             'search' => 'nullable|string',
-            'order' => 'nullable|string|in:popular,recent,oldest',
+            'order' => "nullable|string|in:$orders",
+            'filter' => "nullable|string|in:$filters",
         ]);
 
-        $searchTerm = (string) $request->input('search');
-        $order = (string) $request->input('order', 'recent');
-        $featuredPost = $this->postService->getFeaturedPost($searchTerm, $order);
-        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $order, 1);
+        $dto = new GetPostsDto($request);
+        $featuredPost = $this->postService->getFeaturedPost($dto);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $dto);
 
         return Inertia::render('posts/index', [
-            'search' => $searchTerm,
-            'order' => $order,
+            'search' => $dto->searchTerm,
+            'order' => $dto->order,
+            'filter' => $dto->filter,
             'featured' => $featuredPost,
             'otherPosts' => $otherPosts,
         ]);
@@ -57,18 +64,19 @@ final class PostController extends Controller
      */
     public function getPostsPage(Request $request): JsonResponse
     {
+        $orders = PostOrder::allSerialized();
+        $filters = PostFilter::allSerialized();
+
         $request->validate([
             'search' => 'nullable|string',
-            'order' => 'nullable|string|in:popular,recent,oldest',
+            'order' => "nullable|string|in:$orders",
+            'filter' => "nullable|string|in:$filters",
             'page' => 'required|integer|min:1',
         ]);
 
-        $searchTerm = (string) $request->input('search');
-        $order = (string) $request->input('order', 'recent');
-        $pageNumber = (int) $request->input('page');
-
-        $featuredPost = $this->postService->getFeaturedPost($searchTerm, $order);
-        $otherPosts = $this->postService->getPostsPage($featuredPost, $searchTerm, $order, $pageNumber);
+        $dto = new GetPostsDto($request);
+        $featuredPost = $this->postService->getFeaturedPost($dto);
+        $otherPosts = $this->postService->getPostsPage($featuredPost, $dto);
 
         return response()->json($otherPosts);
     }

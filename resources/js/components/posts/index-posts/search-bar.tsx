@@ -4,9 +4,9 @@ import { router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-export default function SearchBar({ search, order, showSearchBar, setShowSearchBar }: PostIndexSearchBarProps) {
-    const [searchBarActive, setSearchBarActive] = useState<boolean>(search.length > 0);
-    const [searchQuery, setSearchQuery] = useState<string>(search || '');
+export default function SearchBar({ query, showSearchBar, setShowSearchBar }: PostIndexSearchBarProps) {
+    const [searchBarActive, setSearchBarActive] = useState<boolean>(query.search.length > 0);
+    const [searchQuery, setSearchQuery] = useState<string>(query.search || '');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout>(null);
 
@@ -26,7 +26,7 @@ export default function SearchBar({ search, order, showSearchBar, setShowSearchB
                 type="text"
                 placeholder="Search..."
                 className={
-                    'h-9 w-64 rounded-md border-neutral-200 pr-4 pl-10 transition-colors focus:border-green-500 focus:outline-none [&:focus]:border-green-500 ' +
+                    'h-9 w-60 rounded-md border-neutral-200 pr-4 pl-10 transition-colors focus:border-green-500 focus:outline-none [&:focus]:border-green-500 ' +
                     (!showSearchBar && 'hidden')
                 }
                 value={searchQuery}
@@ -39,12 +39,20 @@ export default function SearchBar({ search, order, showSearchBar, setShowSearchB
                     }
 
                     timeoutRef.current = setTimeout(() => {
-                        router.get('/posts', { search: value, order: order, page: 1 }, { preserveState: false, replace: true });
+                        router.get(
+                            '/posts',
+                            { search: value, order: query.order, filter: query.filter, page: 1 },
+                            { preserveState: false, replace: true },
+                        );
                     }, 500);
                 }}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                        router.get('/posts', { search: searchQuery, order: order, page: 1 }, { preserveState: false, replace: true });
+                        router.get(
+                            '/posts',
+                            { search: searchQuery, order: query.order, filter: query.filter, page: 1 },
+                            { preserveState: false, replace: true },
+                        );
                     }
                 }}
             />
@@ -56,7 +64,11 @@ export default function SearchBar({ search, order, showSearchBar, setShowSearchB
                     setShowSearchBar(shouldShow);
 
                     if (!shouldShow) {
-                        router.get('/posts', { search: '', order: order, page: 1 }, { preserveState: false, replace: true });
+                        router.get(
+                            '/posts',
+                            { search: '', order: query.order, filter: query.filter, page: 1 },
+                            { preserveState: false, replace: true },
+                        );
                     }
                 }}
             />

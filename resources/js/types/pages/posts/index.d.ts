@@ -1,3 +1,4 @@
+import { PostFilter, PostOrder } from '@/constants/posts';
 import { Post } from '@/types/models';
 
 export type OtherPosts = {
@@ -11,30 +12,40 @@ export type PostIndexProps = {
     otherPosts: OtherPosts;
     search: string;
     order?: PostOrder;
+    filter?: PostFilter;
 };
 
-export type PostOrder = 'popular' | 'recent' | 'oldest';
+export type PostOrder = PostOrder.RECENT | PostOrder.POPULAR | PostOrder.OLDEST;
+export type PostFilter = PostFilter.PUBLISHED | PostFilter.ARCHIVED | PostFilter.ALL;
 
-export type PostIndexFilterProps = {
+export type PostQuery = {
     search: string;
     order: PostOrder;
+    filter: PostFilter;
 };
 
 export type PostIndexSearchBarProps = {
-    search: string;
-    order: PostOrder;
+    query: PostQuery;
     showSearchBar: boolean;
     setShowSearchBar: (show: boolean) => void;
 };
 
 export type PostIndexOrderProps = {
-    search: string;
-    order: PostOrder;
+    query: PostQuery;
+};
+
+export type PostIndexFilterProps = {
+    query: PostQuery;
 };
 
 export type PostIndexOrderTab = {
     title: string;
     value: PostOrder;
+};
+
+export type PostIndexFilterTab = {
+    title: string;
+    value: PostFilter;
 };
 
 export type PostIndexFeaturedPostProps = {
