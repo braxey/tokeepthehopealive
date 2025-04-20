@@ -12,6 +12,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Validation\ValidationException;
+use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -42,11 +43,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        if (app()->isProduction()) {
+            Integration::handles($exceptions);
+        }
+
         $exceptions->renderable(function (Throwable $e) {
             logger()->error($e->getMessage() . ' -- ' . $e->getTraceAsString());
-
-            if ($e instanceof ValidationException) {
-                logger()->error(json_encode($e->errors()));
-            }
         });
     })->create();

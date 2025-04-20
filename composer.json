@@ -21,6 +21,7 @@
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
         "mews/purifier": "^3.4",
+        "sentry/sentry-laravel": "^4.13",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {
