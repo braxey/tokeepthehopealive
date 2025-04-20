@@ -34,18 +34,3 @@ export interface WysiwigTinyMceBlobInfo {
 export type WysiwigTinyMceProgressFn = (percent: number) => void;
 
 export type WysiwigTinyMceUploadHandler = (blobInfo: WysiwigTinyMceBlobInfo, progress: WysiwigTinyMceProgressFn) => Promise<string>;
-
-export interface WysiwigTinyMceMediaMeta {
-    [filetype: string]: string;
-}
-
-export type FilePickerCallback = (
-    callback: (value: string, meta?: WysiwigTinyMceMediaMeta) => void,
-    value: string,
-    meta: WysiwigTinyMceMediaMeta,
-) => void;
-
-export interface WysiwigTinyMceVideoData {
-    source: string;
-    sourcemime: string;
-}

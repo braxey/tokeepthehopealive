@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Constants\MediaType;
 use App\Dtos\MediaDto;
 use App\Models\Media;
 use App\Models\Post;
@@ -125,7 +126,7 @@ final class MediaService
           'mediable_type' => Post::class,
           'mediable_id' => 0,
           'path' => $dto->getPath(),
-          'type' => $dto->getType(),
+          'type' => MediaType::IMAGE,
         ]);
 
         // Save the uploaded media ID to be linked to the post when the post is created/updated.

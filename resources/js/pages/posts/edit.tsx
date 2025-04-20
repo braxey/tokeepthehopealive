@@ -2,24 +2,38 @@ import { PostForm } from '@/components/posts/common/post-form';
 import { PostPreview } from '@/components/posts/common/post-preview';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
+import { convertYouTubeUrlsToEmbeds } from '@/lib/utils';
 import { EditPostProps } from '@/types/pages/posts/edit';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function EditPost({ post }: EditPostProps) {
     const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
-    const {
-        data,
-        setData,
-        post: update,
-        processing,
-    } = useForm({
+    const [processing, setProcessing] = useState<boolean>(false);
+
+    const { data, setData } = useForm({
         title: post.title || '',
         summary: post.summary || '',
         body: post.body || '',
         preview_image: null as File | null,
         preview_caption: post.preview_caption || '',
     });
+
+    const handleSubmit = () => {
+        const updatedBody = convertYouTubeUrlsToEmbeds(data.body);
+        setProcessing(true);
+
+        router.post(
+            route('posts.update', post.id),
+            {
+                ...data,
+                body: updatedBody,
+            },
+            {
+                onError: () => setProcessing(false),
+            },
+        );
+    };
 
     return (
         <AppLayout>
@@ -28,7 +42,7 @@ export default function EditPost({ post }: EditPostProps) {
                 <div className="flex justify-end">
                     <Button
                         onClick={() => setIsPreviewMode(!isPreviewMode)}
-                        className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                        className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                     >
                         {isPreviewMode ? 'Back' : 'Preview'}
                     </Button>
@@ -40,7 +54,7 @@ export default function EditPost({ post }: EditPostProps) {
                         previewImage={data.preview_image || post.preview_image_url}
                         previewCaption={data.preview_caption}
                         summary={data.summary}
-                        body={data.body}
+                        body={convertYouTubeUrlsToEmbeds(data.body)}
                     />
                 ) : (
                     <PostForm
@@ -52,11 +66,7 @@ export default function EditPost({ post }: EditPostProps) {
                         body={data.body}
                         setValue={setData}
                         processing={processing}
-                        submitForm={() => {
-                            update(route('posts.update', { post: post.id }), {
-                                preserveState: true,
-                            });
-                        }}
+                        submitForm={handleSubmit}
                     />
                 )}
             </div>

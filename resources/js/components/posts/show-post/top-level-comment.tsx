@@ -136,7 +136,6 @@ export default function ShowPostTopLevelComment({ comment, deleteComment }: Show
         })
             .then((response) => {
                 if (!response.ok) {
-                    console.log(response.body);
                     throw new Error(String(response.status));
                 }
                 return response.json();

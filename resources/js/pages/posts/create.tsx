@@ -2,18 +2,36 @@ import { PostForm } from '@/components/posts/common/post-form';
 import { PostPreview } from '@/components/posts/common/post-preview';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { convertYouTubeUrlsToEmbeds } from '@/lib/utils';
+import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function CreatePost() {
     const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
-    const { data, setData, post, processing } = useForm({
+    const [processing, setProcessing] = useState<boolean>(false);
+    const { data, setData } = useForm({
         title: '',
         summary: '',
         body: '',
         preview_image: null as File | null,
         preview_caption: '',
     });
+
+    const handleSubmit = () => {
+        const updatedBody = convertYouTubeUrlsToEmbeds(data.body);
+        setProcessing(true);
+
+        router.post(
+            route('posts.store'),
+            {
+                ...data,
+                body: updatedBody,
+            },
+            {
+                onError: () => setProcessing(false),
+            },
+        );
+    };
 
     return (
         <AppLayout>
@@ -24,7 +42,7 @@ export default function CreatePost() {
                         onClick={() => setIsPreviewMode(!isPreviewMode)}
                         className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                     >
-                        {isPreviewMode ? 'Back to Creating' : 'Preview'}
+                        {isPreviewMode ? 'Back' : 'Preview'}
                     </Button>
                 </div>
 
@@ -34,7 +52,7 @@ export default function CreatePost() {
                         previewImage={data.preview_image}
                         previewCaption={data.preview_caption}
                         summary={data.summary}
-                        body={data.body}
+                        body={convertYouTubeUrlsToEmbeds(data.body)}
                     />
                 ) : (
                     <PostForm
@@ -45,11 +63,7 @@ export default function CreatePost() {
                         body={data.body}
                         setValue={setData}
                         processing={processing}
-                        submitForm={() => {
-                            post(route('posts.store'), {
-                                preserveState: true,
-                            });
-                        }}
+                        submitForm={handleSubmit}
                     />
                 )}
             </div>

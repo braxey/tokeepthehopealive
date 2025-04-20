@@ -1,3 +1,4 @@
+import { convertYouTubeUrlsToEmbeds } from '@/lib/utils';
 import DOMPurify from 'dompurify';
 
 interface PostPreviewProps {
@@ -9,8 +10,10 @@ interface PostPreviewProps {
 }
 
 export function PostPreview({ title, previewImage, previewCaption, summary, body }: PostPreviewProps) {
-    const sanitizedBody: string = DOMPurify.sanitize(body, {
-        ADD_TAGS: ['h2', 'h3', 'video', 'source', 'p', 'br'],
+    const processedBody = convertYouTubeUrlsToEmbeds(body);
+
+    const sanitizedBody: string = DOMPurify.sanitize(processedBody, {
+        ADD_TAGS: ['h2', 'h3', 'iframe', 'source', 'p', 'br'],
         ADD_ATTR: ['loading', 'controls', 'src', 'type', 'style'],
         FORBID_TAGS: ['figure', 'figcaption'],
     });

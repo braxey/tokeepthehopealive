@@ -14,7 +14,6 @@ final class MediaDto
     private int $nowTimestamp;
     private string $uuid;
     private string $extension;
-    private string $type;
     private string $path;
 
     public function __construct(private UploadedFile $file, private string $storageDirectory)
@@ -23,7 +22,6 @@ final class MediaDto
         $this->nowTimestamp = now()->getTimestamp();
         $this->uuid = uuidv4();
         $this->extension = $file->getClientOriginalExtension();
-        $this->type = str_contains($file->getMimeType(), 'video') ? MediaType::VIDEO : MediaType::IMAGE;
         $this->path = "{$this->storageDirectory}/{$this->userId}-{$this->nowTimestamp}-{$this->uuid}.{$this->extension}";
     }
 
@@ -33,14 +31,6 @@ final class MediaDto
     public function getPath(): string
     {
         return $this->path;
-    }
-
-    /**
-     * Return the media type (image or video).
-     */
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     /**

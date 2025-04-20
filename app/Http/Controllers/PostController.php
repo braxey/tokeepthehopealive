@@ -124,7 +124,7 @@ final class PostController extends Controller
         // Store post
         $post = Post::create([
             'title' => $request->validated('title'),
-            'body' => $body = Purifier::clean($request->validated('body')),
+            'body' => $body = Purifier::clean($request->validated('body'), 'youtube'),
             'searchable_body' => strip_tags($body),
             'summary' => $request->validated('summary'),
             'user_id' => Auth::id(),
@@ -170,7 +170,7 @@ final class PostController extends Controller
         // Update post
         $post->update([
             'title' => $request->validated('title'),
-            'body' => $body = Purifier::clean($request->validated('body')),
+            'body' => $body = Purifier::clean($request->validated('body'), 'youtube'),
             'searchable_body' => strip_tags($body),
             'summary' => $request->validated('summary'),
             'preview_image' => $path ?: $post->preview_image,
