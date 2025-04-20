@@ -132,7 +132,7 @@ final class PostController extends Controller
             'preview_caption' => $request->validated('preview_caption'),
         ]);
 
-        $this->mediaService->linkAdditionalMedia($post);
+        $this->mediaService->syncMediaForPost($post);
 
         return to_route('posts.index')->with('success', 'Post created!');
     }
@@ -177,7 +177,7 @@ final class PostController extends Controller
             'preview_caption' => $request->validated('preview_caption'),
         ]);
 
-        $this->mediaService->linkAdditionalMedia($post);
+        $this->mediaService->syncMediaForPost($post);
 
         return to_route('posts.show', $post)->with('success', 'Post updated!');
     }

@@ -50,10 +50,35 @@ final class MediaService
     }
 
     /**
+     * Link recently uploaded media to the post.
+     * Delete media disassociated from the post.
+     */
+    public function syncMediaForPost(Post $post): void
+    {
+        $this->linkAdditionalMedia($post);
+        $this->purgeDeletedMedia($post);
+    }
+
+    /**
+     * Delete all media associated with a post.
+     */
+    public function deleteForPost(Post $post): void
+    {
+        // Delete preview image
+        Storage::delete($post->preview_image);
+
+        // Delete media
+        $post->media->each(function (Media $media) {
+            Storage::delete($media->path);
+            $media->delete();
+        });
+    }
+
+    /**
      * Link recently uploaded media associated to the post.
      * Delete media recently disassociated from the post.
      */
-    public function linkAdditionalMedia(Post $post): void
+    private function linkAdditionalMedia(Post $post): void
     {
         // Grab the IDs of the recently uploaded media.
         $uploadedMediaIds = session('uploaded_media_ids', []);
@@ -82,17 +107,17 @@ final class MediaService
     }
 
     /**
-     * Delete all media associated with a post.
+     * Discover and delete media for a post that was recently deleted.
      */
-    public function deleteForPost(Post $post): void
+    private function purgeDeletedMedia(Post $post): void
     {
-        // Delete preview image
-        Storage::delete($post->preview_image);
-
-        // Delete media
-        $post->media->each(function (Media $media) {
-            Storage::delete($media->path);
-            $media->delete();
+        $post->media->each(function (Media $media) use ($post) {
+            if (!str_contains($post->body, $media->path)) {
+                if (Storage::exists($media->path)) {
+                    Storage::delete($media->path);
+                }
+                $media->delete();
+            }
         });
     }
 
