@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dtos;
 
-use App\Constants\MediaType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 
