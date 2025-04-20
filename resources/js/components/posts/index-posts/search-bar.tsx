@@ -57,7 +57,7 @@ export default function SearchBar({ query, showSearchBar, setShowSearchBar }: Po
                 }}
             />
             <Search
-                className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 cursor-pointer text-neutral-500"
+                className="absolute top-4/9 left-3 h-4 w-4 -translate-y-1/2 cursor-pointer text-neutral-500"
                 onClick={() => {
                     const shouldShow = !showSearchBar;
                     setSearchQuery('');
