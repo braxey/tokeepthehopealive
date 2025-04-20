@@ -1,9 +1,14 @@
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';
+import * as Sentry from '@sentry/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+
+Sentry.init({
+    dsn: 'https://d71180f27e1b3e7d84de8eea243517a5@o4509182913413120.ingest.us.sentry.io/4509183566544896',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
