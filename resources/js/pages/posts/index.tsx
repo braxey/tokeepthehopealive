@@ -31,7 +31,7 @@ export default function PostIndex({ featured, otherPosts, search, order, filter 
 
     const handleLoadMore = () => {
         const pageNumber = currentPage + 1;
-        const params = new URLSearchParams({ page: String(pageNumber), search: search });
+        const params = new URLSearchParams({ page: String(pageNumber), search: search, order: order, filter: filter });
 
         fetch(`${route('posts.load-more')}?${params.toString()}`, {
             headers: {
