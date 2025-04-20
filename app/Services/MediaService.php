@@ -53,10 +53,32 @@ final class MediaService
      * Link recently uploaded media associated to the post.
      * Delete media recently disassociated from the post.
      */
-    public function syncMediaForPost(Post $post): void
+    public function linkAdditionalMedia(Post $post): void
     {
-        $this->linkAdditionalMedia($post);
-        $this->purgeDeletedMedia($post);
+        // Grab the IDs of the recently uploaded media.
+        $uploadedMediaIds = session('uploaded_media_ids', []);
+
+        // Get the recently uploaded media.
+        $uploadedMedia = Media::query()->whereIn('id', $uploadedMediaIds)->get();
+
+        // Filter out uploaded media not related to the new post.
+        // Needed because media may be uploaded that does not make it into the published post.
+        $mediaUploadedForPost = $uploadedMedia->filter(function (Media $media) use ($post) {
+            return str_contains($post->body, $media->path);
+        });
+
+        // Link the media to the post.
+        $mediaUploadedForPost->each(function (Media $media) use ($post) {
+            $media->update([
+                'mediable_id' => $post->id
+            ]);
+        });
+
+        // Clear out the IDs of recently uploaded media.
+        session()->forget('uploaded_media_ids');
+
+        // Delete any uploaded media that are not associated with a post.
+        $this->garbageCollection();
     }
 
     /**
@@ -71,34 +93,6 @@ final class MediaService
         $post->media->each(function (Media $media) {
             Storage::delete($media->path);
             $media->delete();
-        });
-    }
-
-    /**
-     * Link the recently uploaded media to the associated post.
-     */
-    private function linkAdditionalMedia(Post $post): void
-    {
-        // Link any uploaded media.
-        $uploadedMediaIds = session('uploaded_media_ids', []);
-        Media::query()->whereIn('id', $uploadedMediaIds)->update(['mediable_id' => $post->id]);
-        session()->forget('uploaded_media_ids');
-
-        $this->garbageCollection();
-    }
-
-    /**
-     * Discover and delete media for a post that was recently deleted.
-     */
-    private function purgeDeletedMedia(Post $post): void
-    {
-        $post->media->each(function (Media $media) use ($post) {
-            if (!str_contains($post->body, $media->path)) {
-                if (Storage::exists($media->path)) {
-                    Storage::delete($media->path);
-                }
-                $media->delete();
-            }
         });
     }
 
