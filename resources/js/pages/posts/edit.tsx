@@ -23,7 +23,7 @@ export default function EditPost({ post }: EditPostProps) {
         const updatedBody = convertYouTubeUrlsToEmbeds(data.body);
         setProcessing(true);
 
-        router.post(
+        router.put(
             route('posts.update', post.id),
             {
                 ...data,

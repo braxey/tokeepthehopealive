@@ -27,7 +27,7 @@ Route::prefix('posts')->group(function () {
             Route::post('/', [PostController::class, 'store'])->name('posts.store');
 
             Route::get('/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-            Route::post('/{post}', [PostController::class, 'update'])->name('posts.update');
+            Route::put('/{post}', [PostController::class, 'update'])->name('posts.update');
 
             Route::patch('/{post}', [PostController::class, 'archive'])->name('posts.archive');
         });
